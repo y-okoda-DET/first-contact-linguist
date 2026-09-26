@@ -10,8 +10,8 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:image:alt" content="ファーストコンタクト・リンギスト。言葉の通じない来訪者と、話せ。">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <title>ファーストコンタクト・リンギスト</title>
 <meta name="description" content="言葉の通じない8つの来訪者と、身振り・贈り物・香り・素数で対話する。言語学の謎解きゲーム。">
 <meta property="og:title" content="ファーストコンタクト・リンギスト">
@@ -92,7 +92,7 @@ canvas.px{display:block;width:100%;height:auto;image-rendering:pixelated;image-r
 .act:active:not(:disabled),.chip:active:not(:disabled),.primary:active,.opt:active:not(:disabled){transform:translate(2px,2px);box-shadow:1px 1px 0 var(--shadow)}
 .act:disabled{opacity:.3;cursor:not-allowed}
 .opt{border:2px solid var(--line);background:var(--surface);padding:10px 14px;text-align:left;font-size:14px;line-height:1.6;width:100%;box-shadow:3px 3px 0 var(--shadow)}
-.opt:hover:not(:disabled){border-color:var(--accent)}
+@media (hover:hover){.opt:hover:not(:disabled){border-color:var(--accent)}}
 .opt:disabled{cursor:default}
 .opt.right{border-color:var(--good);background:#1f2a1f}
 .opt.wrong{border-color:var(--bad);background:#2d1c1f}
@@ -267,7 +267,7 @@ details.obs ol{margin:8px 0 0;padding-left:1.3em;display:flex;flex-direction:col
 a.primary{display:block;text-align:center;text-decoration:none}
 .listen{border-color:var(--teal);color:var(--teal);font-family:var(--display)}
 .voice[data-a]{cursor:pointer}
-.voice[data-a]:hover{border-color:var(--teal)}
+@media (hover:hover){.voice[data-a]:hover{border-color:var(--teal)}}
 .report{border-color:var(--teal);gap:12px}
 .rlabel{font-size:12px;color:var(--muted)}
 .rtitle{font-family:var(--display);font-size:32px;line-height:1.2;color:var(--ink);text-shadow:0 0 14px rgba(255,154,90,.45)}
@@ -333,6 +333,7 @@ details.more>p,details.more>cite{margin-top:8px;display:block}
 .s2ctl .primary{grid-column:1/3}
 .beatbar{height:10px;background:var(--sunk);border:1px solid var(--line);overflow:hidden}
 .beatbar i{display:block;height:100%;background:var(--teal);width:0}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
 @media (prefers-reduced-motion: reduce){.kami{animation:none}.narr::before{animation:none}.bubble,.bar .fill,.timer i{transition:none}}
 </style>
 <div class="app"><div id="bar"></div><div id="screen"></div></div>
@@ -575,7 +576,7 @@ function keys(n,t,vel){const c=AU.ctx,o=c.createOscillator(),o2=c.createOscillat
 function kick(t){const c=AU.ctx,o=c.createOscillator(),g=c.createGain();o.frequency.setValueAtTime(110,t);o.frequency.exponentialRampToValueAtTime(42,t+.18);env(g,t,.005,.35,.28);o.connect(g);g.connect(AU.mus);o.start(t);o.stop(t+.35);}
 function noiseHit(t,freq,type,peak,rel,dest){const c=AU.ctx,s=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();s.buffer=AU.noise;s.playbackRate.value=.8+Math.random()*.4;f.type=type;f.frequency.value=freq;env(g,t,.004,peak,rel);s.connect(f);f.connect(g);g.connect(dest||AU.mus);s.start(t,Math.random());s.stop(t+rel+.05);}
 function schedule(){
-  const c=AU.ctx,spb=60/66;
+  const c=AU.ctx,spb=60/66;if(AU.next<c.currentTime-.5)AU.next=c.currentTime+.05;
   while(AU.next<c.currentTime+.4){
     const t=AU.next,b=AU.beat,bar=Math.floor(b/4),inBar=b%4,ch=CHORDS[Math.floor(bar/2)%4];
     if(b%8===0)pad(ch,t,spb*8);
@@ -607,6 +608,27 @@ function se(kind,arg){
   else if(kind==='type'){tone1('square',1400+Math.random()*400,t,.002,.015,.02);}
 }
 function audioBar(){return `<div class="audiobar"><button class="aub ${AU.on?'on':''}" data-au="all" aria-pressed="${AU.on}">♪ SOUND ${AU.on?'ON':'OFF'}</button></div>`;}
+
+/* 画面を離れて戻ったときに、音を確実に復帰させる */
+function auRecover(){
+  if(!AU.ctx||!AU.on)return;
+  const c=AU.ctx;
+  if(c.state!=='running'){try{c.resume();}catch(e){}}
+  setTimeout(()=>{
+    if(!AU.on||document.hidden)return;
+    if(!AU.ctx||AU.ctx.state!=='running'){
+      try{AU.ctx&&AU.ctx.close();}catch(e){}
+      clearInterval(AU.timer);AU.ctx=null;AU.vox=null;AU.playing=false;
+      if(auInit()){auResume();musicStart();}
+    }else if(!AU.playing)musicStart();
+  },350);
+}
+document.addEventListener('visibilitychange',()=>{
+  if(!AU.ctx)return;
+  if(document.hidden){musicStop();try{AU.ctx.suspend();}catch(e){}}
+  else if(AU.on){try{AU.ctx.resume();}catch(e){}setTimeout(()=>{if(AU.on&&AU.ctx&&AU.ctx.state==='running'&&!AU.playing)musicStart();},200);}
+});
+window.addEventListener('pageshow',e=>{if(e.persisted&&AU.ctx&&AU.on){AU.playing=false;auRecover();}});
 
 /* ===== alien voices ===== */
 const SPECIES_KEY=['mimik','uum','tsubura','potra','yaa','nef','ordo','kanal','all'];
@@ -709,16 +731,18 @@ function kanalSpeak(text,delay){
   delay?setTimeout(go,delay*1000):go();return est;
 }
 /* ===== logo & share ===== */
-const SHARE_URL=(location.protocol==='https:'?location.origin+location.pathname:'https://first-contact-linguist.yhiokd.workers.dev/');
+const SHARE_URL=(location.protocol==='https:'?location.origin+'/':'https://first-contact-linguist.yhiokd.workers.dev/');
+const SHARE_PAGES=true;
+function shareUrlFor(k){return SHARE_PAGES?SHARE_URL.replace(/\/?$/,'/')+'s/'+k+'/':SHARE_URL;}
 const HASHTAG='#ファーストコンタクトリンギスト';
 const FLAVOR=['ミミクの三つの言葉の意味が分かった瞬間、声が出た。','千年を生きる岩と、挨拶を交わした。','群れの前で、口をすべらせずに済んだ。','浜辺の取引を、最後までやり遂げた。','願いを叶える輪から、月を守った。','香りの部屋で、約束を結んだ。','探査機との問答を、生き延びた。','カナルとの会話が、いちばん怖かった。','橋を架ける者は、ここにいた。'];
 function totalFails(){return Object.values(G.prog.fails||{}).reduce((a,b)=>a+(+b||0),0);}
 function stageShareText(i){const f=G.prog.fails[i]||0;return `STAGE ${i+1}「${STAGES[i].title}」解明（${f?`失敗${f}回`:'ノーミス'}）。\n${FLAVOR[i]}\n\n言葉の通じない来訪者と対話する、言語学の謎解きゲーム\n${HASHTAG}`;}
 function finalShareText(){const f=totalFails();return `言葉の通じない8つの来訪者と、身振りと贈り物と香りと素数で対話した。\n9つの言語、すべて解明（失敗${f}回）。\n\n言語学の謎解きゲーム、全9ステージ。\n${HASHTAG}`;}
-function shareBlock(text,big){
-  const url='https://twitter.com/intent/tweet?text='+encodeURIComponent(text)+'&url='+encodeURIComponent(SHARE_URL);
+function shareBlock(text,big,link){
+  link=link||SHARE_URL;const url='https://twitter.com/intent/tweet?text='+encodeURIComponent(text)+'&url='+encodeURIComponent(link);
   return `<div class="card share ${big?'big':''}"><div class="lbl">${big?'全クリおめでとう。よかったら、SNSでシェアしてください':'よかったら、SNSでシェアしてください'}</div>
-  <pre class="post" id="post">${esc(text)}\n${SHARE_URL}</pre>
+  <pre class="post" id="post">${esc(text)}\n${link}</pre>
   <div class="btnrow"><a class="primary xbtn" href="${url}" target="_blank" rel="noopener">X でポストする</a><button class="ghost" data-copy="1">文面をコピー</button></div>
   <p class="focusline" id="copymsg" aria-live="polite"></p></div>`;
 }
@@ -832,6 +856,7 @@ function render(){
   else if(G.screen==='play')sc.innerHTML=`<div class="stack">${stageHead()}${STAGES[G.cur].view(G.st)}</div>`;
   const bar=$('#bar');if(bar)bar.innerHTML=audioBar();
   hydrate(document);
+  try{if(document.activeElement&&document.activeElement!==document.body&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName))document.activeElement.blur();}catch(e){}
   const nw=document.getElementById('tlwrap');if(nw){const cur=nw.querySelector('.cur');if(!tlPrev||tlPrev.follow){if(cur){const r=cur.getBoundingClientRect(),wr=nw.getBoundingClientRect();nw.scrollLeft=Math.max(0,nw.scrollLeft+(r.right+r.width*2.2)-wr.right);}}else nw.scrollLeft=tlPrev.l;}
   if(G.screen==='fin')buildResultCard();
 }
@@ -889,8 +914,8 @@ function renderFin(){
     <div class="lbl">全クリおめでとう。よかったら、調査記録をSNSでシェアしてください</div>
     <img id="rcard" class="rcard" alt="調査記録のカード画像" src="">
     <ol class="howto"><li>上の画像を長押し（パソコンは右クリック）して保存する</li><li>「X でポストする」を押し、保存した画像を添付する</li></ol>
-    <pre class="post" id="post">${esc(finalShareText())}\n${SHARE_URL}</pre>
-    <div class="btnrow"><a class="primary xbtn" href="${'https://twitter.com/intent/tweet?text='+encodeURIComponent(finalShareText())+'&url='+encodeURIComponent(SHARE_URL)}" target="_blank" rel="noopener">X でポストする</a><button class="ghost" data-copyimg="1">画像をコピー</button><button class="ghost" data-copy="1">文面をコピー</button></div>
+    <pre class="post" id="post">${esc(finalShareText())}\n${shareUrlFor('fin')}</pre>
+    <div class="btnrow"><a class="primary xbtn" href="${'https://twitter.com/intent/tweet?text='+encodeURIComponent(finalShareText())+'&url='+encodeURIComponent(shareUrlFor('fin'))}" target="_blank" rel="noopener">X でポストする</a><button class="ghost" data-copyimg="1">画像をコピー</button><button class="ghost" data-copy="1">文面をコピー</button></div>
     <p class="focusline" id="copymsg" aria-live="polite"></p>
    </div>
    <div class="btnrow"><button class="ghost" data-nav="title">タイトルへ</button><button class="ghost" data-nav="map">作戦盤へ</button></div></div>`;
@@ -976,7 +1001,7 @@ function renderEnd(){
    ${finale}
    <div class="card note"><div class="eyebrow">Linguistics note</div><h3>言語学ノート：${s.concept}</h3>${foldNote(s.note)}<p class="focusline">※ 来訪者たちの言語はすべて架空です。解説で触れた人間の言語や研究は実在するものですが、説明のために単純化している部分があります。</p></div>
    <div class="btnrow">${next}</div>
-   ${last?'':shareBlock(stageShareText(G.cur),false)}</div>`;
+   ${last?'':shareBlock(stageShareText(G.cur),false,shareUrlFor(G.cur+1))}</div>`;
 }
 function nav(w,v){
   if(w==='title')G.screen='title';
@@ -1003,7 +1028,7 @@ function storyDone(d){
 document.addEventListener('click',e=>{
   const au=e.target.closest('[data-au]');
   if(au){auInit();AU.on=!AU.on;AU.bgm=AU.se=AU.on;if(AU.on)musicStart();else{musicStop();try{speechSynthesis.cancel();}catch(e){}}auSave();$('#bar').innerHTML=audioBar();if(AU.se)se('click');return;}
-  if(auInit()){auResume();if(AU.bgm&&!AU.playing)musicStart();}
+  if(AU.on&&auInit()){auResume();if(AU.ctx.state==='running'){if(!AU.playing)musicStart();}else auRecover();}
   const vb=e.target.closest('[data-voice]');if(vb){const k=vb.dataset.voice;k==='all'?chorus(true):voice(k);return;}
   if(e.target.closest('[data-copyimg]')){se('click');copyCard();return;}
   if(e.target.closest('[data-copy]')){se('click');copyPost();return;}
@@ -1826,7 +1851,7 @@ return {
       ];
       return `${steps[st.ri]()}<button class="primary" data-a="rnext">${st.ri<steps.length-1?'次へ':'記録を閉じる'}</button>`;}
     const t=st.T[st.i],fb=st.pick!==null;
-    const opts=t.build?buildUI(st,t,fb):t.opts.map((o,k)=>`<button class="opt ${fb&&st.pick===k?(o.ok?'right':'wrong'):''}" data-a="pick" data-v="${k}" ${fb?'disabled':''}>${o.t}</button>`).join('');
+    const opts=t.build?buildUI(st,t,fb):t.opts.map((o,k)=>`<button class="opt ${fb&&st.pick===k?(o.ok?'right':'wrong'):''}" data-a="sel9" data-v="${k}" aria-pressed="${!fb&&st.sel9===k}" ${fb?'disabled':''}>${o.t}</button>`).join('')+(fb?'':`<button class="primary" data-a="pick" data-v="${st.sel9}" ${st.sel9==null?'disabled':''}>この通訳で伝える</button>`);
     const left=Math.max(0,st.deadline-Date.now())/1000;
     return `${H.status(H.num('発言',`${st.i+1}/${st.T.length}`),H.pips('誤訳',st.miss,3,true),H.num('通訳できた',st.ok))}
     ${fb?'':`<div class="timer ${left<12?'low':''}" id="s9timer"><i style="width:${left/secOf(st)*100}%"></i></div>`}
@@ -1840,13 +1865,14 @@ return {
     if(left<=0){resolve(st,-1);if(G.screen==='play')render();}},
   act(st,a,v){
     if(a==='onext'){if(st.oi<OPEN.length-1){st.oi++;if(st.oi===1)chorus(false);if(st.oi===3)voice('mimik','tii');}else{st.phase='task';st.deadline=Date.now()+secOf(st)*1000;setTimeout(()=>{const x=st.T[st.i];if(x&&!st.over&&G.st===st)voice(SP_BY_NAME[x.from]);},300);}window.scrollTo(0,0);return;}
-    if(a==='pick'&&st.phase==='task'&&st.pick===null&&!st.T[st.i].build){resolve(st,+v);return;}
+    if(a==='sel9'&&st.phase==='task'&&st.pick===null){st.sel9=+v;return;}
+    if(a==='pick'&&st.phase==='task'&&st.pick===null&&!st.T[st.i].build&&v!=null&&v!=='undefined'){resolve(st,+v);return;}
     if(st.phase==='task'&&st.pick===null){const t=st.T[st.i];
       if(a==='b'){const [k,val]=v.split(':');const part=t.build.find(p=>p.key===k);if(part.multi){const arr=st.bs[k]||[];const i=arr.indexOf(val);if(i>=0)arr.splice(i,1);else if(arr.length<part.multi)arr.push(val);st.bs[k]=arr;}else st.bs[k]=val;return;}
       if(a==='seq'){const part=t.build.find(p=>p.seq);const arr=st.bs[part.key]||[];if(arr.length<part.seq){arr.push(v);se('tone',v);}st.bs[part.key]=arr;return;}
       if(a==='seqc'){const part=t.build.find(p=>p.seq);st.bs[part.key]=[];return;}
       if(a==='bsend'&&buildReady(st,t)){resolve(st,'b');return;}}
-    if(a==='next'&&st.pick!==null){st.i++;st.turn++;st.pick=null;st.bs={};st.bres=null;
+    if(a==='next'&&st.pick!==null){st.i++;st.turn++;st.pick=null;st.bs={};st.bres=null;st.sel9=null;
       if(st.i>=st.T.length){st.phase='reveal';st.alog.push('会議は合意に至った。');window.scrollTo(0,0);return;}
       st.deadline=Date.now()+secOf(st)*1000;setTimeout(()=>{const x=st.T[st.i];if(x&&!st.over&&G.st===st)voice(SP_BY_NAME[x.from]);},300);return;}
     if(a==='voice'){v==='kanal'?voice('kanal','すみません！　お願いがあります。わたしに、通訳の仕事を教えてください。'):voice(v);return false;}
