@@ -1,0 +1,1866 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#17151f">
+<meta property="og:url" content="https://first-contact-linguist.pages.dev/">
+<meta property="og:site_name" content="ファーストコンタクト・リンギスト">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:image:alt" content="ファーストコンタクト・リンギスト。言葉の通じない来訪者と、話せ。">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>ファーストコンタクト・リンギスト</title>
+<meta name="description" content="言葉の通じない8つの来訪者と、身振り・贈り物・香り・素数で対話する。言語学の謎解きゲーム。">
+<meta property="og:title" content="ファーストコンタクト・リンギスト">
+<meta property="og:description" content="言葉の通じない来訪者と、話せ。言語学の謎解きゲーム、全9ステージ。">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://first-contact-linguist.pages.dev/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ファーストコンタクト・リンギスト">
+<meta name="twitter:description" content="言葉の通じない来訪者と、話せ。言語学の謎解きゲーム、全9ステージ。">
+<meta name="twitter:image" content="https://first-contact-linguist.pages.dev/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=VT323&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+<style>
+/* single committed look: dusk CRT, sodium orange, teal phosphor */
+:root{
+  color-scheme:dark;
+  --bg:#17151f; --surface:#221f2c; --sunk:#131119; --ink:#ece0c8; --muted:#a3978c; --line:#3b3547;
+  --accent:#ff9a5a; --accent-ink:#1a1016; --accent-soft:#3a2a2a; --teal:#7fd1c1;
+  --good:#9fd67a; --bad:#ff6f66; --warn:#f4c95d;
+  --sc-sweet:#e79ab8; --sc-resin:#9fd67a; --sc-sour:#f4c95d; --sc-bitter:#a8887a;
+  --pix-on:#7fd1c1; --pix-off:#262233;
+  --shadow:#0b0a10;
+  --display:"DotGothic16","Hiragino Sans",system-ui,sans-serif;
+  --body:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+  --mono:"VT323","DotGothic16",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{background:radial-gradient(120% 80% at 50% 0%,#241f33 0%,var(--bg) 60%) fixed,var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.75;padding-inline:16px;padding-block:14px 48px;min-height:100%}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.09;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:51;background:repeating-linear-gradient(to bottom,transparent 0 2px,rgba(0,0,0,.14) 2px 3px)}
+.app{max-width:580px;margin:0 auto;position:relative}
+.stack{display:flex;flex-direction:column;gap:14px}
+.eyebrow{font-family:var(--mono);font-size:17px;letter-spacing:.12em;color:var(--teal);text-transform:uppercase;line-height:1}
+h1{font-family:var(--display);font-weight:400;font-size:26px;line-height:1.35;margin:0;text-wrap:balance;text-shadow:0 0 12px rgba(255,154,90,.35)}
+h2{font-family:var(--display);font-weight:400;font-size:21px;line-height:1.4;margin:0;text-wrap:balance}
+h3{font-family:var(--display);font-weight:400;font-size:15px;margin:0;letter-spacing:.04em}
+p{margin:0}
+b{color:var(--accent);font-weight:700}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,summary:focus-visible,input:focus-visible,.kami:focus-visible{outline:2px dashed var(--accent);outline-offset:3px}
+.head{display:flex;flex-direction:column;gap:6px}
+.lead{color:var(--muted);font-size:14px}
+.mono{font-family:var(--mono);font-size:16px;letter-spacing:.06em}
+/* pixel canvases */
+canvas.px{display:block;width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;background:#0f0e15}
+.stage,.portrait,.crtbox{position:relative;border:2px solid #000;border-radius:6px;overflow:hidden;box-shadow:0 0 0 2px var(--line),4px 4px 0 2px var(--shadow)}
+.crtbox::after,.kami-frame::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.45) 100%);}
+/* HUD */
+.status{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;font-family:var(--mono);font-size:19px;line-height:1;font-variant-numeric:tabular-nums;color:var(--teal)}
+.status .k{color:var(--muted);font-family:var(--body);font-size:12px;margin-right:6px}
+.pips{display:inline-flex;gap:4px;vertical-align:middle}
+.pip{width:10px;height:10px;border:2px solid var(--teal);background:transparent}
+.pip.on{background:var(--teal);box-shadow:0 0 6px var(--teal)}
+.pips.bad .pip{border-color:var(--bad)} .pips.bad .pip.on{background:var(--bad);box-shadow:0 0 6px var(--bad)}
+.bubble{position:absolute;left:50%;top:8px;transform:translateX(-50%);font-family:var(--mono);font-size:26px;line-height:1;letter-spacing:.08em;background:var(--ink);color:#1a1016;border:2px solid #000;padding:4px 14px 2px;white-space:nowrap;box-shadow:3px 3px 0 #000;transition:opacity .25s}
+.bubble[data-empty="1"]{opacity:0}
+.narr{background:var(--sunk);border:2px solid var(--line);padding:10px 14px;min-height:52px;font-size:14px;position:relative}
+.narr::before{content:"▍";color:var(--teal);margin-right:4px;animation:blink 1s steps(1) infinite}
+.narr.good{border-color:var(--good)} .narr.bad{border-color:var(--bad)}
+@keyframes blink{50%{opacity:0}}
+.lbl{font-size:12px;color:var(--muted);letter-spacing:.08em;margin-bottom:6px}
+/* controls */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:2px solid var(--line);background:var(--surface);padding:5px 12px;font-size:14px;box-shadow:2px 2px 0 var(--shadow)}
+.chip[aria-pressed="true"]{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.chip small{color:var(--muted);font-size:11px;margin-left:4px}
+.chip:disabled{opacity:.35;cursor:not-allowed}
+.acts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.acts.two{grid-template-columns:repeat(2,1fr)}
+.act{border:2px solid var(--ink);background:var(--surface);padding:8px 6px;font-size:14px;font-weight:700;line-height:1.35;text-align:center;box-shadow:3px 3px 0 var(--shadow)}
+.act span{display:block;font-weight:400;font-size:11px;color:var(--muted)}
+.act:active:not(:disabled),.chip:active:not(:disabled),.primary:active,.opt:active:not(:disabled){transform:translate(2px,2px);box-shadow:1px 1px 0 var(--shadow)}
+.act:disabled{opacity:.3;cursor:not-allowed}
+.opt{border:2px solid var(--line);background:var(--surface);padding:10px 14px;text-align:left;font-size:14px;line-height:1.6;width:100%;box-shadow:3px 3px 0 var(--shadow)}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:disabled{cursor:default}
+.opt.right{border-color:var(--good);background:#1f2a1f}
+.opt.wrong{border-color:var(--bad);background:#2d1c1f}
+.opt .tag{font-family:var(--mono);font-size:15px;color:var(--teal);display:block;line-height:1}
+.optlist{display:flex;flex-direction:column;gap:8px}
+.wait{border:2px dashed var(--muted);background:transparent;padding:8px;font-size:14px;color:var(--muted);width:100%}
+.primary{background:var(--accent);color:var(--accent-ink);border:2px solid #000;padding:12px;font-family:var(--display);font-size:16px;width:100%;box-shadow:4px 4px 0 var(--shadow)}
+.ghost{background:transparent;border:2px solid var(--line);padding:10px;font-size:14px;width:100%;color:var(--ink)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap}.btnrow>*{flex:1 1 140px}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--line)}
+.tab{background:none;border:none;padding:8px 12px;font-size:14px;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent);font-weight:700}
+.log{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;max-height:260px;overflow-y:auto;font-size:13.5px}
+.log li{display:grid;grid-template-columns:44px 1fr;gap:6px}
+.log .t{font-family:var(--mono);font-size:16px;color:var(--teal);line-height:1.3}
+.log li.good .x{color:var(--good)} .log li.bad .x{color:var(--bad)}
+.card{background:var(--surface);border:2px solid var(--line);padding:16px;display:flex;flex-direction:column;gap:10px;box-shadow:4px 4px 0 var(--shadow)}
+.card ul,.card ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:4px}
+.card.note{border-color:var(--teal)}
+.card.note p{font-size:14px}
+.card.note cite{font-style:normal;color:var(--muted);font-size:12px}
+details.obs{background:var(--surface);border:2px solid var(--line);padding:10px 14px;font-size:13.5px}
+details.obs summary{cursor:pointer;font-family:var(--display);font-size:14px;color:var(--teal)}
+details.obs ol{margin:8px 0 0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+.memory{background:var(--sunk);border:2px dashed var(--line);padding:10px 14px;font-size:13.5px}
+.memory ul{margin:4px 0 0;padding-left:1.2em}
+.alog{font-family:var(--mono);font-size:17px;line-height:1.25;color:var(--teal);background:#0c0f10;border:2px solid #000;padding:12px;display:flex;flex-direction:column;gap:4px;text-shadow:0 0 6px rgba(127,209,193,.45)}
+.cmp{width:100%;border-collapse:collapse;font-size:13px}
+.cmp th,.cmp td{text-align:left;padding:6px 4px;border-bottom:1px solid var(--line);vertical-align:top}
+.cmp th{font-weight:400;color:var(--muted);font-size:12px}
+.cmp td:first-child{font-family:var(--mono);font-size:16px;white-space:nowrap}
+.scroll{overflow-x:auto}
+.focusline{font-size:13px;color:var(--muted)}
+.focusline b{color:var(--ink)}
+.line{font-family:var(--display);font-size:22px;line-height:1.55}
+.cue{font-size:13px;color:var(--muted)}
+.route{font-family:var(--mono);font-size:18px;color:var(--teal);line-height:1}
+/* title / story */
+.title-screen{padding-top:10px}
+.big{font-size:34px;line-height:1.25}
+.kicker{font-family:var(--display);font-size:14px;color:var(--accent);letter-spacing:.06em}
+.prose{display:flex;flex-direction:column;gap:10px;font-size:16px;line-height:1.95}
+.comm{display:flex;flex-direction:column;gap:8px;border-left:3px solid var(--teal);padding:4px 0 4px 12px}
+.cl{display:flex;flex-direction:column;font-size:14px}
+.cl .who{font-family:var(--mono);font-size:16px;color:var(--teal);letter-spacing:.06em;line-height:1.1;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:2px}
+.cl .ts{color:var(--muted);letter-spacing:.04em}
+.cl p{margin:0 0 4px}
+.kami .cl .ts{color:#7d7066}
+.kami{background:var(--ink);color:#231c1a;border:3px solid #000;box-shadow:6px 6px 0 var(--shadow);cursor:pointer;animation:slidein .35s ease-out}
+.kami .kami-top{display:flex;justify-content:space-between;align-items:center;gap:8px;font-family:var(--mono);font-size:17px;padding:6px 10px 4px;border-bottom:3px solid #000;background:#d9ccb2;line-height:1}
+.kdots{display:flex;gap:3px}.kdots i{width:6px;height:6px;background:#a3978c}.kdots i.on{background:#e0612b}
+.kami-frame{position:relative;border-bottom:3px solid #000}
+.kami-body{padding:14px 16px 18px;display:flex;flex-direction:column;gap:12px}
+.kami .kicker{color:#b8461a}
+.kami .prose{font-size:15.5px}
+.kami .comm{border-left-color:#2f7d73}
+.kami .cl .who{color:#2f7d73}
+.kami b{color:#b8461a}
+@keyframes slidein{from{opacity:0;transform:translateX(18px) rotate(.6deg)}to{opacity:1;transform:none}}
+.fragment{background:#0c0f10;color:var(--teal);border:2px solid #000;padding:14px 16px;display:flex;flex-direction:column;gap:6px;text-shadow:0 0 8px rgba(127,209,193,.5)}
+.fragment .mono{color:var(--muted);text-shadow:none}
+.fragment p{font-family:var(--display);font-size:21px;line-height:1.5}
+.summons{font-family:var(--display);font-size:15px;line-height:2}
+.summons .fr{color:var(--line);margin-right:4px}
+.summons .fr.on{color:var(--teal)}
+.summons-full .sline{font-family:var(--display);font-size:18px;line-height:1.6;display:flex;flex-direction:column}
+.summons-full .sline .mono{font-size:14px;opacity:.7}
+.site{font-size:13px;color:var(--muted)}
+.site>span:first-child{font-family:var(--mono);font-size:16px;border:2px solid var(--line);padding:0 6px;margin-right:6px;color:var(--accent)}
+.site .mono{color:var(--teal)}
+.hints{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px;font-size:14px}
+/* plate */
+.plate{margin:0;background:var(--surface);border:2px solid var(--line);box-shadow:4px 4px 0 var(--shadow)}
+.plate-hd{display:flex;justify-content:space-between;font-family:var(--mono);font-size:17px;padding:6px 10px 4px;color:var(--teal);line-height:1;border-bottom:2px solid var(--line)}
+.plate figcaption{padding:10px 14px;font-size:12.5px;color:var(--muted)}
+.plate figcaption ul{margin:0;padding-left:1.1em}
+@media (min-width:520px){.plate figcaption ul{columns:2;column-gap:18px}}
+/* map */
+.stages{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.stagerow{width:100%;text-align:left;border:2px solid var(--line);background:var(--surface);padding:10px 14px;display:grid;grid-template-columns:auto 1fr;gap:0 12px;align-items:baseline;box-shadow:3px 3px 0 var(--shadow)}
+.stagerow:disabled{opacity:.4;cursor:not-allowed}
+.stagerow.cleared{border-color:var(--good)}
+.stagerow .sn{font-family:var(--mono);font-size:22px;color:var(--accent);grid-row:span 2;line-height:1}
+.stagerow .st{font-family:var(--display);font-size:17px}
+.stagerow .sc{grid-column:2;font-size:12px;color:var(--muted)}
+.stagerow.cleared .sc{color:var(--good)}
+.small-links{display:flex;gap:14px;flex-wrap:wrap}
+.linkbtn{background:none;border:none;padding:0;font-size:12px;color:var(--muted);text-decoration:underline}
+/* stage 2 */
+.tl{display:grid;gap:3px;font-family:var(--mono);font-size:17px;width:max-content}
+.tl .rl{font-family:var(--body);font-size:11px;color:var(--muted);white-space:nowrap;align-self:center;padding-right:4px}
+.tl .c{height:28px;background:var(--sunk);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:13px}
+.tl .c.cur{outline:2px solid var(--accent);outline-offset:-2px}
+.tl .rl{position:sticky;left:0;z-index:2;background:var(--bg);align-self:stretch;display:flex;align-items:center;border-right:2px solid var(--line);box-shadow:4px 0 6px rgba(0,0,0,.5)}
+.tlwrap{scroll-behavior:auto;padding-bottom:6px;overscroll-behavior-x:contain}
+.tlhint{margin-top:-4px;font-size:11px}
+.tl .c.fut{opacity:.4}
+.tl .c.hi{background:#5a4a1e;color:var(--warn)}
+.tl .c.lo{background:#1e3a4a;color:var(--teal)}
+.tl .c.x{background:#4a1e22;color:var(--bad)}
+.tl .bn{font-size:14px;color:var(--muted);text-align:center}
+.ticks{display:flex;gap:3px}.ticks i{flex:1;height:6px;background:var(--line)}.ticks i.on{background:var(--teal)}
+.recorder{background:#0c0f10;border:2px solid #000;padding:10px 14px}
+.recorder .lbl{color:var(--teal)}
+.recorder ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.recorder li{display:flex;align-items:center;gap:4px;flex-wrap:wrap;font-size:13px}
+.recorder .who{font-size:11px;color:var(--muted);min-width:96px}
+.recorder b{display:inline-block;min-width:26px;text-align:center;padding:1px 4px;font-family:var(--display);font-weight:400}
+.recorder b.hi{background:#5a4a1e;color:var(--warn)}
+.recorder b.lo{background:#1e3a4a;color:var(--teal)}
+/* stage 3 */
+.glyph{font-family:var(--display);font-size:22px;line-height:1;min-width:46px;min-height:46px;border:2px solid var(--line);background:var(--surface);padding:6px 8px;display:inline-flex;flex-direction:column;align-items:center;gap:3px;box-shadow:2px 2px 0 var(--shadow)}
+.glyph small{font-family:var(--body);font-size:10px;color:var(--muted)}
+.glyph[aria-pressed="true"]{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.formation{display:inline-flex;gap:6px;font-family:var(--display);font-size:24px}
+.formation span{border:2px solid var(--teal);color:var(--teal);min-width:42px;text-align:center;padding:2px 6px;background:#0c0f10}
+/* stage 6 */
+.bars{display:flex;flex-direction:column;gap:6px}
+.bar{display:grid;grid-template-columns:36px 1fr 28px;gap:8px;align-items:center;font-size:13px}
+.bar .track{height:14px;background:var(--sunk);border:1px solid var(--line);overflow:hidden;position:relative}
+.bar .fill{height:100%;transition:width .4s;background-image:repeating-linear-gradient(90deg,transparent 0 6px,rgba(0,0,0,.35) 6px 8px)}
+.bar .n{font-family:var(--mono);font-size:18px;text-align:right;font-variant-numeric:tabular-nums;line-height:1}
+/* stage 7 */
+.bits{font-family:var(--mono);font-size:16px;word-break:break-all;line-height:1.15;background:#0c0f10;color:var(--teal);border:2px solid #000;padding:10px;max-height:120px;overflow-y:auto;letter-spacing:.08em}
+.pix{display:grid;gap:2px;width:max-content;max-width:100%;margin:0 auto}
+.pix i{width:14px;height:14px;background:var(--pix-off)}
+.pix i.on{background:var(--pix-on);box-shadow:0 0 4px var(--pix-on)}
+.pix i.void{background:transparent;outline:1px dashed var(--line)}
+.wchips{display:flex;flex-wrap:wrap;gap:6px}
+.wchips .chip{padding:2px 8px;font-family:var(--mono);font-size:18px;min-width:38px;line-height:1.2}
+/* stage 8/9 */
+.corpus{background:#0c0f10;border:2px solid #000;padding:10px 14px;font-size:13px}
+.corpus b{color:var(--teal);font-weight:400;font-family:var(--display)}
+.corpus ul{margin:4px 0 0;padding-left:1.2em;display:flex;flex-direction:column;gap:3px}
+.timer{height:8px;background:var(--sunk);border:1px solid var(--line);overflow:hidden}
+.timer i{display:block;height:100%;background:var(--teal);width:100%;transition:width .25s linear}
+.timer.low i{background:var(--bad)}
+.voices{display:flex;flex-direction:column;gap:10px}
+.voice{border:2px solid var(--line);background:var(--surface);padding:10px 14px;display:flex;flex-direction:column;gap:2px;box-shadow:3px 3px 0 var(--shadow)}
+.voice .vw{font-family:var(--mono);font-size:17px;color:var(--teal);letter-spacing:.06em;line-height:1}
+.voice .vo{font-size:13px;color:var(--muted)}
+.voice .vt{font-family:var(--display);font-size:17px;color:var(--ink)}
+/* notebook */
+.note-row{display:grid;grid-template-columns:56px 1fr;gap:6px 10px;align-items:center;padding-block:8px;border-bottom:1px solid var(--line)}
+.note-row .w{font-family:var(--mono);font-size:22px;line-height:1}
+.note-row input{width:100%;font:inherit;font-size:14px;padding:6px 10px;border:2px solid var(--line);background:var(--sunk);color:var(--ink)}
+.stars{grid-column:2;display:flex;gap:2px;align-items:center;font-size:12px;color:var(--muted)}
+.star{background:none;border:none;font-size:18px;line-height:1;padding:0 2px;color:var(--line)}
+.star.on{color:var(--warn)}
+.words{display:flex;gap:8px;flex-wrap:wrap}
+.word{font-family:var(--mono);font-size:24px;line-height:1;border:2px solid var(--teal);color:var(--teal);background:#0c0f10;padding:6px 16px 4px;box-shadow:3px 3px 0 var(--shadow)}
+.stats{display:flex;gap:18px;flex-wrap:wrap;font-variant-numeric:tabular-nums}
+.stats div{display:flex;flex-direction:column}
+.stats .k{font-size:11px;color:var(--muted)}
+.stats .v{font-family:var(--mono);font-size:30px;line-height:1;color:var(--accent)}
+/* audio bar, logo, share */
+#bar{display:flex;justify-content:flex-end;margin-bottom:10px}
+.audiobar{display:flex;gap:6px}
+.aub{font-family:var(--mono);font-size:16px;line-height:1;padding:4px 8px 3px;border:2px solid var(--line);background:var(--sunk);color:var(--muted)}
+.aub.on{border-color:var(--teal);color:var(--teal);text-shadow:0 0 6px rgba(127,209,193,.5)}
+.logo{display:flex;align-items:center;gap:14px}
+.logo canvas.emb{width:84px;height:84px;background:transparent;flex:none;filter:drop-shadow(0 0 10px rgba(255,154,90,.35))}
+.logo .lw{display:flex;flex-direction:column;gap:4px}
+.logo .lj{font-family:var(--display);font-size:27px;line-height:1.2;color:#ffcf8a;text-shadow:-1.5px 0 rgba(127,209,193,.8),1.5px 0 rgba(255,90,90,.7),0 0 16px rgba(255,154,90,.55)}
+.logo .le{font-family:var(--mono);font-size:17px;letter-spacing:.16em;color:var(--teal);line-height:1;white-space:nowrap}
+.logo .lw{min-width:0}
+@media (max-width:420px){.logo .lj{font-size:23px}.logo canvas.emb{width:68px;height:68px}.logo .le{font-size:15px;letter-spacing:.1em}}
+.logo.small canvas.emb{width:56px;height:56px}.logo.small .lj{font-size:19px}.logo.small .le{font-size:15px}
+.share{border-color:var(--accent)}
+.share.big{box-shadow:0 0 0 2px var(--accent),6px 6px 0 2px var(--shadow)}
+.post{margin:0;font-family:var(--body);font-size:13px;line-height:1.7;white-space:pre-wrap;word-break:break-all;background:var(--sunk);border:2px dashed var(--line);padding:10px 12px;color:var(--ink)}
+a.primary{display:block;text-align:center;text-decoration:none}
+.listen{border-color:var(--teal);color:var(--teal);font-family:var(--display)}
+.voice[data-a]{cursor:pointer}
+.voice[data-a]:hover{border-color:var(--teal)}
+.report{border-color:var(--teal);gap:12px}
+.rlabel{font-size:12px;color:var(--muted)}
+.rtitle{font-family:var(--display);font-size:32px;line-height:1.2;color:var(--ink);text-shadow:0 0 14px rgba(255,154,90,.45)}
+.rdesc{font-size:14px}
+.rstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.rstats div{background:var(--sunk);border:2px solid var(--line);padding:8px 10px;display:flex;flex-direction:column}
+.rstats .k{font-size:11px;color:var(--muted)}
+.rstats .v{font-family:var(--mono);font-size:28px;line-height:1;color:var(--accent)}
+.rstats small{font-size:16px;color:var(--muted);margin-left:2px}
+.rtiles{display:grid;grid-template-columns:repeat(9,1fr);gap:4px}
+.rt{border:2px solid var(--line);background:var(--sunk);display:flex;flex-direction:column;align-items:center;padding:4px 0;line-height:1.1}
+.rt .n{font-family:var(--mono);font-size:15px;color:var(--muted)}
+.rt .m{font-family:var(--display);font-size:13px}
+.rt.ok{border-color:var(--teal)}.rt.ok .m{color:var(--teal)}
+.rt.re{border-color:var(--warn)}.rt.re .m{color:var(--warn)}
+.rleg{font-size:11px;color:var(--muted)}
+.rlines{margin:0;padding-left:1.2em;font-size:13.5px;display:flex;flex-direction:column;gap:4px}
+.rcard{display:block;width:100%;height:auto;border:2px solid #000;box-shadow:0 0 0 2px var(--line);background:#141219;aspect-ratio:1200/675}
+.howto{margin:0;padding-left:1.3em;font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:2px}
+.build{display:flex;flex-direction:column;gap:12px;background:var(--surface);border:2px solid var(--teal);padding:14px;box-shadow:4px 4px 0 var(--shadow)}
+.build>.lbl{color:var(--teal);font-family:var(--display);font-size:14px;margin:0}
+.seqrow{display:flex;gap:6px;margin-bottom:8px}
+.slot{flex:1;height:40px;display:flex;align-items:center;justify-content:center;border:2px solid var(--line);background:var(--sunk);font-family:var(--display);font-size:16px;color:var(--muted)}
+.slot.hi{background:#5a4a1e;color:var(--warn);border-color:var(--warn)}
+.slot.lo{background:#1e3a4a;color:var(--teal);border-color:var(--teal)}
+.chips.mean .chip{font-size:13px}
+.dict dt{font-weight:700;margin-top:4px}.dict dd{margin:0;color:var(--muted);font-size:13px}
+.primary:disabled{opacity:.4;cursor:not-allowed}
+.recap{border-color:var(--teal);gap:8px}
+.recap details{border-top:2px solid var(--line);padding-top:8px}
+.recap summary{cursor:pointer;font-family:var(--display);font-size:14px;color:var(--teal)}
+.rlegend{font-size:11px;color:var(--muted);margin:6px 0 4px}
+.rlegend .ok{color:var(--good)}.rlegend .ng{color:var(--bad)}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;max-height:320px;overflow-y:auto;font-size:13px;counter-reset:st}
+.steps li{display:grid;grid-template-columns:22px 44px 1fr 16px;gap:6px;align-items:baseline;counter-increment:st}
+.steps li::before{content:counter(st);font-family:var(--mono);font-size:15px;color:var(--muted);text-align:right}
+.steps .t{font-family:var(--mono);font-size:15px;color:var(--teal)}
+.steps .m{font-family:var(--display)}
+.steps li.good .x{color:var(--good)}.steps li.good .m{color:var(--good)}
+.steps li.bad .x{color:var(--bad)}.steps li.bad .m{color:var(--bad)}
+.recapx{margin-top:8px;display:flex;flex-direction:column;gap:8px;font-size:13.5px}
+.reclink{color:var(--teal)}
+.recbtn{border-color:var(--teal);color:var(--teal);font-family:var(--display);text-align:center;display:flex;flex-direction:column;gap:2px;align-items:center}
+.recbtn span{font-family:var(--body);font-size:11px;color:var(--muted)}
+.reclist{display:flex;flex-direction:column;gap:8px}
+.recrow{background:var(--surface);border:2px solid var(--line);box-shadow:3px 3px 0 var(--shadow)}
+.recrow>summary{cursor:pointer;display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:baseline;padding:10px 14px;list-style:none}
+.recrow>summary::-webkit-details-marker{display:none}
+.recrow>summary .sn{font-family:var(--mono);font-size:22px;color:var(--accent);line-height:1}
+.recrow>summary .st{font-family:var(--display);font-size:16px}
+.recrow>summary .sc{font-size:12px;color:var(--muted)}
+.recrow[open]{border-color:var(--teal)}
+.recrow .recap{box-shadow:none;border:none;border-top:2px solid var(--line);margin:0}
+.mission{gap:12px}
+.mlead{font-family:var(--display);font-size:16px;line-height:1.6}
+.mis{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;margin:0;font-size:14px}
+.mis dt{font-family:var(--mono);font-size:17px;color:var(--teal);line-height:1.5;letter-spacing:.06em}
+.mis dd{margin:0}
+details.more summary{cursor:pointer;color:var(--teal);font-family:var(--display);font-size:13px;margin:4px 0}
+details.more{display:flex;flex-direction:column;gap:8px}
+details.more>p,details.more>cite{margin-top:8px;display:block}
+.s2ctl{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.s2ctl .primary{grid-column:1/3}
+.beatbar{height:10px;background:var(--sunk);border:1px solid var(--line);overflow:hidden}
+.beatbar i{display:block;height:100%;background:var(--teal);width:0}
+@media (prefers-reduced-motion: reduce){.kami{animation:none}.narr::before{animation:none}.bubble,.bar .fill,.timer i{transition:none}}
+</style>
+<div class="app"><div id="bar"></div><div id="screen"></div></div>
+<script>
+/* ===== story ===== */
+const HQ='佐伯長官（本部）';
+const PROLOGUE=[
+  {scene:'pro1',kicker:'2031年3月14日　協定世界時 04:12',lines:['その夜、地球の8か所に、同時に「何か」が降りた。']},
+  {scene:'pro2',kicker:'着地点',lines:['モンゴル、アイスランド、アマゾン、カナダ、南極、ナミブ、東京湾。','そして、地球の軌道上。']},
+  {scene:'pro3',kicker:'72時間後',lines:['来訪者は、攻撃も要求もしなかった。ただ、何かを待っていた。','言葉が通じない以上、交渉の手段はない。各国の軍はそう結論づけた。']},
+  {scene:'pro4',stamp:'2031.03.15 21:40',kicker:'国連　第一接触言語班',lines:['国連に、急ごしらえの部署が作られた。指揮は、叩き上げの調整役・佐伯長官。','班員は一人。言語学者の、あなただ。'],comm:[[HQ,'銃より先に、辞書を。ただし辞書はまだ一冊もない。あなたが作る。']]},
+  {scene:'pro5',stamp:'2031.03.15 23:05',kicker:'ひとつめの謎',lines:['8つの来訪者は、互いに無関係な種族らしい。','なのに、なぜ同じ日に、同じ星へ来たのか。'],comm:[[HQ,'答えは、彼らの言葉の中にある。最初の現場はモンゴルだ。']]}
+];
+const SITES=[
+  {place:'モンゴル中部の草原',lat:47.0,lon:104.0,coord:'北緯47° 東経104°'},
+  {place:'アイスランド南部の谷',lat:64.2,lon:-19.0,coord:'北緯64° 西経19°'},
+  {place:'アマゾン川上流の森',lat:-3.4,lon:-62.2,coord:'南緯3° 西経62°'},
+  {place:'カナダ北西岸、ハイダ・グワイの入り江',lat:53.3,lon:-132.1,coord:'北緯53° 西経132°'},
+  {place:'南極、ロス棚氷',lat:-80.0,lon:175.0,coord:'南緯80° 東経175°'},
+  {place:'ナミブ砂漠に着陸した船の中',lat:-24.7,lon:15.3,coord:'南緯24° 東経15°'},
+  {place:'地球周回軌道（観測所から交信）',lat:null,lon:null,coord:'高度 約36,000 km'},
+  {place:'東京湾、埋立地の一角',lat:35.5,lon:139.8,coord:'北緯35° 東経139°'},
+  {place:'太平洋の中央、どの国にも属さない海上',lat:0,lon:-160,coord:'北緯0° 西経160°'}
+];
+const BRIEF_TS=['2031.03.16 06:10','2031.03.19 04:30','2031.03.23 13:15','2031.03.28 07:50','2031.04.02 18:20','2031.04.07 11:05','2031.04.12 02:40','2031.04.16 09:30','2031.04.21 05:00'];
+const AFTER_TS=['2031.03.17 19:45','2031.03.21 22:10','2031.03.26 16:30','2031.03.31 20:05','2031.04.05 08:40','2031.04.10 23:15','2031.04.14 03:55','2031.04.19 17:20'];
+const BRIEF=[
+  [[HQ,'ミミクは友好的で、こちらの動きをよく真似する。'],[HQ,'ただ昨日、兵士が近づいたとき、急に身を低くした。理由は分からない。']],
+  [[HQ,'谷の岩が二体、遠く離れて光り合っている。会話……なのか？'],[HQ,'急ぐな。あれは3日で2センチしか動かない。']],
+  [[HQ,'数百の個体が、ひとつの群れとして動いている。'],[HQ,'村の古老いわく「あの群れの前では、知らないことを知っているように話すな」。']],
+  [[HQ,'浜辺の来訪者は、ひと言も話さない。'],[HQ,'ハイダの長老は言った。「あれは、私たちの祖先と同じ作法を知っている」。']],
+  [[HQ,'氷原の来訪者は、望みを何でも叶えようとする。'],[HQ,'それが怖い。冗談で「月がほしい」と言ったら、本気で準備を始めた。']],
+  [[HQ,'今回は、密閉された船の中だ。'],[HQ,'入った隊員は皆こう言った。「匂いが、ずっと残る」。']],
+  [[HQ,'軌道上の物体は探査機だった。信号で、こちらを試している。'],[HQ,'あなたの答えが、そのまま人類の答えになる。']],
+  [[HQ,'東京湾の来訪者は、日本語を話す。テレビで覚えたそうだ。'],[HQ,'やっと話の通じる相手だ。楽な仕事になるといいが。']],
+  [[HQ,'8つの種族が、太平洋の真ん中に集まり始めた。'],[HQ,'互いの言葉を知っているのは、あなただけだ。']]
+];
+/* 招集状の断片：文中での順番(ord)、入手の場面、断片 */
+const FRAG=[
+  {ord:0,text:'言葉を異にする者たちよ。',how:'ミミクは自分の持ち物を裏返して見せた。内側に、細かな模様が刻まれている。ミミクの言葉で読むと、こうなる。'},
+  {ord:1,text:'千の年が満ちたら、',how:'ウームは最後に、とても長い光の列を放った。記録には8時間かかった。ウームの一族は、千年前にこの言葉を受け取った個体が、まだ生きているのだという。'},
+  {ord:3,text:'見たことを持ち寄り、',how:'ツブラの群れが、あなたに向けて記号を掲げた。三つ目の記号は「◌」だった。群れの誰も、この言葉の送り主を見ていない。祖先から聞いた言葉だ。'},
+  {ord:2,text:'九つめの星に集え。',how:'ポトラから受け取った星図には、八つの星に印がついていた。そして九つめの印は、太陽の位置に打たれていた。'},
+  {ord:4,text:'互いが在り続けるように、',how:'ヤァは、同じ言葉を受け取っていた。ほかの種族は「互いを滅ぼさぬように」と訳している部分だ。否定を持たないヤァは、それを肯定の形で覚えていた。'},
+  {ord:5,text:'残り続ける約束を結べ。',how:'ネフの部屋に、ひとつの香りがずっと漂っていた。消えないようにと、代々重ねられてきた香り。それ自体が、この言葉だった。'},
+  {ord:6,text:'言葉と言葉のあいだに',how:'オルドが最後の信号を送ってきた。「この招集状を宇宙に放ったのは、わたしを作った者たちだ。彼らは、もういない」。'},
+  {ord:7,text:'橋を架ける者が、そこにいる。',how:'カナルが言った。「テレビで、外国の人が日本語を話していました。声が、別の人でした」。吹き替えのことだ。「この星には、言葉を渡す仕事があるのですね。わたしたちは、それを探しに来ました」。'}
+];
+const AFTER=[
+  [[HQ,'断片か。何かの「呼びかけ」の書き出しに見える。'],[HQ,'次はアイスランドだ。光る岩のところへ向かってくれ。']],
+  [[HQ,'千年前の言葉を覚えている個体がいる……？'],[HQ,'アマゾンから連絡。群体があなたを待っているらしい。「来るなら、ちゃんと来い」と村人が伝言をよこした。']],
+  [[HQ,'送り主を見た者はいない、か。ずいぶん古い呼びかけらしい。'],[HQ,'カナダへ。浜辺の来訪者が、あなたの到着に合わせて何かの品を用意しているそうだ。']],
+  [[HQ,'九つめの印が、太陽に。つまり、ここだ。'],[HQ,'呼ばれているのは、地球なのか？ 南極へ急いでくれ。氷原の来訪者が、観測隊に「海をください」と言い出した。']],
+  [[HQ,'否定を使わずに、同じことを言っている。面白いな。'],[HQ,'ナミブの船から招待状が来た。文字どおりの招待状だ。香りのついた。']],
+  [[HQ,'呼びかけの形が見えてきた。集まって、約束を結べ、と。'],[HQ,'軌道の探査機が、また信号を送ってきた。今度は観測所だけでは解読できない。']],
+  [[HQ,'送り主は、もういない。招集状だけが、宇宙を渡ってきたのか。'],[HQ,'最後の断片は、東京にある。日本語を話す来訪者のところだ。']],
+  [[HQ,'……橋を架ける者。'],[HQ,'全種族が、太平洋の会議場に集まり始めた。会議は、あなた抜きでは始まらない。']]
+];
+
+function interludePages(i){return [
+  {scene:'int'+i,kicker:`${STAGES[i].species}が残したもの`,lines:[FRAG[i].how],fragment:FRAG[i].text},
+  {scene:'worldmap',kicker:'本部より',comm:AFTER[i],stamp:AFTER_TS[i],map:true}
+];}
+const EPILOGUE=[
+  {scene:'epi1',kicker:'会議の翌朝',lines:['世界中のニュースが、あなたの名前を報じた。','見出しはどれも同じだった。「人類、銀河の架け橋に」。']},
+  {scene:'epi2',kicker:'三か月後',lines:['8つの種族から、翻訳の依頼が届き始めた。一日に数万件。','地球は、銀河でただ一つの翻訳の請負先になった。単価は、交渉する前に決まっていた。']},
+  {scene:'epi3',kicker:'同じ頃',lines:['国連総会は「銀河との協定を、どの言語で書くか」で紛糾していた。','193か国の議論は、四か月たっても終わらなかった。同時通訳者たちは、途中でストライキに入った。']},
+  {scene:'epi4',voice:['kanal','すみません。この星の人々は、互いの言葉が通じないのですか？'],kicker:'ある日の東京湾',lines:['カナルが首をかしげた。','「すみません。この星の人々は、互いの言葉が通じないのですか？」','あなたは、答えに詰まった。']},
+  {scene:'epi5',kicker:'翌年度',lines:['第一接触言語班は、予算削減で解散した。','決裁書の理由の欄には、一行だけ書かれていた。','「翻訳は、機械で十分」。']},
+  {scene:'epi6',kicker:'その年の暮れ',lines:['カナルの母星から、丁寧な問い合わせが届いた。「次回、お邪魔してもよろしいでしょうか」。','新しく導入された翻訳システムは、礼儀正しく、こう返信した。','「結構です」。']},
+  {scene:'epi7',kicker:'三十日後',lines:['空を覆う船団が現れた。二万隻。','橋を架ける者は、たしかにこの星にいた。','予算がつくまでは。']}
+];
+/* ===== pixel renderer ===== */
+const PAL={k:'#0f0e15',n:'#1a1824',d:'#27233a',i:'#3a3356',p:'#5a4a7e',u:'#6b5a8c',v:'#8a6fc2',l:'#c3b2e6',
+ c:'#e8dcc4',w:'#fff4dc',m:'#8f857d',x:'#5c5560',h:'#4d433c',j:'#6e5d4c',e:'#c9a77a',a:'#e59a5c',o:'#ff9a5a',O:'#ffcf8a',
+ r:'#d9544d',R:'#8e2f3a',y:'#f4c95d',z:'#ffe9a8',t:'#7fd1c1',T:'#3d8c86',b:'#35577f',B:'#243a57',s:'#86b3de',S:'#cfe6f5',
+ g:'#5f8a4e',G:'#9fd67a',f:'#2f4a36',q:'#e79ab8',Q:'#a45a7c'};
+const BAYER=[[0,8,2,10],[12,4,14,6],[3,11,1,9],[15,7,13,5]];
+const FONT={'0':'111101101101111','1':'010110010010111','2':'111001111100111','3':'111001111001111','4':'101101111001001','5':'111100111001111','6':'111100111101111','7':'111001010010010','8':'111101111101111','9':'111101111001111','?':'111001011000010','-':'000000111000000',':':'000010000010000','.':'000000000000010',' ':'000000000000000'};
+function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function PX(ctx){const col=c=>PAL[c]||c;const P={
+  r(x,y,w,h,c){ctx.fillStyle=col(c);ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));},
+  p(x,y,c){P.r(x,y,1,1,c);},
+  ell(cx,cy,rx,ry,c,half){ctx.fillStyle=col(c);for(let y=-ry;y<=(half?0:ry);y++){const w=Math.round(rx*Math.sqrt(Math.max(0,1-(y*y)/(ry*ry))));ctx.fillRect(Math.round(cx-w),Math.round(cy+y),w*2+1,1);}},
+  circ(cx,cy,r,c){P.ell(cx,cy,r,r,c);},
+  ring(cx,cy,r,t,c){ctx.fillStyle=col(c);for(let y=-r;y<=r;y++)for(let x=-r;x<=r;x++){const d=Math.sqrt(x*x+y*y);if(d<=r+.4&&d>=r-t+.4)ctx.fillRect(cx+x,cy+y,1,1);}},
+  line(x0,y0,x1,y1,c,dash){ctx.fillStyle=col(c);x0|=0;y0|=0;x1|=0;y1|=0;let dx=Math.abs(x1-x0),sx=x0<x1?1:-1,dy=-Math.abs(y1-y0),sy=y0<y1?1:-1,er=dx+dy,n=0;for(;;){if(!dash||(n++%dash)<dash/2)ctx.fillRect(x0,y0,1,1);if(x0===x1&&y0===y1)break;const e2=2*er;if(e2>=dy){er+=dy;x0+=sx;}if(e2<=dx){er+=dx;y0+=sy;}}},
+  dg(x,y,w,h,c1,c2){for(let yy=0;yy<h;yy++){const t=h>1?yy/(h-1)*16:0;for(let xx=0;xx<w;xx++){ctx.fillStyle=col(BAYER[(y+yy)&3][(x+xx)&3]<t?c2:c1);ctx.fillRect(x+xx,y+yy,1,1);}}},
+  dith(x,y,w,h,c,lvl){ctx.fillStyle=col(c);for(let yy=0;yy<h;yy++)for(let xx=0;xx<w;xx++)if(BAYER[(y+yy)&3][(x+xx)&3]<lvl)ctx.fillRect(x+xx,y+yy,1,1);},
+  dellip(cx,cy,rx,ry,c,lvl){ctx.fillStyle=col(c);for(let y=-ry;y<=ry;y++)for(let x=-rx;x<=rx;x++){if((x*x)/(rx*rx)+(y*y)/(ry*ry)<=1&&BAYER[(cy+y)&3][(cx+x)&3]<lvl)ctx.fillRect(cx+x,cy+y,1,1);}},
+  stars(n,seed,w,h,cs){const R=rng(seed);for(let i=0;i<n;i++)P.p(R()*w|0,R()*h|0,cs[i%cs.length]);},
+  txt(s,x,y,c,z=1){String(s).split('').forEach((ch,i)=>{const f=FONT[ch];if(!f)return;for(let k=0;k<15;k++)if(f[k]==='1')P.r(x+(i*4+k%3)*z,y+(k/3|0)*z,z,z,c);});},
+  night(h,seed){P.dg(0,0,160,h,'n','i');P.stars(40,seed||7,160,h-10,['c','l','m','S']);}
+};return P;}
+/* ---- species ---- */
+const SP={
+  mimik(P,cx,by,o={}){const k=o.k||1,col={neutral:'l',calm:'s',interest:'y',alert:'u',confused:'z'}[o.mood||'neutral'];const t=(o.tilt||0)*k,cr=o.mood==='alert'?2*k:0;
+    P.ell(cx,by-1,9*k,2*k,'k');
+    P.ell(cx,by-10*k+cr/2,9*k,10*k-cr/2,'k');P.ell(cx+t,by-21*k+cr,6*k,8*k,'k');
+    P.ell(cx,by-10*k+cr/2,8*k,9*k-cr/2,col);P.ell(cx+t,by-21*k+cr,5*k,7*k,col);
+    [[-3,0],[0,-1],[3,0]].forEach(([dx,dy])=>P.r(cx+t+dx*k,by-23*k+cr+dy*k,k,k,'k'));
+    for(let i=-3;i<=3;i++)P.r(cx+i*2*k,by-9*k+Math.abs(i)*k/2,k,k,'t');
+    [[-4,-14],[3,-11],[-1,-6]].slice(0,o.alert||0).forEach(([dx,dy])=>P.r(cx+dx*k,by+dy*k,2*k,2*k,'r'));},
+  uum(P,cx,by,rx,ry,glow){P.ell(cx,by,rx+1,ry+1,'k',true);P.ell(cx,by,rx,ry,'x',true);P.dellip(cx-rx/3|0,by-ry/2|0,rx/3|0,ry/4|0,'m',6);
+    [[-.5,-.3],[.4,-.6],[.6,-.2]].forEach(([a,b])=>P.r(cx+rx*a,by+ry*b,3,2,'g'));
+    P.r(cx-rx+4,by-ry*.45,2*rx-8,Math.max(2,ry/7|0),glow===2?'z':glow===1?'y':'h');},
+  swarm(P,cx,cy,n,seed,sp){const R=rng(seed||3);for(let i=0;i<n;i++){const a=i*2.4,rr=2+i*(sp||.9);const x=cx+Math.cos(a)*rr*1.4,y=cy+Math.sin(a)*rr*.7+(R()*2|0);P.r(x-1,y-1,3,3,'k');P.r(x-1,y-1,2,2,'s');P.p(x,y,'b');}},
+  potra(P,x,by,k=1){P.r(x-4*k,by-34*k,9*k,34*k,'k');P.r(x-3*k,by-33*k,7*k,33*k,'e');P.ell(x,by-36*k,4*k,4*k,'k');P.ell(x,by-36*k,3*k,3*k,'e');
+    P.r(x-2*k,by-37*k,k,k,'k');P.r(x+1*k,by-37*k,k,k,'k');for(let i=0;i<4;i++)P.r(x-2*k,by-(24-i*4)*k,5*k,k,'j');
+    P.line(x+3*k,by-26*k,x+12*k,by-10*k,'h');P.line(x-3*k,by-26*k,x-10*k,by-12*k,'h');P.ell(x+13*k,by-7*k,4*k,4*k,'h');P.r(x+11*k,by-12*k,k,3*k,'e');},
+  yaa(P,cx,cy,r,c){P.ring(cx,cy,r+1,5,'k');P.ring(cx,cy,r,3,c||'v');P.circ(cx,cy,1,'l');},
+  nef(P,x,by,k=1){const tips=[[-14,-26],[-2,-32],[12,-27],[-20,-12],[19,-13]];tips.forEach(([dx,dy])=>{P.line(x,by-3,x+dx*k,by+dy*k,'f');P.line(x+1,by-3,x+dx*k+1,by+dy*k,'g');P.circ(x+dx*k,by+dy*k,2*k,'q');P.p(x+dx*k,by+dy*k-1,'w');});P.ell(x,by-2,6*k,3*k,'f');},
+  ordo(P,cx,cy,k=1){P.r(cx-24*k,cy-4*k,14*k,8*k,'B');P.r(cx+10*k,cy-4*k,14*k,8*k,'B');for(let i=0;i<3;i++){P.r(cx-23*k+i*4*k,cy-3*k,3*k,6*k,'b');P.r(cx+11*k+i*4*k,cy-3*k,3*k,6*k,'b');}
+    P.line(cx-10*k,cy,cx-6*k,cy,'m');P.line(cx+6*k,cy,cx+10*k,cy,'m');P.circ(cx,cy,7*k,'k');P.circ(cx,cy,6*k,'i');P.circ(cx-k,cy-k,3*k,'p');P.line(cx,cy-7*k,cx,cy-11*k,'m');P.ell(cx,cy-12*k,4*k,2*k,'S',true);},
+  kanal(P,cx,by,pose,k=1){const ant={fwd:[[-4,-26],[4,-26]],sky:[[-2,-34],[2,-34]],nod:[[-9,-22],[9,-22]],back:[[4,-30],[10,-28]]}[pose||'fwd'];
+    ant.forEach(([dx,dy],i)=>{const sx=cx+(i?2:-2)*k;P.line(sx,by-24*k,cx+dx*k*2,by+dy*k,'k');P.r(cx+dx*k*2-k,by+dy*k-k,2*k+1,2*k+1,'y');});
+    P.ell(cx,by-12*k,10*k,13*k,'k');P.ell(cx,by-12*k,9*k,12*k,'a');P.r(cx-6*k,by-18*k,4*k,4*k,'w');P.r(cx+2*k,by-18*k,4*k,4*k,'w');P.r(cx-5*k,by-17*k,2*k,2*k,'k');P.r(cx+3*k,by-17*k,2*k,2*k,'k');P.line(cx-3*k,by-8*k,cx+3*k,by-8*k,'h');},
+  human(P,x,by,c='k'){P.circ(x,by-11,2,c);P.r(x-2,by-8,5,6,c);P.r(x-2,by-2,2,2,c);P.r(x+1,by-2,2,2,c);},
+  crt(P,x,y,w,h,scr,frame){P.r(x-2,y-2,w+4,h+5,frame||'m');P.r(x,y,w,h,scr||'T');for(let yy=y;yy<y+h;yy+=2)P.r(x,yy,w,1,'k');P.r(x+w/2-3,y+h+3,6,2,'h');}
+};
+/* ---- scenes ---- */
+function mapXY(lat,lon){return [Math.round((lon+180)/360*160),Math.round((90-lat)/180*90)];}
+const SCENES={
+  worldmap(P,a){P.r(0,0,160,90,'n');for(let x=0;x<160;x+=20)for(let y=0;y<90;y+=2)P.p(x,y,'d');for(let y=15;y<90;y+=15)for(let x=0;x<160;x+=2)P.p(x,y,y===45?'i':'d');
+    [[36,22,15,11],[30,12,10,6],[53,56,7,14],[86,20,8,6],[89,45,10,15],[120,22,24,12],[112,38,8,6],[140,60,8,5]].forEach(([x,y,rx,ry])=>P.dellip(x,y,rx,ry,'p',9));P.dg(10,85,140,5,'n','p');
+    const cl=a.cl||[],un=a.un||[];P.line(0,2,160,2,cl[6]?'G':un[6]?'o':'x',4);P.txt('7',2,4,'m');
+    SITES.forEach((s,i)=>{if(s.lat===null)return;const [x,y]=mapXY(s.lat,s.lon);const c=cl[i]?'G':un[i]?'o':'x';if(un[i]&&!cl[i])P.ring(x,y,4,1,'o');P.r(x-1,y-1,3,3,c);P.txt(String(i+1),x+3,y-6,cl[i]?'G':un[i]?'c':'x');});},
+  pro1(P){P.night(90,11);P.circ(80,150,82,'B');P.ring(80,150,82,2,'s');P.dellip(80,150,80,80,'b',5);
+    const R=rng(5);for(let i=0;i<40;i++){const x=20+R()*120|0,y=74+R()*16|0;P.p(x,y,'y');}
+    [[18,8],[40,2],[62,12],[88,4],[104,14],[124,6],[140,10],[150,20]].forEach(([x,y],i)=>{const tx=x+(80-x)*.35,ty=y+34+i%3*4;P.line(x,y,tx,ty,'O',0);P.circ(tx,ty,1,'z');P.dith(tx-3,ty-3,7,7,'o',4);});},
+  pro2(P){const pan=[['S','g','l'],['i','x','z'],['f','G','s'],['b','e','e'],['S','w','v'],['a','O','g'],['k','k','S'],['i','d','a']];
+    pan.forEach(([s,g,o],i)=>{const x=(i%4)*40,y=(i/4|0)*45;P.dg(x,y,40,28,s,i===6?'n':s);if(i===6)P.stars(8,i,40,28,['c']);P.r(x,y+28,40,17,g);P.dith(x,y+28,40,17,'k',3);
+      if(i===6){SP.ordo(P,x+20,y+18);}else{P.ell(x+20,y+27,4,5,'k');P.ell(x+20,y+27,3,4,o);P.dith(x+14,y+20,13,10,'z',2);}
+      P.r(x,y,40,1,'k');P.r(x,y,1,45,'k');P.txt(String(i+1),x+2,y+2,'c');});},
+  pro3(P){P.dg(0,0,160,40,'i','u');P.dg(0,40,160,22,'u','a');P.r(0,62,160,28,'h');P.dith(0,62,160,28,'k',6);
+    P.dith(100,24,10,38,'z',3);P.dith(104,16,4,46,'z',5);P.ell(120,60,6,3,'z');P.ell(120,59,4,2,'w');P.dith(108,50,24,12,'O',4);
+    [[20,66],[48,70],[74,64]].forEach(([x,y])=>{P.r(x,y,18,6,'k');P.r(x+4,y-3,8,3,'k');P.line(x+12,y-2,x+22,y-5,'k');P.r(x+1,y+6,16,2,'n');});
+    P.line(30,64,110,20,'z',3);P.line(56,68,140,30,'z',3);},
+  pro4(P){P.r(0,0,160,90,'d');P.r(96,8,50,40,'k');P.dg(98,10,46,36,'n','i');P.stars(10,4,40,30,['c']);P.stars(6,9,30,20,['l']);P.circ(130,20,4,'c');P.r(119,10,2,36,'k');P.r(98,27,46,2,'k');
+    P.r(0,64,160,4,'h');P.r(0,68,160,22,'n');SP.crt(P,28,34,30,22,'T','m');P.dith(28,34,30,22,'t',3);P.r(26,58,34,6,'m');
+    P.line(76,40,70,64,'m');P.ell(78,38,6,3,'y',true);P.dith(64,40,26,24,'z',2);SP.human(P,52,76,'k');P.r(44,70,18,6,'k');P.r(66,58,10,6,'c');P.r(67,59,8,1,'m');P.r(67,61,6,1,'m');},
+  pro5(P){P.r(0,0,160,90,'j');P.dith(0,0,160,90,'h',5);const pts=[[20,14],[60,10],[104,12],[142,16],[18,62],[58,68],[106,66],[142,62]];const cols=['l','x','s','e','v','q','i','a'];
+    pts.forEach(([x,y])=>P.line(x,y+6,80,40,'r'));pts.forEach(([x,y],i)=>{P.r(x-8,y-6,17,14,'c');P.r(x-6,y-4,13,9,'k');P.ell(x,y+2,3,3,cols[i]);P.circ(x,y-7,1,'r');});
+    P.r(68,28,24,24,'y');P.txt('?',76,33,'k',3);},
+  int0(P){P.r(0,0,160,90,'n');P.dellip(80,50,50,30,'i',8);P.ell(80,60,28,20,'k',true);P.ell(80,60,26,18,'e',true);for(let i=-3;i<=3;i++)P.line(80,60,80+i*8,44+Math.abs(i)*2,'j');
+    [[70,52],[76,48],[84,50],[90,54],[72,56],[88,57]].forEach(([x,y])=>P.r(x,y,2,1,'t'));P.r(52,60,56,2,'k');SP.mimik(P,136,84,{mood:'calm'});},
+  int1(P){P.night(70,21);P.r(0,70,160,20,'f');P.dith(0,70,160,20,'k',6);SP.uum(P,50,72,30,24,2);
+    for(let i=0;i<46;i++){const x=78+i*2,y=46-Math.sin(i/5)*8-i*.4;P.p(x,y,i%3?'z':'y');}},
+  int2(P){P.dg(0,0,160,90,'f','n');for(let i=0;i<60;i++){const a=i/60*Math.PI*2;const x=80+Math.cos(a)*30,y=45+Math.sin(a)*22;P.r(x-1,y-1,3,3,'k');P.r(x-1,y-1,2,2,'s');}
+    P.dith(0,0,160,12,'g',4);P.dith(0,78,160,12,'g',4);},
+  int3(P){P.r(0,0,160,90,'n');P.r(18,8,124,74,'h');P.dith(18,8,124,74,'j',5);P.r(18,8,124,1,'k');
+    const st=[[32,20],[52,62],[70,26],[40,44],[96,18],[120,30],[128,64],[88,70]];st.forEach(([x,y])=>{P.ring(x,y,3,1,'o');P.p(x,y,'c');});
+    const R=rng(3);for(let i=0;i<40;i++)P.p(20+R()*120|0,10+R()*70|0,'m');P.circ(84,44,3,'y');P.ring(84,44,6,1,'r');P.ring(84,44,8,1,'r');},
+  int4(P){P.dg(0,0,160,60,'S','s');P.r(0,60,160,30,'w');P.dith(0,60,160,30,'S',5);SP.yaa(P,40,48,14,'v');SP.yaa(P,122,52,10,'l');
+    P.r(62,22,38,30,'c');P.r(64,24,34,26,'w');for(let i=0;i<9;i++){const a=i/9*Math.PI*2;P.r(81+Math.cos(a)*10,37+Math.sin(a)*9,2,2,['l','x','s','e','v','q','i','a','o'][i]);}},
+  int5(P){P.r(0,0,160,90,'d');P.r(0,70,160,20,'n');P.r(10,10,140,2,'i');P.dellip(60,40,50,26,'q',5);P.dellip(100,46,50,24,'G',4);P.dellip(80,30,60,14,'y',2);SP.nef(P,80,74,1);},
+  int6(P){P.night(90,31);P.circ(22,24,9,'x');P.line(16,18,28,30,'k');P.line(20,28,26,20,'k');P.dith(13,15,18,18,'k',6);SP.ordo(P,80,44,1);
+    for(let i=0;i<12;i++)P.r(104+i*4,46+i*2,2,1,'o');P.circ(156,76,10,'B');P.ring(156,76,10,1,'s');},
+  int7(P){P.r(0,0,160,90,'d');P.r(0,66,160,24,'h');SP.crt(P,58,14,54,36,'b','m');P.r(58,14,54,36,'b');P.dith(58,14,54,36,'s',3);SP.human(P,74,44,'c');SP.human(P,96,44,'e');P.r(62,42,46,6,'k');P.r(66,44,38,2,'c');
+    SP.kanal(P,36,86,'fwd',1);P.dith(50,10,70,48,'t',1);},
+  epi1(P){P.r(0,0,160,90,'k');for(let i=0;i<12;i++){const x=6+(i%4)*38,y=6+(i/4|0)*28;SP.crt(P,x,y,30,20,['T','b','R','i'][i%4],'x');SP.human(P,x+15,y+19,'c');}},
+  epi2(P){P.r(0,0,160,90,'d');P.r(96,6,58,40,'k');P.dg(98,8,54,36,'n','i');for(let i=0;i<14;i++)P.r(100+i*4,12+(i%3)*8,3,1,'o');P.r(0,62,160,28,'h');
+    for(let s=0;s<6;s++){const h=10+s*5%17;for(let j=0;j<h;j++)P.r(10+s*14,60-j*2,12,2,j%2?'c':'w');}SP.human(P,110,74,'k');SP.crt(P,120,52,18,12,'T','m');},
+  epi3(P){P.r(0,0,160,90,'n');for(let r=0;r<5;r++){P.r(0,40+r*10,160,2,'i');for(let x=4+r*3;x<160;x+=6)P.circ(x,38+r*10,1,r%2?'c':'e');}
+    [[30,10],[80,6],[124,12]].forEach(([x,y],i)=>{P.r(x-14,y,28,12,'w');P.r(x-2,y+12,3,3,'w');P.r(x-10,y+3,20,1,'m');P.r(x-10,y+6,14,1,'m');});P.line(44,14,66,10,'y');P.line(94,10,110,16,'y');P.txt('193',70,76,'o');},
+  epi4(P){P.dg(0,0,160,60,'u','a');P.r(0,60,160,30,'h');P.dith(0,60,160,30,'k',4);SP.kanal(P,60,84,'nod',1);SP.human(P,110,84,'k');P.txt('?',55,24,'z',2);P.txt('...',104,58,'c');},
+  epi5(P){P.r(0,0,160,90,'n');P.r(0,64,160,26,'k');P.r(20,54,70,6,'h');SP.crt(P,30,30,26,20,'k','x');P.r(96,46,34,22,'j');P.r(96,46,34,4,'e');P.line(96,46,112,40,'e');P.line(130,46,118,40,'e');P.r(100,40,6,8,'c');P.dith(0,0,160,64,'k',3);},
+  epi6(P){P.r(0,0,160,90,'k');P.r(10,8,140,70,'T');P.dith(10,8,140,70,'t',3);for(let yy=8;yy<78;yy+=2)P.r(10,yy,140,1,'k');
+    [[14,14,90],[14,22,110],[14,30,70],[14,44,60],[14,52,100]].forEach(([x,y,w])=>P.r(x,y,w,3,'t'));P.r(14,62,40,5,'o');P.r(56,62,4,5,'z');},
+  epi7(P){P.dg(0,0,160,60,'k','i');const R=rng(77);for(let i=0;i<34;i++){const x=R()*160|0,y=R()*48|0,w=6+R()*10|0;P.r(x,y,w,2,'k');P.p(x+1,y+2,'o');P.p(x+w-2,y+2,'o');}
+    for(let b=0;b<14;b++){const h=16+(b*37%26);P.r(b*12,90-h,10,h,'n');for(let j=0;j<h-4;j+=4)P.p(b*12+3,90-h+2+j,'y');}},
+  s1(P,a){P.dg(0,0,160,40,'u','a');P.dg(0,40,160,6,'a','g');P.r(0,46,160,44,'g');P.dith(0,46,160,44,'f',4);P.line(0,64,160,64,'f',4);P.line(0,76,160,76,'f',4);
+    SP.mimik(P,80,58,{mood:a.mood,alert:a.alert,tilt:a.tilt});
+    const pos={alien:[[104,60],[114,60],[124,60]],ground:[[56,70],[80,70],[104,70]],player:[[60,84],[80,84],[100,84]]},used={alien:0,ground:0,player:0};
+    ['apple','stone','shell'].forEach(it=>{const z=a.h[it],[x,y]=pos[z][used[z]++];if(a.sel===it)P.ring(x,y-1,5,1,'o');
+      if(it==='apple'){P.circ(x,y-1,2,'r');P.p(x,y-4,'g');}if(it==='stone')P.ell(x,y,3,2,'m');if(it==='shell'){P.ell(x,y,3,3,'e',true);P.p(x,y-2,'j');}});},
+  s2(P,a){P.night(70,13);P.r(0,70,160,20,'f');P.dith(0,70,160,20,'k',6);SP.uum(P,55,72,32,24,a.a);SP.uum(P,132,72,11,8,a.b);if(a.face)P.r(40,56,4,1,'k');else P.r(70,56,4,1,'k');},
+  s3(P,a){P.dg(0,0,160,90,'f','n');P.dith(0,0,160,14,'g',5);SP.swarm(P,80,54,40,5,.8);P.r(58,6,44,14,'c');P.r(60,8,40,10,'k');P.txt(a.q||'?',70,10,'c');},
+  s4(P){P.dg(0,0,160,50,'S','s');P.dg(0,50,160,14,'b','s');P.r(0,64,160,26,'e');P.dith(0,64,160,26,'j',3);SP.potra(P,64,80,1);},
+  s5(P){P.dg(0,0,160,56,'S','s');P.r(0,56,160,34,'w');P.dith(0,56,160,34,'S',5);SP.yaa(P,58,42,16,'v');SP.yaa(P,110,48,11,'l');},
+  s6(P,a){P.r(0,0,160,90,'d');P.r(0,72,160,18,'n');P.r(0,0,160,3,'i');const L=v=>Math.min(16,v*1.6|0);
+    P.dellip(44,38,40,28,'q',L(a.S));P.dellip(116,40,40,28,'G',L(a.R));P.dellip(80,24,64,16,'y',L(a.A));P.dellip(80,54,70,18,'j',L(a.B));SP.nef(P,80,74,1);},
+  hall(P){P.night(50,41);P.r(0,50,160,40,'B');P.dith(0,50,160,40,'b',4);P.ell(80,64,70,18,'i');P.ell(80,63,66,15,'d');PLATE_ART[8](P);},
+  s8(P,a){P.dg(0,0,160,60,'u','a');P.r(0,60,160,30,'x');P.dith(0,60,160,30,'k',3);for(let b=0;b<8;b++){const h=14+(b*23%18);P.r(b*20,60-h,16,h,'i');}SP.kanal(P,80,86,a.pose,1);}
+};
+const PLATE_ART=[
+  P=>SP.mimik(P,80,90,{k:3}),
+  P=>{P.r(0,86,160,14,'f');SP.uum(P,80,88,52,40,1);},
+  P=>SP.swarm(P,80,54,70,9,.75),
+  P=>SP.potra(P,74,96,2),
+  P=>{SP.yaa(P,64,52,28,'v');SP.yaa(P,126,64,14,'l');},
+  P=>SP.nef(P,80,94,2),
+  P=>SP.ordo(P,80,54,2),
+  P=>SP.kanal(P,80,96,'fwd',2),
+  P=>{['l','x','s','e','v','q','i','a'].forEach((c,i)=>{const an=i/8*Math.PI*2-Math.PI/2,x=80+Math.cos(an)*60,y=52+Math.sin(an)*32;P.circ(x,y,6,'k');P.circ(x,y,5,c);});SP.human(P,80,62,'o');}
+];
+const PLATE_NOTES=[
+  ['三つの眼点','発色細胞の列（気分で色が変わる）','腕も脚もない','根のような基部','高さ 約1.3 m'],
+  ['発光帯（高・低の二段）','地衣類に覆われた外殻','殻の合わせ目','移動速度 1日に約7ミリ'],
+  ['個体（体長 約8 cm）','背中の記号板','群れ全体で一つの意思'],
+  ['口はない','長い腕','荷袋（贈答品が入っている）','身長 約2.4 m'],
+  ['輪（回転の向きと速さで気持ちを表す）','中心核','右は幼体'],
+  ['香腺（五つ）','茎は香りを溜める','床に触れる根'],
+  ['受信皿','太陽電池板','推定製造年代：約11,000年前'],
+  ['触角（向きで気持ちを表す）','人の声を再現できる発声器官','テレビ放送の受信器官？'],
+  ['8つの種族が円を描く','中央の席は、まだ空いている']
+];
+function plate(i){return `<figure class="plate"><div class="plate-hd"><span>SPECIMEN ${pad2(i+1)}</span><span>${STAGES[i].species}</span></div>${canvas('plate',{i},160,100)}<figcaption><ul>${PLATE_NOTES[i].map(n=>`<li>${n}</li>`).join('')}</ul></figcaption></figure>`;}
+SCENES.plate=(P,a,ctx)=>{P.r(0,0,160,100,'n');for(let x=0;x<160;x+=8)for(let y=0;y<100;y+=2)P.p(x,y,'d');for(let y=0;y<100;y+=8)for(let x=0;x<160;x+=2)P.p(x,y,'d');
+  if(a.sil&&ctx){const fk={set fillStyle(v){},get fillStyle(){return '';},fillRect:(x,y,w,h)=>{ctx.fillStyle='#342f47';ctx.fillRect(x,y,w,h);},clearRect(){}};PLATE_ART[a.i](PX(fk));P.txt('?',72,34,'u',5);}else PLATE_ART[a.i](P);P.line(118,94,150,94,'c');P.line(118,92,118,96,'c');P.line(150,92,150,96,'c');};
+function canvas(scene,args,w,h,cls){return `<canvas class="px ${cls||''}" width="${w||160}" height="${h||90}" data-scene="${scene}" data-args="${esc(JSON.stringify(args||{}))}" role="img" aria-label="イラスト"></canvas>`;}
+function hydrate(root){(root||document).querySelectorAll('canvas[data-scene]').forEach(cv=>{const f=SCENES[cv.dataset.scene];if(!f)return;const ctx=cv.getContext('2d');ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,cv.width,cv.height);f(PX(ctx),JSON.parse(cv.dataset.args||'{}'),ctx);});}
+function worldMap(){return canvas('worldmap',{cl:SITES.map((s,i)=>!!G.prog.cleared[i]),un:SITES.map((s,i)=>isUnlocked(i))});}
+/* ===== audio: generative BGM + SE (Web Audio, no files) ===== */
+const AU={ctx:null,bgm:true,se:true,on:true,out:null,mus:null,sfx:null,noise:null,playing:false,timer:null,next:0,beat:0,lfo:null};
+try{const a=JSON.parse(localStorage.getItem('fcl-audio')||'null');if(a){AU.on=a.on!==undefined?!!a.on:!!(a.bgm||a.se);AU.bgm=AU.se=AU.on;}}catch(e){}
+function auSave(){try{localStorage.setItem('fcl-audio',JSON.stringify({on:AU.on}));}catch(e){}}
+const mtof=m=>440*Math.pow(2,(m-69)/12);
+function auInit(){
+  if(AU.ctx)return true;const C=window.AudioContext||window.webkitAudioContext;if(!C)return false;
+  try{AU.ctx=new C();}catch(e){return false;}
+  const c=AU.ctx;AU.out=c.createDynamicsCompressor();AU.out.connect(c.destination);
+  const lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.value=1700;lp.Q.value=.4;lp.connect(AU.out);
+  AU.mus=c.createGain();AU.mus.gain.value=0;AU.mus.connect(lp);
+  AU.sfx=c.createGain();AU.sfx.gain.value=.55;AU.sfx.connect(AU.out);
+  const len=c.sampleRate*2,buf=c.createBuffer(1,len,c.sampleRate),d=buf.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;AU.noise=buf;
+  AU.lfo=c.createOscillator();AU.lfo.frequency.value=.35;const lg=c.createGain();lg.gain.value=9;AU.lfo.connect(lg);AU.lfo.start();AU.lfoGain=lg;
+  return true;
+}
+function auResume(){if(AU.ctx&&AU.ctx.state==='suspended')AU.ctx.resume().catch(()=>{});}
+/* ---- music ---- */
+const CHORDS=[[45,60,64,67,71],[41,57,60,64,69],[38,57,60,64,65],[40,56,59,62,64]]; /* Am9 Fmaj7 Dm9 E7 */
+const MEL=[69,72,74,76,79,81];
+function env(g,t,a,peak,rel){g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(peak,t+a);g.gain.exponentialRampToValueAtTime(0.0001,t+a+rel);}
+function pad(notes,t,dur){const c=AU.ctx;notes.slice(1).forEach(n=>{[0,7].forEach(det=>{const o=c.createOscillator(),g=c.createGain();o.type=det?'triangle':'sine';o.frequency.value=mtof(n);o.detune.value=det;AU.lfoGain.connect(o.detune);
+  g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(.022,t+1.4);g.gain.linearRampToValueAtTime(.016,t+dur-.6);g.gain.linearRampToValueAtTime(0.0001,t+dur+.8);o.connect(g);g.connect(AU.mus);o.start(t);o.stop(t+dur+1);});});
+  const o=AU.ctx.createOscillator(),g=AU.ctx.createGain();o.type='sine';o.frequency.value=mtof(notes[0]);env(g,t,.08,.12,dur*.9);o.connect(g);g.connect(AU.mus);o.start(t);o.stop(t+dur+.2);}
+function keys(n,t,vel){const c=AU.ctx,o=c.createOscillator(),o2=c.createOscillator(),g=c.createGain();o.type='sine';o2.type='sine';o.frequency.value=mtof(n);o2.frequency.value=mtof(n)*2.002;
+  const g2=c.createGain();g2.gain.value=.25;o2.connect(g2);g2.connect(g);o.connect(g);AU.lfoGain.connect(o.detune);env(g,t,.012,.07*vel,1.6);g.connect(AU.mus);o.start(t);o2.start(t);o.stop(t+1.8);o2.stop(t+1.8);}
+function kick(t){const c=AU.ctx,o=c.createOscillator(),g=c.createGain();o.frequency.setValueAtTime(110,t);o.frequency.exponentialRampToValueAtTime(42,t+.18);env(g,t,.005,.35,.28);o.connect(g);g.connect(AU.mus);o.start(t);o.stop(t+.35);}
+function noiseHit(t,freq,type,peak,rel,dest){const c=AU.ctx,s=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();s.buffer=AU.noise;s.playbackRate.value=.8+Math.random()*.4;f.type=type;f.frequency.value=freq;env(g,t,.004,peak,rel);s.connect(f);f.connect(g);g.connect(dest||AU.mus);s.start(t,Math.random());s.stop(t+rel+.05);}
+function schedule(){
+  const c=AU.ctx,spb=60/66;
+  while(AU.next<c.currentTime+.4){
+    const t=AU.next,b=AU.beat,bar=Math.floor(b/4),inBar=b%4,ch=CHORDS[Math.floor(bar/2)%4];
+    if(b%8===0)pad(ch,t,spb*8);
+    if(inBar===0)kick(t);if(inBar===2)kick(t+spb*.5);
+    if(inBar===1||inBar===3)noiseHit(t,1600,'bandpass',.09,.16);
+    noiseHit(t+spb*.55,7000,'highpass',.018,.05);noiseHit(t,7000,'highpass',.012,.04);
+    if(Math.random()<.55){const n=Math.random()<.5?ch[2+(Math.random()*3|0)]+12:MEL[Math.random()*MEL.length|0];keys(n,t+(Math.random()<.3?spb*.5:0),.7+Math.random()*.3);}
+    if(Math.random()<.35)noiseHit(t+Math.random()*spb,2500,'bandpass',.03,.01);
+    AU.next+=spb;AU.beat++;
+  }
+}
+function musicStart(){if(!auInit()||AU.playing)return;auResume();AU.playing=true;AU.next=AU.ctx.currentTime+.1;
+  AU.mus.gain.cancelScheduledValues(AU.ctx.currentTime);AU.mus.gain.setValueAtTime(AU.mus.gain.value,AU.ctx.currentTime);AU.mus.gain.linearRampToValueAtTime(.9,AU.ctx.currentTime+2.5);
+  AU.hiss=AU.ctx.createBufferSource();AU.hiss.buffer=AU.noise;AU.hiss.loop=true;const hf=AU.ctx.createBiquadFilter();hf.type='highpass';hf.frequency.value=3000;const hg=AU.ctx.createGain();hg.gain.value=.006;AU.hiss.connect(hf);hf.connect(hg);hg.connect(AU.mus);AU.hiss.start();
+  AU.timer=setInterval(schedule,90);schedule();}
+function musicStop(){if(!AU.ctx||!AU.playing)return;AU.playing=false;clearInterval(AU.timer);const t=AU.ctx.currentTime;AU.mus.gain.cancelScheduledValues(t);AU.mus.gain.setValueAtTime(AU.mus.gain.value,t);AU.mus.gain.linearRampToValueAtTime(0,t+.8);try{AU.hiss.stop(t+.9);}catch(e){}}
+/* ---- SE ---- */
+function tone1(type,f,t,a,peak,rel,f2){const c=AU.ctx,o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+a+rel);env(g,t,a,peak,rel);o.connect(g);g.connect(AU.sfx);o.start(t);o.stop(t+a+rel+.05);}
+function se(kind,arg){
+  if(!AU.se||!auInit())return;auResume();const t=AU.ctx.currentTime+.01;
+  if(kind==='click')tone1('square',880,t,.003,.035,.04,660);
+  else if(kind==='page'){noiseHit(t,1800,'bandpass',.12,.22,AU.sfx);noiseHit(t+.08,900,'bandpass',.06,.18,AU.sfx);}
+  else if(kind==='good'){tone1('triangle',mtof(76),t,.01,.12,.35);tone1('triangle',mtof(81),t+.09,.01,.12,.5);}
+  else if(kind==='bad'){tone1('sawtooth',98,t,.01,.07,.35,80);tone1('sawtooth',104,t,.01,.05,.35,84);}
+  else if(kind==='win'){[69,72,76,81,84].forEach((n,i)=>tone1('triangle',mtof(n),t+i*.11,.01,.12,.9));}
+  else if(kind==='lose'){[57,53,50,45].forEach((n,i)=>tone1('sine',mtof(n),t+i*.28,.02,.14,.8));}
+  else if(kind==='voice'){const c=AU.ctx,o=c.createOscillator(),l=c.createOscillator(),lg=c.createGain(),g=c.createGain();o.type='triangle';o.frequency.value=arg||520;l.frequency.value=13;lg.gain.value=60;l.connect(lg);lg.connect(o.frequency);env(g,t,.02,.1,.3);o.connect(g);g.connect(AU.sfx);o.start(t);l.start(t);o.stop(t+.4);l.stop(t+.4);}
+  else if(kind==='tone'){const f=arg==='高'?mtof(72):mtof(60),c=AU.ctx,o=c.createOscillator(),g=c.createGain(),v=c.createOscillator(),vg=c.createGain();o.type='triangle';o.frequency.value=f;v.frequency.value=5;vg.gain.value=f*.012;v.connect(vg);vg.connect(o.frequency);env(g,t,.04,.14,.45);o.connect(g);g.connect(AU.sfx);o.start(t);v.start(t);o.stop(t+.55);v.stop(t+.55);}
+  else if(kind==='type'){tone1('square',1400+Math.random()*400,t,.002,.015,.02);}
+}
+function audioBar(){return `<div class="audiobar"><button class="aub ${AU.on?'on':''}" data-au="all" aria-pressed="${AU.on}">♪ SOUND ${AU.on?'ON':'OFF'}</button></div>`;}
+
+/* ===== alien voices ===== */
+const SPECIES_KEY=['mimik','uum','tsubura','potra','yaa','nef','ordo','kanal','all'];
+function voxOut(){const c=AU.ctx;if(AU.vox)return AU.vox;
+  AU.vox=c.createGain();AU.vox.gain.value=1;AU.vox.connect(AU.out);
+  const d=c.createDelay(1),fb=c.createGain(),wet=c.createGain();d.delayTime.value=.19;fb.gain.value=.28;wet.gain.value=.22;
+  AU.vox.connect(d);d.connect(fb);fb.connect(d);d.connect(wet);wet.connect(AU.out);return AU.vox;}
+function duck(dur){if(!AU.playing)return;const c=AU.ctx,t=c.currentTime,g=AU.mus.gain;g.cancelScheduledValues(t);g.setValueAtTime(g.value,t);g.linearRampToValueAtTime(.28,t+.08);g.setValueAtTime(.28,t+dur);g.linearRampToValueAtTime(.9,t+dur+.7);}
+function osc(type,f,t,end,dest){const o=AU.ctx.createOscillator();o.type=type;o.frequency.setValueAtTime(f,t);o.connect(dest);o.start(t);o.stop(end);return o;}
+function gainNode(dest,v){const g=AU.ctx.createGain();g.gain.value=v===undefined?1:v;g.connect(dest);return g;}
+function filt(type,f,q,dest){const b=AU.ctx.createBiquadFilter();b.type=type;b.frequency.value=f;if(q)b.Q.value=q;b.connect(dest);return b;}
+function burst(t,dur,type,f,peak,dest){const c=AU.ctx,s=c.createBufferSource();s.buffer=AU.noise;const b=filt(type,f,1.2,dest),g=c.createGain();env(g,t,.004,peak,dur);s.connect(g);g.connect(b);s.start(t,Math.random());s.stop(t+dur+.05);}
+const VOICE={
+  /* ミミク：母音のある、小鳥のような声。k/t/r の子音と a/i/u の母音がはっきり分かれる */
+  mimik(t,arg,lvl=1){const out=gainNode(voxOut(),lvl);const w=typeof arg==='string'?arg:['kaa','tii','ruu'][Math.random()*3|0];
+    const F={a:[820,1250],i:[300,2300],u:[340,780],o:[500,850],e:[480,1900]}[w[1]]||[820,1250],cons=w[0],alert=arg&&arg.alert;
+    if(cons==='k')burst(t,.035,'highpass',2600,.5,out);if(cons==='t')burst(t,.025,'highpass',4800,.45,out);if(cons==='p')burst(t,.02,'bandpass',900,.5,out);if(cons==='s')burst(t,.09,'highpass',5500,.35,out);
+    const t0=t+(cons==='r'||cons==='l'||cons==='m'||cons==='n'?0:cons==='s'?.08:.04),dur=.42,f0=alert?190:290;
+    const src=AU.ctx.createGain(),o=osc('sawtooth',f0,t0,t0+dur+.1,src);o.frequency.linearRampToValueAtTime(f0*1.12,t0+.12);o.frequency.linearRampToValueAtTime(f0*.94,t0+dur);
+    if(cons==='r'||cons==='l'){o.frequency.setValueAtTime(f0*.7,t0);o.frequency.linearRampToValueAtTime(f0*1.1,t0+.06);}
+    const v=AU.ctx.createOscillator(),vg=AU.ctx.createGain();v.frequency.value=6;vg.gain.value=7;v.connect(vg);vg.connect(o.frequency);v.start(t0);v.stop(t0+dur+.1);
+    const e=gainNode(out,0);env(e,t0,.03,.9,dur);F.forEach((f,k)=>{const b=filt('bandpass',f,9,e);src.connect(b);});
+    return dur+.1;},
+  /* ウーム：低くて長い、鐘と鯨の中間。高・低の二段。遠くの仲間はこもって小さい */
+  uum(t,arg,lvl=1){const far=arg&&arg.far,hi=!arg||arg.tone!=='低',L=(arg&&arg.short)?1.25:2.2;const out=gainNode(voxOut(),(far?.35:1)*lvl);const dest=far?filt('lowpass',700,.5,out):out;
+    const f=hi?330:165;[[1,.5],[2.01,.18],[2.76,.1],[.5,.3]].forEach(([m,a])=>{const g=gainNode(dest,0);g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(a*.5,t+.35);g.gain.exponentialRampToValueAtTime(0.0001,t+L);
+      const o=osc('sine',f*m,t,t+L+.1,g);o.frequency.linearRampToValueAtTime(f*m*(hi?1.03:.97),t+L*.7);});
+    return L;},
+  /* ツブラ：数百の小さな個体のさえずり。粒の雨 */
+  tsubura(t,arg,lvl=1){const out=gainNode(voxOut(),lvl),bad=arg==='bad',good=arg==='good',n=bad?46:30;
+    for(let i=0;i<n;i++){const tt=t+(good?i*.022:Math.random()*.8),f=bad?700+Math.random()*700:good?1800+i*60:1900+Math.random()*2400;
+      const g=gainNode(out,0);env(g,tt,.003,bad?.09:.07,.035);osc(bad?'square':'triangle',f,tt,tt+.06,g);}
+    return .9;},
+  /* ポトラ：声を持たない。荷袋の品を置く、木を打つ音だけ */
+  potra(t,arg,lvl=1){const out=gainNode(voxOut(),lvl),pat=arg==='bad'?[300]:arg==='good'?[520,620,740]:[520,520];
+    pat.forEach((f,i)=>{const tt=t+i*.2,g=gainNode(out,0);env(g,tt,.002,.6,.13);const o=osc('sine',f,tt,tt+.2,g);o.frequency.exponentialRampToValueAtTime(f*.8,tt+.12);burst(tt,.015,'bandpass',2200,.25,out);});
+    return pat.length*.2+.2;},
+  /* ヤァ：輪が回るうなり。問いは上がり、喜びは明るく跳ね、凍りつくと落ちて止まる */
+  yaa(t,arg,lvl=1){const out=gainNode(voxOut(),lvl);const path=arg==='good'?[440,660]:arg==='bad'?[440,160]:[330,440];const d=arg==='bad'?.5:.8;
+    const g=gainNode(out,0);g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(.32,t+.12);g.gain.setValueAtTime(.32,t+d-.1);g.gain.linearRampToValueAtTime(0.0001,t+d+(arg==='bad'?.02:.3));
+    const o=osc('sine',path[0],t,t+d+.4,g);o.frequency.exponentialRampToValueAtTime(path[1],t+d);
+    const m=AU.ctx.createOscillator(),mg=AU.ctx.createGain();m.frequency.value=arg==='bad'?2:5.5;mg.gain.value=35;m.connect(mg);mg.connect(o.frequency);m.start(t);m.stop(t+d+.4);
+    if(arg==='good'){const g2=gainNode(out,0);env(g2,t+.2,.1,.14,.8);const o2=osc('sine',660,t+.2,t+1.2,g2);o2.frequency.exponentialRampToValueAtTime(990,t+1);}
+    return d+.3;},
+  /* ネフ：言葉は香り。吸って、吐く、長い息。怒ると喉が鳴る */
+  nef(t,arg,lvl=1){const out=gainNode(voxOut(),lvl),c=AU.ctx,s=c.createBufferSource();s.buffer=AU.noise;
+    const b=filt('bandpass',600,2.5,out),g=c.createGain();s.connect(g);g.connect(b);
+    b.frequency.setValueAtTime(500,t);b.frequency.linearRampToValueAtTime(1500,t+.6);b.frequency.linearRampToValueAtTime(420,t+1.5);
+    g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(.45,t+.5);g.gain.linearRampToValueAtTime(.2,t+.8);g.gain.linearRampToValueAtTime(.5,t+1.1);g.gain.linearRampToValueAtTime(0.0001,t+1.6);s.start(t);s.stop(t+1.7);
+    const h=gainNode(out,0);env(h,t+.2,.4,.06,1);osc('sine',147,t+.2,t+1.7,h);
+    if(arg==='bad'){const r=gainNode(filt('lowpass',400,1,out),0);env(r,t+.3,.05,.25,.9);const o=osc('sawtooth',62,t+.3,t+1.3,r);}
+    return 1.6;},
+  /* オルド：機械。データを周波数偏移で送ってくる */
+  ordo(t,arg,lvl=1){const out=gainNode(filt('lowpass',3200,.7,voxOut()),lvl*.9);const bits=(typeof arg==='string'?arg:'1011001110001011').slice(0,40);
+    const g0=gainNode(out,0);env(g0,t,.01,.08,.18);osc('square',1800,t,t+.22,g0);
+    const g=gainNode(out,0),tt=t+.24,o=osc('square',1200,tt,tt+bits.length*.045+.05,g);g.gain.setValueAtTime(.07,tt);g.gain.setValueAtTime(0,tt+bits.length*.045);
+    bits.split('').forEach((b,i)=>o.frequency.setValueAtTime(b==='1'?2200:1200,tt+i*.045));
+    return .3+bits.length*.045;},
+  /* カナル：テレビのスピーカー越しの、流暢な日本語らしき声 */
+  kanal(t,arg,lvl=1){const out=gainNode(filt('bandpass',1300,.7,voxOut()),lvl*1.4);const text=typeof arg==='string'?arg:'すみません';const n=Math.max(3,Math.min(16,Math.round(text.length*.8)));
+    burst(t,n*.12+.1,'highpass',3000,.02,out);
+    for(let i=0;i<n;i++){const tt=t+i*.12,f=(215+Math.sin(i*1.7)*30)*(i>n-3?.85:1),g=gainNode(out,0);env(g,tt,.012,.5,.08);
+      const s=AU.ctx.createGain();const o=osc('sawtooth',f,tt,tt+.12,s);const F=[[700,1200],[300,2200],[500,900]][i%3];F.forEach(ff=>{const b=filt('bandpass',ff,6,g);s.connect(b);});}
+    return n*.12+.1;}
+};
+function voice(key,arg,delay,lvl){
+  if(!AU.se||!auInit())return 0;auResume();voxOut();const t=AU.ctx.currentTime+.03+(delay||0);
+  if(key==='all')return chorus(false);
+  if(key==='kanal')return kanalSpeak(typeof arg==='string'?arg:'すみません',delay);
+  const f=VOICE[key];if(!f)return 0;const d=f(t,arg,lvl);duck((delay||0)+d);return d;
+}
+/* ステージ9：声が重なっていく */
+function chorus(build){
+  if(!AU.se||!auInit())return 0;auResume();voxOut();const t0=AU.ctx.currentTime+.05,gap=build?.75:.28,l=build?.8:.6;
+  const seq=[['mimik','tii'],['uum',{tone:'高'}],['tsubura',build?'good':''],['potra',build?'good':''],['yaa',build?'good':''],['nef',''],['ordo','101100111000101101'],['kanal','お願いがあります']];
+  seq.forEach(([k,a],i)=>{if(k==='kanal')kanalSpeak(a,t0-AU.ctx.currentTime+i*gap);else VOICE[k](t0+i*gap,a,l);});
+  if(build)[['uum',{tone:'低'}],['mimik','kaa'],['yaa','good'],['nef','']].forEach(([k,a],i)=>VOICE[k](t0+seq.length*gap+i*.3,a,.5));
+  const total=seq.length*gap+(build?3:1.5);duck(total);return total;
+}
+const SP_BY_NAME={'ミミク':'mimik','議長ミミク':'mimik','ウーム':'uum','ツブラ':'tsubura','ポトラ':'potra','ヤァ':'yaa','ネフ':'nef','探査機オルド':'ordo','カナル':'kanal','全員':'all'};
+
+/* ===== カナル：端末の読み上げ機能で、本物の日本語を話す ===== */
+const TTS={voice:null,ok:null};
+function ttsPickVoice(){try{const vs=speechSynthesis.getVoices()||[];TTS.voice=vs.find(v=>/^ja/i.test(v.lang)&&/Kyoko|Otoya|Google|Nanami|Haruka/i.test(v.name))||vs.find(v=>/^ja/i.test(v.lang))||null;}catch(e){TTS.voice=null;}}
+try{if('speechSynthesis' in window){ttsPickVoice();speechSynthesis.addEventListener&&speechSynthesis.addEventListener('voiceschanged',ttsPickVoice);}}catch(e){}
+function quoted(s){const m=String(s||'').match(/「([^」]+)」/);return m?m[1]:null;}
+function kanalSpeak(text,delay){
+  if(!AU.se||!text)return 0;const est=text.length*.17+.8;
+  const fallback=()=>{if(!auInit())return;voxOut();const t=AU.ctx.currentTime+.03;const d=VOICE.kanal(t,text);duck(d);};
+  const go=()=>{
+    if(!('speechSynthesis' in window)||TTS.ok===false){fallback();return;}
+    try{
+      if(auInit()){voxOut();const t=AU.ctx.currentTime+.01;burst(t,.18,'bandpass',2600,.18,AU.vox);burst(t+.05,.12,'highpass',5000,.12,AU.vox);}
+      speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='ja-JP';if(TTS.voice)u.voice=TTS.voice;u.pitch=1.45;u.rate=1.08;u.volume=1;
+      let started=false;u.onstart=()=>{started=true;TTS.ok=true;};u.onerror=()=>{if(!started){TTS.ok=false;fallback();}};
+      duck(est+.3);setTimeout(()=>speechSynthesis.speak(u),180);
+      setTimeout(()=>{if(!started&&TTS.ok!==true){try{speechSynthesis.cancel();}catch(e){}TTS.ok=false;fallback();}},1800);
+    }catch(e){TTS.ok=false;fallback();}
+  };
+  delay?setTimeout(go,delay*1000):go();return est;
+}
+/* ===== logo & share ===== */
+const SHARE_URL=(location.protocol==='https:'?location.origin+location.pathname:'https://first-contact-linguist.pages.dev/');
+const HASHTAG='#ファーストコンタクトリンギスト';
+const FLAVOR=['ミミクの三つの言葉の意味が分かった瞬間、声が出た。','千年を生きる岩と、挨拶を交わした。','群れの前で、口をすべらせずに済んだ。','浜辺の取引を、最後までやり遂げた。','願いを叶える輪から、月を守った。','香りの部屋で、約束を結んだ。','探査機との問答を、生き延びた。','カナルとの会話が、いちばん怖かった。','橋を架ける者は、ここにいた。'];
+function totalFails(){return Object.values(G.prog.fails||{}).reduce((a,b)=>a+(+b||0),0);}
+function stageShareText(i){const f=G.prog.fails[i]||0;return `STAGE ${i+1}「${STAGES[i].title}」解明（${f?`失敗${f}回`:'ノーミス'}）。\n${FLAVOR[i]}\n\n言葉の通じない来訪者と対話する、言語学の謎解きゲーム\n${HASHTAG}`;}
+function finalShareText(){const f=totalFails();return `言葉の通じない8つの来訪者と、身振りと贈り物と香りと素数で対話した。\n9つの言語、すべて解明（失敗${f}回）。\n\n言語学の謎解きゲーム、全9ステージ。\n${HASHTAG}`;}
+function shareBlock(text,big){
+  const url='https://twitter.com/intent/tweet?text='+encodeURIComponent(text)+'&url='+encodeURIComponent(SHARE_URL);
+  return `<div class="card share ${big?'big':''}"><div class="lbl">${big?'全クリおめでとう。よかったら、SNSでシェアしてください':'よかったら、SNSでシェアしてください'}</div>
+  <pre class="post" id="post">${esc(text)}\n${SHARE_URL}</pre>
+  <div class="btnrow"><a class="primary xbtn" href="${url}" target="_blank" rel="noopener">X でポストする</a><button class="ghost" data-copy="1">文面をコピー</button></div>
+  <p class="focusline" id="copymsg" aria-live="polite"></p></div>`;
+}
+function copyPost(){
+  const el=document.getElementById('post'),msg=document.getElementById('copymsg');if(!el)return;const text=el.textContent;
+  const fallback=()=>{const r=document.createRange();r.selectNodeContents(el);const s=window.getSelection();s.removeAllRanges();s.addRange(r);if(msg)msg.textContent='文面を選択しました。そのままコピーしてください。';};
+  try{navigator.clipboard.writeText(text).then(()=>{if(msg)msg.textContent='コピーしました。';se('good');}).catch(fallback);}catch(e){fallback();}
+}
+SCENES.emblem=P=>{
+  P.r(4,5,24,1,'c');P.r(3,6,1,15,'c');P.r(28,6,1,15,'c');P.r(4,21,24,1,'c');P.r(4,6,24,15,'k');
+  P.r(8,22,3,2,'c');P.r(7,24,2,2,'c');P.r(6,26,1,1,'c');P.r(9,21,1,1,'k');
+  P.line(6,16,25,10,'t');P.circ(15,13,4,'o');P.r(13,11,2,1,'O');P.p(12,12,'O');P.line(19,12,25,10,'t');P.line(6,16,10,15,'t');
+  P.p(24,7,'y');P.p(6,8,'l');P.p(22,18,'l');
+};
+function logo(small){return `<div class="logo ${small?'small':''}">${canvas('emblem',{},32,32,'emb')}<div class="lw"><span class="lj">ファーストコンタクト<br>・リンギスト</span><span class="le">FIRST&nbsp;CONTACT&nbsp;LINGUIST</span></div></div>`;}
+/* ===== play record, profile, result card ===== */
+const SPN=['ミミク','ウーム','ツブラ','ポトラ','ヤァ','ネフ','オルド','カナル','全種族'];
+function recordStat(won){
+  const st=G.st;if(!st||st._rec)return;st._rec=true;
+  const ms=Date.now()-(st.t0||Date.now());G.prog.time=(G.prog.time||0)+ms;
+  if(won){G.prog.stats=G.prog.stats||{};G.prog.stats[G.cur]={bad:st._bad||0,obs:st._obs||0,ms,ok:st.ok};}
+  save();
+}
+function fmtTime(ms){const m=Math.round((ms||0)/60000);return m>=60?`${Math.floor(m/60)}時間${m%60}分`:`${m}分`;}
+function profile(){
+  const S=G.prog.stats||{},F=i=>G.prog.fails[i]||0,idx=[0,1,2,3,4,5,6,7,8];
+  const cleared=idx.filter(i=>G.prog.cleared[i]).length,fails=idx.reduce((a,i)=>a+F(i),0);
+  const first=idx.filter(i=>G.prog.cleared[i]&&!F(i)).length;
+  const obs=idx.filter(i=>i!==1).reduce((a,i)=>a+((S[i]&&S[i].obs)||0),0);
+  const bad=idx.reduce((a,i)=>a+((S[i]&&S[i].bad)||0),0);
+  const hard=idx.reduce((m,i)=>F(i)>F(m)?i:m,0);
+  const timed=idx.filter(i=>i<8&&S[i]&&S[i].ms);const quick=timed.length?timed.reduce((m,i)=>S[i].ms<S[m].ms?i:m,timed[0]):null;
+  const s9=(S[8]&&S[8].ok!=null)?S[8].ok:'-';
+  const obsHigh=obs>=9,failHigh=fails>=5;
+  let title,desc;
+  if(fails===0){title='完全翻訳者';desc='一度も、相手を去らせなかった。九つの言語は、最初からあなたを信じていたのかもしれない。';}
+  else if(obsHigh&&!failHigh){title='沈黙の観察者';desc='話す前に、よく見た。あなたの辞書には、余白がほとんどない。';}
+  else if(obsHigh&&failHigh){title='粘り強い記録者';desc='見て、間違えて、また見た。その回数だけ、辞書は厚くなった。';}
+  else if(!obsHigh&&!failHigh){title='直感の通訳者';desc='考えるより先に、言葉のほうが合っていた。本部は、その理由をまだ説明できずにいる。';}
+  else{title='体当たりの外交官';desc='間違えながら覚えた。来訪者たちは、あなたの失敗まで丁寧に記録している。';}
+  const lines=[];
+  if(F(hard)>0)lines.push(`いちばん手こずった相手は、${SPN[hard]}。${F(hard)}回やり直した。`);else lines.push('一度もやり直さずに、すべての相手と話し終えた。');
+  if(quick!=null)lines.push(`いちばん早く打ち解けた相手は、${SPN[quick]}。${fmtTime(S[quick].ms)}だった。`);
+  if(bad>0)lines.push(`相手を戸惑わせた瞬間は、全部で${bad}回。どれも、辞書の一行になった。`);
+  const rows=idx.map(i=>({i,cls:!G.prog.cleared[i]?'no':F(i)?'re':'ok',mark:!G.prog.cleared[i]?'−':F(i)?`○${F(i)}`:'◎'}));
+  return {title,desc,cleared,first,fails,obs,bad,time:fmtTime(G.prog.time),s9,lines,rows};
+}
+finalShareText=function(){const P=profile();return `言葉の通じない8つの来訪者と、身振りと贈り物と香りと素数で対話した。\n9つの言語、すべて解明（失敗${P.fails}回・一度で解明${P.first}/9）。\nわたしの調査記録に残った称号は《${P.title}》。\n\n言語学の謎解きゲーム、全9ステージ。\n${HASHTAG}`;};
+/* ---- 1200x675 card for X ---- */
+let CARD_URL='';
+async function buildResultCard(){
+  const img=document.getElementById('rcard');if(!img)return;
+  try{if(document.fonts){await Promise.all([document.fonts.load('40px "DotGothic16"'),document.fonts.load('40px "VT323"')]);}}catch(e){}
+  const W=1200,Hh=675,cv=document.createElement('canvas');cv.width=W;cv.height=Hh;const c=cv.getContext('2d');c.imageSmoothingEnabled=false;
+  const P=profile();const DG='"DotGothic16",sans-serif',VT='"VT323",monospace';
+  const g=c.createRadialGradient(W/2,0,50,W/2,Hh*.4,W*.8);g.addColorStop(0,'#2a2340');g.addColorStop(1,'#141219');c.fillStyle=g;c.fillRect(0,0,W,Hh);
+  const sprite=(scene,args,w,h,x,y,dw,dh)=>{const o=document.createElement('canvas');o.width=w;o.height=h;const oc=o.getContext('2d');oc.imageSmoothingEnabled=false;SCENES[scene](PX(oc),args,oc);c.drawImage(o,x,y,dw,dh);};
+  c.strokeStyle='#3b3547';c.lineWidth=4;c.strokeRect(24,24,W-48,Hh-48);
+  sprite('emblem',{},32,32,56,52,84,84);
+  c.fillStyle='#ffcf8a';c.font=`34px ${DG}`;c.textBaseline='top';c.fillText('ファーストコンタクト・リンギスト',158,60);
+  c.fillStyle='#7fd1c1';c.font=`30px ${VT}`;c.fillText('FIELD REPORT  ·  調査記録',160,104);
+  c.textAlign='right';c.fillStyle='#7fd1c1';c.font=`34px ${VT}`;c.fillText(`${P.cleared}/9 LANGUAGES DECODED`,W-60,66);c.textAlign='left';
+  c.fillStyle='#a3978c';c.font=`24px ${DG}`;c.fillText('調査記録に残った称号',60,178);
+  c.save();c.shadowColor='rgba(255,154,90,.55)';c.shadowBlur=18;c.fillStyle='#ece0c8';c.font=`76px ${DG}`;c.fillText(`《${P.title}》`,44,214);c.restore();
+  c.fillStyle='#ece0c8';c.font=`25px ${DG}`;wrap(c,P.desc,62,318,760,36);
+  const st=[['一度で解明',`${P.first}/9`],['失敗',`${P.fails}回`],['観察',`${P.obs}回`],['プレイ時間',P.time]];
+  st.forEach(([k,v],i)=>{const x=60+i*190,y=410;c.fillStyle='#211e2a';c.fillRect(x,y,172,92);c.strokeStyle='#3b3547';c.lineWidth=2;c.strokeRect(x,y,172,92);c.fillStyle='#a3978c';c.font=`19px ${DG}`;c.fillText(k,x+14,y+12);c.fillStyle='#ff9a5a';c.font=`46px ${VT}`;c.fillText(v,x+14,y+40);});
+  P.rows.forEach((r,i)=>{const x=60+i*80,y=530,col=r.cls==='ok'?'#7fd1c1':r.cls==='re'?'#f4c95d':'#5c5560';c.fillStyle='#131119';c.fillRect(x,y,72,72);c.strokeStyle=col;c.lineWidth=3;c.strokeRect(x+1.5,y+1.5,69,69);c.fillStyle=col;c.font=`26px ${VT}`;c.fillText(pad2(r.i+1),x+10,y+8);c.font=`28px ${DG}`;c.fillText(r.mark,x+12,y+34);});
+  [[0,false],[1,false],[7,false],[4,true]].forEach(([i,sl],k)=>{const x=868+(k%2)*142,y=176+(k>>1)*94;c.fillStyle='#3b3547';c.fillRect(x-2,y-2,134,85);sprite('plate',{i,sil:sl},160,100,x,y,130,81);});
+  c.fillStyle='#a3978c';c.font=`22px ${DG}`;c.textAlign='right';c.fillText('言語学の謎解きゲーム',W-60,540);c.fillStyle='#7fd1c1';c.font=`22px ${DG}`;c.fillText('#ファーストコンタクトリンギスト',W-60,572);c.textAlign='left';
+  c.fillStyle='rgba(0,0,0,.16)';for(let y=0;y<Hh;y+=3)c.fillRect(0,y,W,1);
+  const v=c.createRadialGradient(W/2,Hh/2,Hh*.45,W/2,Hh/2,W*.7);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(0,0,0,.45)');c.fillStyle=v;c.fillRect(0,0,W,Hh);
+  CARD_URL=cv.toDataURL('image/png');const el=document.getElementById('rcard');if(el)el.src=CARD_URL;
+}
+function wrap(c,text,x,y,maxW,lh){let line='',yy=y;for(const ch of text){const t=line+ch;if(c.measureText(t).width>maxW&&line){c.fillText(line,x,yy);line=ch;yy+=lh;}else line=t;}if(line)c.fillText(line,x,yy);}
+async function copyCard(){
+  const msg=document.getElementById('copymsg');
+  try{const b64=atob(CARD_URL.split(',')[1]),u8=new Uint8Array(b64.length);for(let i=0;i<b64.length;i++)u8[i]=b64.charCodeAt(i);const blob=new Blob([u8],{type:'image/png'});await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);if(msg)msg.textContent='画像をコピーしました。ポスト画面に貼り付けられます。';se('good');}
+  catch(e){if(msg)msg.textContent='この環境では画像をコピーできませんでした。画像を長押し（右クリック）して保存してください。';}
+}
+/* ===== engine ===== */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pad2=n=>String(n).padStart(2,'0');
+const STAGES=[];
+const G={cur:0,st:null,screen:'title',pi:0,result:null,prog:{cleared:{},fails:{},unlockAll:false,seenPrologue:false}};
+try{const p=JSON.parse(localStorage.getItem('fcl-progress-v2')||'null');if(p&&p.cleared)G.prog=Object.assign(G.prog,p);}catch(e){}
+function save(){try{localStorage.setItem('fcl-progress-v2',JSON.stringify(G.prog));}catch(e){}}
+const H={
+  pips(label,v,max,bad){let s='';for(let i=0;i<max;i++)s+=`<i class="pip ${i<v?'on':''}"></i>`;return `<span><span class="k">${label}</span><span class="pips ${bad?'bad':''}">${s}</span></span>`;},
+  num(label,v){return `<span><span class="k">${label}</span>${v}</span>`;},
+  status(...a){return `<div class="status">${a.join('')}</div>`;},
+  narr(n){return `<div class="narr ${n.kind||''}" aria-live="polite">${esc(n.text)}</div>`;},
+  log(list,label){const li=list.map(l=>`<li class="${l.kind||''}"><span class="t">${esc(l.t)}</span><span class="x">${esc(l.text)}</span></li>`).join('');
+    return `<div><div class="lbl">${label||'観察ログ'}</div><ul class="log">${li||'<li><span class="t">--</span><span class="x">まだ記録はない。</span></li>'}</ul></div>`;},
+  act(a,label,sub,dis,v){return `<button class="act" data-a="${a}" ${v!==undefined?`data-v="${esc(v)}"`:''} ${dis?'disabled':''}>${label}${sub?`<span>${sub}</span>`:''}</button>`;},
+  comm(lines,stamp){const g=[];lines.forEach(([who,t])=>{const l=g[g.length-1];if(l&&l.who===who)l.ts.push(t);else g.push({who,ts:[t]});});
+    return `<div class="comm">${g.map((x,k)=>`<div class="cl"><div class="who"><span>${esc(x.who)}</span>${stamp&&k===0?`<span class="ts">${esc(stamp)}</span>`:''}</div>${x.ts.map(t=>`<p>${esc(t)}</p>`).join('')}</div>`).join('')}</div>`;}
+};
+function say(st,text,kind,t){if(kind==='good')se('good');else if(kind==='bad'){se('bad');st._bad=(st._bad||0)+1;}st.narr={text,kind:kind||''};st.log.unshift({t:t??(st.tlabel?st.tlabel():('T'+pad2(st.turn||0))),text,kind:kind||''});}
+function isUnlocked(i){return i===0||G.prog.unlockAll||!!G.prog.cleared[i-1];}
+function win(o){se('win');if(G.st){G.st.over=true;recordStat(true);saveRecap(o);}G.result=Object.assign({win:true},o);G.prog.cleared[G.cur]=true;save();G.screen='end';render();window.scrollTo(0,0);}
+function lose(o){se('lose');if(G.st){G.st.over=true;recordStat(false);}G.prog.fails[G.cur]=(G.prog.fails[G.cur]||0)+1;save();G.result=Object.assign({win:false},o);G.screen='end';render();window.scrollTo(0,0);}
+function fragCount(){return FRAG.filter((f,i)=>G.prog.cleared[i]).length;}
+
+function render(){
+  const sc=$('#screen');
+  const tw=document.getElementById('tlwrap');const tlPrev=tw?(()=>{const c=tw.querySelector('.cur'),wr=tw.getBoundingClientRect(),r=c?c.getBoundingClientRect():null;return {l:tw.scrollLeft,follow:!r||(r.left>=wr.left-4&&r.right<=wr.right+4)};})():null;
+  const v={title:renderTitle,story:renderStory,fin:renderFin,map:renderMap,intro:renderIntro,end:renderEnd,records:renderRecords}[G.screen];
+  if(v)sc.innerHTML=v();
+  else if(G.screen==='play')sc.innerHTML=`<div class="stack">${stageHead()}${STAGES[G.cur].view(G.st)}</div>`;
+  const bar=$('#bar');if(bar)bar.innerHTML=audioBar();
+  hydrate(document);
+  const nw=document.getElementById('tlwrap');if(nw){const cur=nw.querySelector('.cur');if(!tlPrev||tlPrev.follow){if(cur){const r=cur.getBoundingClientRect(),wr=nw.getBoundingClientRect();nw.scrollLeft=Math.max(0,nw.scrollLeft+(r.right+r.width*2.2)-wr.right);}}else nw.scrollLeft=tlPrev.l;}
+  if(G.screen==='fin')buildResultCard();
+}
+function stageHead(){const s=STAGES[G.cur];return `<div class="head"><div class="eyebrow">Stage ${G.cur+1} · ${s.species}</div><h1>${s.title}</h1></div>`;}
+function renderTitle(){
+  return `<div class="stack title-screen">
+   ${logo()}
+   <div class="crtbox">${canvas('pro1',{})}</div>
+   <p class="lead">8つの来訪者。8つのまったく違う言語。<br>辞書は一冊もない。作るのは、あなただ。</p>
+   ${G.prog.seenPrologue?`<button class="primary" data-nav="map">任務を続ける</button><button class="ghost" data-nav="prologue">プロローグを見る</button>`:`<button class="primary" data-nav="prologue">はじめる</button>`}
+  </div>`;
+}
+function startStory(label,pages,done){G.story={label,pages,i:0,done};G.screen='story';}
+function renderStory(){
+  const S=G.story,p=S.pages[S.i],last=S.i===S.pages.length-1;
+  const dots=S.pages.map((x,k)=>`<i class="${k===S.i?'on':''}"></i>`).join('');
+  return `<div class="stack">
+   <div class="kami" data-nav="snext">
+    <div class="kami-top"><span>${S.label}</span><span class="kdots">${dots}</span><span>${S.i+1} / ${S.pages.length}</span></div>
+    <div class="kami-frame">${p.scene==='worldmap'?worldMap():canvas(p.scene,{})}</div>
+    <div class="kami-body">
+     ${p.kicker?`<div class="kicker">${p.kicker}</div>`:''}
+     ${p.lines?`<div class="prose">${p.lines.map(l=>`<p>${l}</p>`).join('')}</div>`:''}
+     ${p.fragment?`<div class="fragment"><span class="mono">FRAGMENT</span><p>「${p.fragment}」</p></div>`:''}
+     ${p.comm?H.comm(p.comm,p.stamp):''}
+    </div>
+   </div>
+   <div class="btnrow">${S.i>0?`<button class="ghost" data-nav="sback">戻る</button>`:''}<button class="primary" data-nav="snext">${last?S.doneLabel||'次へ':'次へ'}</button></div>
+  </div>`;
+}
+function renderFin(){
+  const P=profile();
+  const tiles=P.rows.map(r=>`<div class="rt ${r.cls}"><span class="n">${pad2(r.i+1)}</span><span class="m">${r.mark}</span></div>`).join('');
+  return `<div class="stack title-screen">
+   ${logo(true)}<div class="eyebrow">End of transmission</div><h1 class="big">FIN</h1>
+   <p class="lead">九つの言語は、いまも太平洋の真ん中で話され続けている。<br>通訳の席は、空いたままだ。</p>
+   <div class="card report">
+    <div class="eyebrow">Field report · 調査記録</div>
+    <div class="rlabel">あなたの調査記録に残った称号</div>
+    <div class="rtitle">《${P.title}》</div>
+    <p class="rdesc">${P.desc}</p>
+    <div class="rstats">
+     <div><span class="k">解明した言語</span><span class="v">${P.cleared}<small>/9</small></span></div>
+     <div><span class="k">一度で解明</span><span class="v">${P.first}<small>/9</small></span></div>
+     <div><span class="k">失敗</span><span class="v">${P.fails}<small>回</small></span></div>
+     <div><span class="k">観察</span><span class="v">${P.obs}<small>回</small></span></div>
+     <div><span class="k">総プレイ時間</span><span class="v">${P.time}</span></div>
+     <div><span class="k">会議の通訳</span><span class="v">${P.s9}<small>/8</small></span></div>
+    </div>
+    <div class="rtiles">${tiles}</div>
+    <p class="rleg">◎ 一度で解明　○ やり直して解明（数字は失敗の回数）</p>
+    <ul class="rlines">${P.lines.map(l=>`<li>${l}</li>`).join('')}</ul>
+   </div>
+   <div class="card share big">
+    <div class="lbl">全クリおめでとう。よかったら、調査記録をSNSでシェアしてください</div>
+    <img id="rcard" class="rcard" alt="調査記録のカード画像" src="">
+    <ol class="howto"><li>上の画像を長押し（パソコンは右クリック）して保存する</li><li>「X でポストする」を押し、保存した画像を添付する</li></ol>
+    <pre class="post" id="post">${esc(finalShareText())}\n${SHARE_URL}</pre>
+    <div class="btnrow"><a class="primary xbtn" href="${'https://twitter.com/intent/tweet?text='+encodeURIComponent(finalShareText())+'&url='+encodeURIComponent(SHARE_URL)}" target="_blank" rel="noopener">X でポストする</a><button class="ghost" data-copyimg="1">画像をコピー</button><button class="ghost" data-copy="1">文面をコピー</button></div>
+    <p class="focusline" id="copymsg" aria-live="polite"></p>
+   </div>
+   <div class="btnrow"><button class="ghost" data-nav="title">タイトルへ</button><button class="ghost" data-nav="map">作戦盤へ</button></div></div>`;
+}
+function renderMap(){
+  const done=STAGES.filter((s,i)=>G.prog.cleared[i]).length;
+  const rows=STAGES.map((s,i)=>{const un=isUnlocked(i),cl=!!G.prog.cleared[i];
+    return `<li><button class="stagerow ${cl?'cleared':''}" data-nav="stage" data-v="${i}" ${un?'':'disabled'}>
+      <span class="sn">${pad2(i+1)}</span><span class="st">${un?s.title:'？？？'}</span>
+      <span class="sc">${un?`${s.species}・${SITES[i].place}`:'未確認の反応'}${cl?`<br>解明：${s.concept}　<span class="reclink">▸ 調査記録を見る</span>`:''}</span></button></li>`;}).join('');
+  const frags=FRAG.map((f,i)=>({f,i})).sort((a,b)=>a.f.ord-b.f.ord).map(({f,i})=>G.prog.cleared[i]?`<span class="fr on">${f.text}</span>`:`<span class="fr">＿＿＿＿</span>`).join('');
+  return `<div class="stack">
+   <div class="head"><div class="eyebrow">第一接触言語班　作戦盤</div><h1>来訪者の着地点</h1></div>
+   <div class="portrait">${worldMap()}</div>
+   <div class="card"><div class="lbl">招集状（復元 ${fragCount()}/8）</div><p class="summons">${frags}</p></div>
+   <ol class="stages">${rows}</ol>
+   ${done===STAGES.length?`<button class="ghost" data-nav="epilogue">エピローグを見る</button>`:''}
+   ${Object.keys(G.prog.cleared).length?`<button class="ghost recbtn" data-nav="records" data-v="map">▤ 調査記録をまとめて見る</button>`:''}
+   <div class="small-links"><button class="linkbtn" data-nav="title">タイトルへ</button><button class="linkbtn" data-nav="unlock">すべてのステージを開放する</button><button class="linkbtn" data-nav="reset">記録を消去する</button></div>
+  </div>`;
+}
+function saveRecap(o){
+  const st=G.st,steps=(st.log||[]).slice().reverse().filter(l=>/^(あなた|信号を)/.test(l.text)).slice(-60).map(l=>({t:l.t,x:l.text,k:l.kind||''}));steps.push({t:'解明',x:o.title+'。'+String(o.text||'').replace(/<[^>]+>/g,''),k:'good'});
+  let note='';try{note=STAGES[G.cur].note;}catch(e){}
+  G.prog.rec=G.prog.rec||{};G.prog.rec[G.cur]={steps,extra:o.extra||'',note,fails:G.prog.fails[G.cur]||0,at:Date.now()};
+}
+function recapBlock(i,compact){
+  const r=(G.prog.rec||{})[i];if(!G.prog.cleared[i])return '';
+  if(!r)return `<div class="card recap"><div class="eyebrow">Field record · 前回の調査記録</div><p class="focusline">このステージを解明した記録は、この端末には残っていない。もう一度解明すると、ここに手順が記録される。</p></div>`;
+  const d=new Date(r.at),ds=`${d.getFullYear()}.${pad2(d.getMonth()+1)}.${pad2(d.getDate())}`;
+  const steps=r.steps.map((s,k)=>`<li class="${s.k}"><span class="t">${esc(s.t)}</span><span class="x">${esc(s.x)}</span><span class="m">${s.k==='good'?'○':s.k==='bad'?'×':''}</span></li>`).join('');
+  return `<div class="card recap">
+   <div class="eyebrow">Field record · 前回の調査記録</div>
+   <p class="focusline">${ds} に解明（それまでの失敗 ${r.fails}回）。これは前回あなたが出会った個体の記録だ。次の接触では、言葉や規則が変わっているかもしれない。</p>
+   <details ${compact?'':'open'}><summary>解明までにたどった手順（${r.steps.length}手）</summary>
+    <p class="rlegend"><span class="ok">○</span> 相手に通じた　<span class="ng">×</span> 相手を戸惑わせた</p>
+    <ol class="steps">${steps||'<li><span class="x">記録された手順はない。</span></li>'}</ol></details>
+   ${r.extra?`<details ${compact?'open':''}><summary>解いた答えと、相手の規則</summary><div class="recapx">${r.extra}</div></details>`:''}
+   ${r.note?`<details><summary>言語学ノートを読み返す</summary><div class="recapx note">${r.note}</div></details>`:''}
+  </div>`;
+}
+function renderRecords(){
+  const back=G.recBack||'map';
+  const list=STAGES.slice(0,8).map((s,i)=>{const cl=!!G.prog.cleared[i];
+    return `<details class="recrow" ${G.recOpen===i?'open':''}><summary><span class="sn">${pad2(i+1)}</span><span class="st">${cl?s.title:'？？？'}</span><span class="sc">${cl?s.species:'未解明'}</span></summary>
+    ${cl?recapBlock(i,true):'<p class="focusline" style="padding:8px 0">まだ解明していない。</p>'}</details>`;}).join('');
+  return `<div class="stack">
+   <div class="head"><div class="eyebrow">Field records · 第一接触言語班</div><h1>調査記録</h1></div>
+   <p class="lead">これまでに出会った来訪者たちの記録。どの手で通じ、どの手で戸惑わせたか。会議の前に、読み返しておこう。</p>
+   <div class="reclist">${list}</div>
+   <button class="primary" data-nav="${back==='intro'?'recback':'map'}">${back==='intro'?'会議の準備に戻る':'作戦盤へ戻る'}</button></div>`;
+}
+function renderIntro(){
+  const s=STAGES[G.cur],site=SITES[G.cur];
+  return `<div class="stack">${stageHead()}
+   <div class="site"><span>現場</span>${site.place}　<span class="mono">${site.coord}</span></div>
+   ${plate(G.cur)}
+   <button class="ghost listen" data-voice="${SPECIES_KEY[G.cur]}">▶ ${G.cur===8?'会議場の声を聞く':`${s.species}の声を聞く`}</button>
+   ${H.comm(BRIEF[G.cur],BRIEF_TS[G.cur])}
+   ${recapBlock(G.cur)}
+   <div class="card mission"><p class="mlead">${s.lead}</p><dl class="mis"><dt>目標</dt><dd>${s.rules[0]}</dd><dt>制限</dt><dd>${s.rules[1]}</dd><dt>失敗</dt><dd>${s.rules[2]}</dd></dl>
+   ${G.cur===8?`<button class="ghost recbtn" data-nav="records" data-v="intro">▤ これまでの調査記録を見返す<span>ウームの返し方、ポトラの品の順番、ツブラの記号……</span></button>`:''}
+   <button class="primary" data-nav="play">${G.prog.cleared[G.cur]?'もう一度接触する':'接触を開始する'}</button>
+   <button class="ghost" data-nav="map">作戦盤へ戻る</button></div></div>`;
+}
+function foldNote(n){const k=n.indexOf('</p>');if(k<0)return n;return n.slice(0,k+4)+`<details class="more"><summary>続きを読む</summary>${n.slice(k+4)}</details>`;}
+function renderEnd(){
+  const s=STAGES[G.cur],r=G.result,last=G.cur===STAGES.length-1;
+  const alog=(r.alog&&r.alog.length)?`<div><div class="lbl">${s.species}側の記録（一部開示）</div><div class="alog">${r.alog.map(t=>`<div>&gt; ${esc(t)}</div>`).join('')}</div></div>`:'';
+  if(!r.win){
+    const f=G.prog.fails[G.cur]||1,hs=s.hints.slice(0,Math.min(f,s.hints.length));
+    return `<div class="stack">${stageHead()}
+     <div class="card"><div class="eyebrow">Contact lost</div><h2>${esc(r.title)}</h2><p>${r.text}</p>${alog}</div>
+     <div class="card"><div class="lbl">現場メモ（失敗${f}回目${f<s.hints.length?'。失敗するたびに、メモが一行増える':''}）</div><ol class="hints">${hs.map(h=>`<li>${h}</li>`).join('')}</ol></div>
+     <div class="btnrow"><button class="primary" data-nav="play">もう一度挑戦する</button><button class="ghost" data-nav="map">作戦盤へ</button></div></div>`;
+  }
+  const next=last?`<button class="primary" data-nav="epilogue">エピローグへ</button>`:`<button class="primary" data-nav="interlude">断片を受け取る</button>`;
+  const finale=last?`<div class="card"><div class="eyebrow">All stages cleared</div><h2>九つの言語、九つの世界</h2>
+     <p>あなたが解き明かしたのは、単語ではなかった。言葉が世界を切り分ける、九通りのやり方だった。</p>
+     <ol>${STAGES.map(x=>`<li><b>${x.title}</b>　${x.concept}</li>`).join('')}</ol></div>`:'';
+  return `<div class="stack">${stageHead()}
+   <div class="card"><div class="eyebrow">Contact established</div><h2>${esc(r.title)}</h2><p>${r.text}</p>${r.extra||''}${alog}</div>
+   ${finale}
+   <div class="card note"><div class="eyebrow">Linguistics note</div><h3>言語学ノート：${s.concept}</h3>${foldNote(s.note)}<p class="focusline">※ 来訪者たちの言語はすべて架空です。解説で触れた人間の言語や研究は実在するものですが、説明のために単純化している部分があります。</p></div>
+   <div class="btnrow">${next}</div>
+   ${last?'':shareBlock(stageShareText(G.cur),false)}</div>`;
+}
+function nav(w,v){
+  if(w==='title')G.screen='title';
+  if(w==='prologue'){startStory('PROLOGUE',PROLOGUE,'prologue');G.story.doneLabel='任務を開始する';}
+  if(w==='snext'){const S=G.story;if(S.i<S.pages.length-1){S.i++;const pv=S.pages[S.i].voice;if(pv)setTimeout(()=>voice(pv[0],pv[1]),500);}else storyDone(S.done);}
+  if(w==='sback'){G.story.i=Math.max(0,G.story.i-1);}
+  if(w==='map')G.screen='map';
+  if(w==='records'){G.recBack=v||'map';G.recOpen=null;G.screen='records';}
+  if(w==='recback'){G.cur=8;G.screen='intro';}
+  if(w==='stage'){G.cur=+v;G.screen='intro';}
+  if(w==='play'){G.st=STAGES[G.cur].init();G.st.t0=Date.now();G.st._bad=0;G.st._obs=0;G.screen='play';const S=STAGES[G.cur];if(S.onStart)setTimeout(()=>{if(G.screen==='play')S.onStart(G.st);},450);}
+  if(w==='interlude'){startStory(`INTERLUDE ${G.cur+1}`,interludePages(G.cur),'next');G.story.doneLabel=`次の現場へ`;}
+  if(w==='epilogue'){startStory('EPILOGUE',EPILOGUE,'fin');G.story.doneLabel='おわり';}
+  if(w==='next'){G.cur=Math.min(STAGES.length-1,G.cur+1);G.screen='intro';}
+  if(w==='unlock'){G.prog.unlockAll=true;save();}
+  if(w==='reset'){G.prog={cleared:{},fails:{},unlockAll:false,seenPrologue:false};save();G.screen='title';}
+  render();window.scrollTo(0,0);
+}
+function storyDone(d){
+  if(d==='prologue'){G.prog.seenPrologue=true;save();G.cur=0;G.screen='intro';}
+  else if(d==='next'){G.cur=Math.min(STAGES.length-1,G.cur+1);G.screen='intro';}
+  else if(d==='fin')G.screen='fin';
+}
+document.addEventListener('click',e=>{
+  const au=e.target.closest('[data-au]');
+  if(au){auInit();AU.on=!AU.on;AU.bgm=AU.se=AU.on;if(AU.on)musicStart();else{musicStop();try{speechSynthesis.cancel();}catch(e){}}auSave();$('#bar').innerHTML=audioBar();if(AU.se)se('click');return;}
+  if(auInit()){auResume();if(AU.bgm&&!AU.playing)musicStart();}
+  const vb=e.target.closest('[data-voice]');if(vb){const k=vb.dataset.voice;k==='all'?chorus(true):voice(k);return;}
+  if(e.target.closest('[data-copyimg]')){se('click');copyCard();return;}
+  if(e.target.closest('[data-copy]')){se('click');copyPost();return;}
+  if(e.target.closest('.xbtn')){se('good');return;}
+  const b=e.target.closest('[data-nav],[data-a]');if(!b||b.disabled)return;
+  se(b.dataset.nav==='snext'||b.dataset.nav==='sback'?'page':'click');
+  if(b.dataset.nav){nav(b.dataset.nav,b.dataset.v);return;}
+  if(G.screen!=='play'||!G.st||G.st.over)return;
+  if(['wait','obs','show'].includes(b.dataset.a))G.st._obs++;
+  const r=STAGES[G.cur].act(G.st,b.dataset.a,b.dataset.v);
+  if(G.screen==='play'&&r!==false)render();
+});
+document.addEventListener('input',e=>{if(G.screen==='play'&&STAGES[G.cur].input)STAGES[G.cur].input(G.st,e.target);});
+setInterval(()=>{if(G.screen==='play'&&G.st&&!G.st.over&&STAGES[G.cur].tick)STAGES[G.cur].tick(G.st);},250);
+/* ===== Stage 1: ミミク ===== */
+STAGES.push((()=>{
+const NAME={apple:'りんご',stone:'石',shell:'貝殻'};
+const TRUTH={kaa:'話し手が持っている物',tii:'聞き手が持っている物',ruu:'どちらも持っていない物'};
+const MAXT=20;
+const CONS=['k','t','r','m','n','s','p','l'],VOW=['a','i','u','o','e'];
+function shuf(a){const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[b[i],b[j]]=[b[j],b[i]];}return b;}
+function makeLex(){const c=shuf(CONS),v=shuf(VOW);return {kaa:c[0]+v[0]+v[0],tii:c[1]+v[1]+v[1],ruu:c[2]+v[2]+v[2]};}
+const L=(st,r)=>st.lex[r];
+const rel=(st,it,p)=>{const h=st.holder[it];return h==='ground'?'ruu':(h===p?'kaa':'tii');};
+function alienSay(st,it){const w=rel(st,it,'alien');voice('mimik',L(st,w));st.heard[w]=true;st.say=w;st.face=it;return w;}
+function once(st,k){if(st.flags[k])return false;st.flags[k]=true;return true;}
+function extra(st){
+  const rows=['kaa','tii','ruu'].map(w=>`<tr><td>${L(st,w)}</td><td>${st.heard[w]?(esc(st.notes[w].t)||'<span class="focusline">（未記入）</span>'):'<span class="focusline">聞いていない</span>'}</td><td>${TRUTH[w]}</td></tr>`).join('');
+  return `<div class="stats"><div><span class="k">使用ターン</span><span class="v">${Math.min(st.turn,MAXT)}</span></div><div><span class="k">警戒反応</span><span class="v">${st.alert}</span></div><div><span class="k">正しく使えた語</span><span class="v">${Object.keys(st.correct).length}/3</span></div><div><span class="k">言い間違い</span><span class="v">${st.wrongs}</span></div></div>
+  <div><div class="lbl">仮説ノートの答え合わせ</div><div class="scroll"><table class="cmp"><tr><th>語</th><th>あなたの仮説</th><th>本当の意味</th></tr>${rows}</table></div></div>`;
+}
+function spend(st){if(st.over)return;st.ap--;if(st.ap<=0)endTurn(st);}
+function endTurn(st){
+  if(st.over)return;
+  if(st.returnQ.length){const it=st.returnQ.shift();st.holder[it]='ground';const w=alienSay(st,it);st.mood='neutral';
+    say(st,`（ターン終了）ミミクは${NAME[it]}を地面に置き、「${L(st,w)}」と言った。`);}
+  else if(Math.random()<0.6){const its=Object.keys(NAME);const it=its[Math.floor(Math.random()*its.length)];const w=alienSay(st,it);st.mood='calm';
+    say(st,`（ターン終了）ミミクは${NAME[it]}の方へ向き直り、「${L(st,w)}」と小さく言った。`);}
+  else{st.say='';st.mood='neutral';st.face=null;say(st,'（ターン終了）ミミクはゆっくり体を揺らしている。');}
+  st.offered=null;st.turn++;st.ap=3;
+  if(st.turn>MAXT){st.alog.push('地球側に大型の機械が集まってきた。接触を打ち切る。');
+    lose({title:'時間切れ',text:'地球側の軍が交渉失敗と判断し、介入してきた。',alog:st.alog.slice(-6),extra:extra(st)});}
+}
+const A={
+  show(st,it){st.focus=it;const w=alienSay(st,it);st.mood='interest';
+    say(st,`あなたは${NAME[it]}を掲げて見せた。ミミクは黄色く明滅し、「${L(st,w)}」と言った。`);
+    if(once(st,'show'))st.alog.push('地球個体が所有物を提示。友好的と判定。');},
+  face(st,it){st.focus=it;const w=alienSay(st,it);st.mood='calm';
+    say(st,`あなたは体ごと${NAME[it]}の方へ向き直った。ミミクも同じ方へ向き直り、青く光って「${L(st,w)}」と言った。`,'good');
+    if(once(st,'face'))st.alog.push('地球個体が正しい指示動作を行った。学習能力あり。');},
+  point(st,it){st.alert++;st.mood='alert';st.say='';st.face='you';
+    say(st,`あなたは${NAME[it]}を指差した。ミミクの体に赤い斑点が浮かんだ。`,'bad');
+    st.alog.push(`地球個体、照準動作（${st.alert}回目）。対象：${NAME[it]}。`);
+    if(st.alert>=3){st.alog.push('照準動作3回。敵対個体と判定。防衛行動に移る。');
+      lose({title:'ミミクは姿を消した',text:'赤い斑点が全身に広がった直後、ミミクは地面に沈むように姿を消した。何がいけなかったのか、ミミクは教えてくれなかった。',alog:st.alog.slice(-6),extra:extra(st)});}},
+  place(st,it){st.holder[it]='ground';if(st.offered===it)st.offered=null;st.focus=it;const w=alienSay(st,it);st.mood='interest';
+    say(st,`あなたは${NAME[it]}を地面に置いた。ミミクはそちらに体を向け、「${L(st,w)}」と言った。`);},
+  pick(st,it){st.holder[it]='player';st.focus=it;const w=alienSay(st,it);st.mood='interest';
+    say(st,`あなたは${NAME[it]}を拾い上げた。ミミクは「${L(st,w)}」と言った。`);},
+  offer(st,it){st.offered=it;st.focus=it;st.mood='interest';st.say='';st.face=it;
+    say(st,`あなたは${NAME[it]}をミミクの方へ差し出した。ミミクはじっと見つめているが、受け取ろうとはしない。`);
+    if(once(st,'offer'))st.alog.push('地球個体が物を差し出した。合図を待つ。');},
+  give(st,it){st.holder[it]='alien';st.returnQ.push(it);if(st.offered===it)st.offered=null;st.focus=it;const w=alienSay(st,it);st.mood='interest';
+    say(st,`あなたは${NAME[it]}を手渡した。ミミクは受け取って「${L(st,w)}」と言った。`);
+    st.alog.push('地球個体が物を手放した。交換の合図なし。意図不明。');},
+};
+function speak(st,w){
+  if(!st.focus){st.mood='confused';st.say='';say(st,`あなたは「${L(st,w)}」と言った。ミミクは黄色く明滅しただけだった。`);return;}
+  const it=st.focus;
+  if(st.offered===it&&w==='tii'&&st.holder[it]==='player'){
+    if(Object.keys(st.correct).length>=3){
+      st.holder[it]='alien';st.holder[st.alienItem]='player';st.mood='calm';st.say='kaa';G.prog.lex1=st.lex;
+      st.alog.push(`地球個体が「あなたの物」と告げて${NAME[it]}を差し出した。交換成立。対話可能な種族と判定。`);
+      win({title:'交換成立',text:`あなたが「${L(st,'tii')}」と言って${NAME[it]}を差し出すと、ミミクは青く輝いてそれを受け取り、「${L(st,'kaa')}」と言った。そして自分の${NAME[st.alienItem]}をあなたの手に置いた。`,alog:st.alog.slice(-6),extra:extra(st)});return;}
+    st.mood='confused';st.say='';st.face=it;
+    say(st,`あなたは差し出した${NAME[it]}を示して「${L(st,'tii')}」と言った。ミミクは${NAME[it]}とあなたを交互に見ている。`);return;
+  }
+  const r=rel(st,it,'player');
+  if(w===r){const nw=!st.correct[w];st.correct[w]=true;st.mood='calm';st.say=w;st.face=it;
+    say(st,`あなたは${NAME[it]}について「${L(st,w)}」と言った。ミミクは青く光り、「${L(st,w)}」と繰り返した。`,'good');
+    if(nw)st.alog.push(`地球個体が語「${L(st,w)}」を正しく使った。`);
+  }else{st.wrongs++;const aw=alienSay(st,it);st.mood='confused';
+    say(st,`あなたは${NAME[it]}について「${L(st,w)}」と言った。ミミクは黄色く明滅し、${NAME[it]}に向き直って「${L(st,aw)}」と言った。`,'bad');}
+}
+function positions(st){
+  const z={alien:[],ground:[],player:[]};Object.keys(NAME).forEach(it=>z[st.holder[it]].push(it));
+  const p={};z.alien.forEach((it,i)=>p[it]={x:232+i*40,y:150});z.ground.forEach((it,i)=>p[it]={x:130+i*55,y:196});z.player.forEach((it,i)=>p[it]={x:140+i*80,y:242});return p;
+}
+function itemSvg(st,it,x,y){
+  let g='';
+  if(it==='apple')g=`<circle cx="${x}" cy="${y}" r="12" fill="#c8453b"/><path d="M${x} ${y-12} q2 -6 6 -7" stroke="#5a4020" stroke-width="2" fill="none"/><ellipse cx="${x+5}" cy="${y-15}" rx="4" ry="2" fill="#5f8c3c"/>`;
+  if(it==='stone')g=`<ellipse cx="${x}" cy="${y+2}" rx="15" ry="10" fill="#8b8f93"/><ellipse cx="${x-4}" cy="${y-1}" rx="6" ry="3" fill="#a9adb1"/>`;
+  if(it==='shell')g=`<path d="M${x-13} ${y+8} Q${x} ${y-22} ${x+13} ${y+8} Z" fill="#e8c9a8" stroke="#b58a62" stroke-width="1.5"/><path d="M${x} ${y+8} L${x} ${y-8} M${x-6} ${y+8} L${x-3} ${y-5} M${x+6} ${y+8} L${x+3} ${y-5}" stroke="#b58a62" stroke-width="1.2"/>`;
+  const sel=st.sel===it?`<circle class="selring" cx="${x}" cy="${y}" r="20"/>`:'';
+  const off=st.offered===it?`<text x="${x}" y="${y-22}" text-anchor="middle" font-size="10" fill="var(--accent)" font-family="var(--body)">差し出し中</text>`:'';
+  return `<g class="item" data-a="sel" data-v="${it}">${sel}${g}${off}<circle cx="${x}" cy="${y}" r="22" fill="transparent"/></g>`;
+}
+function scene(st){
+  const p=positions(st);let deg=0;
+  if(st.face&&st.face!=='you'&&p[st.face])deg=Math.max(-20,Math.min(20,(p[st.face].x-180)/6));
+  if(st.mood==='confused')deg+=9;
+  const mv={neutral:'--al-neutral',calm:'--al-calm',interest:'--al-interest',alert:'--al-alert',confused:'--al-confused'}[st.mood];
+  const crouch=st.mood==='alert'?' translateY(8px) scaleY(.9)':'';
+  const spots=[[168,78],[192,92],[176,104]].map((s,i)=>`<circle class="spot" cx="${s[0]}" cy="${s[1]}" r="5" fill="#d2463c" opacity="${i<st.alert?1:0}"/>`).join('');
+  return `<svg viewBox="0 0 360 270" role="img" aria-label="着陸地点の草原。上にミミク、下にあなたの手元">
+  <defs><linearGradient id="fld1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--field-a)"/><stop offset="1" stop-color="var(--field-b)"/></linearGradient></defs>
+  <rect width="360" height="270" fill="url(#fld1)"/>
+  <line x1="20" y1="172" x2="340" y2="172" stroke="var(--zone)" stroke-dasharray="3 5"/><line x1="20" y1="220" x2="340" y2="220" stroke="var(--zone)" stroke-dasharray="3 5"/>
+  <text x="24" y="165" font-size="10" fill="var(--muted)" font-family="var(--body)">ミミクの手元</text><text x="24" y="213" font-size="10" fill="var(--muted)" font-family="var(--body)">地面</text><text x="24" y="262" font-size="10" fill="var(--muted)" font-family="var(--body)">あなたの手元</text>
+  <g id="alien" style="transform:rotate(${deg}deg)${crouch}">
+    <ellipse cx="180" cy="132" rx="34" ry="6" fill="#000" opacity=".12"/>
+    <path id="alienBody" d="M180 44 C204 44 214 78 212 104 C210 126 196 132 180 132 C164 132 150 126 148 104 C146 78 156 44 180 44 Z" fill="var(${mv})" stroke="var(--ink)" stroke-width="1.5"/>
+    <g fill="var(--ink)" opacity=".75"><circle cx="170" cy="66" r="3"/><circle cx="180" cy="62" r="3.4"/><circle cx="190" cy="66" r="3"/></g>
+    <path d="M160 112 q20 8 40 0" stroke="var(--ink)" stroke-width="1.2" fill="none" opacity=".4"/>${spots}
+  </g>${Object.keys(p).map(it=>itemSvg(st,it,p[it].x,p[it].y)).join('')}</svg>`;
+}
+function view(st){
+  const it=st.sel,h=it?st.holder[it]:null;
+  const can={show:h==='player',face:!!it,point:!!it,place:h==='player',pick:h==='ground',offer:h==='player'&&st.offered!==it,give:h==='player'};
+  const lab={show:['見せる','掲げる'],face:['体を向ける','全身で示す'],point:['指差す','指で示す'],place:['置く','地面へ'],pick:['拾う','地面から'],offer:['差し出す','持ったまま'],give:['手渡す','押しつける']};
+  const chips=Object.keys(NAME).map(k=>`<button class="chip" data-a="sel" data-v="${k}" aria-pressed="${st.sel===k}">${NAME[k]}<small>${{player:'手元',ground:'地面',alien:'ミミク'}[st.holder[k]]}</small></button>`).join('');
+  const acts=Object.keys(lab).map(a=>H.act('do',lab[a][0],lab[a][1],!can[a],a)).join('');
+  const words=['kaa','tii','ruu'].map(w=>st.heard[w]?`<button class="word" data-a="say" data-v="${w}">${L(st,w)}</button>`:'').join('');
+  const focus=st.focus?`<b>${NAME[st.focus]}</b>${st.offered===st.focus?'（差し出し中）':''}`:'なし';
+  const notes=['kaa','tii','ruu'].map(w=>{
+    if(!st.heard[w])return `<div class="note-row"><span class="w" style="color:var(--muted)">???</span><span class="focusline">まだ聞いていない言葉</span></div>`;
+    const n=st.notes[w];const stars=[1,2,3].map(i=>`<button class="star ${i<=n.c?'on':''}" data-a="star" data-v="${w}:${i}" aria-label="確信度${i}">★</button>`).join('');
+    return `<div class="note-row"><span class="w">${L(st,w)}</span><input id="s1-note-${w}" data-note="${w}" placeholder="意味の仮説を書く" value="${esc(n.t)}"><div class="stars">確信度 ${stars}</div></div>`;}).join('');
+  return `${H.status(H.num('ターン',`${pad2(st.turn)}/${MAXT}`),H.pips('行動力',st.ap,3),H.pips('警戒反応',st.alert,3,true))}
+  <div class="stage">${canvas('s1',{mood:st.mood,alert:st.alert,tilt:st.mood==='confused'?2:({apple:-2,stone:0,shell:2}[st.face]||0),h:st.holder,sel:st.sel})}<div class="bubble" data-empty="${st.say?0:1}">${st.say?`「${L(st,st.say)}」`:'&nbsp;'}</div></div>
+  ${H.narr(st.narr)}
+  <div><div class="lbl">対象を選ぶ</div><div class="chips">${chips}</div></div>
+  <div><div class="lbl">行動（行動力を1使う）</div><div class="acts">${acts}</div></div>
+  <div><div class="lbl">聞いた言葉を話す　<span class="focusline">話題：${focus}</span></div><div class="words">${words||'<span class="focusline">まだ何も聞き取れていない</span>'}</div></div>
+  <button class="wait" data-a="wait">待つ（ターンを終えて、ミミクの様子を見る）</button>
+  <div class="tabs" role="tablist"><button class="tab" role="tab" data-a="tab" data-v="log" aria-selected="${st.tab==='log'}">観察ログ</button><button class="tab" role="tab" data-a="tab" data-v="note" aria-selected="${st.tab==='note'}">仮説ノート</button></div>
+  ${st.tab==='log'?H.log(st.log,' '):`<div>${notes}<p class="focusline" style="margin-top:8px">正解は表示されない。答え合わせはステージ終了時に行う。</p></div>`}`;
+}
+return {
+  title:'三つの言葉',species:'ミミク',concept:'直示（ダイクシス）とガヴァガイ問題',
+  lead:'草原のミミクは、三つの言葉しか話さない。言葉の音は、接触のたびに違って聞こえる。',
+  rules:['こちらの品と、ミミクの品を交換する', '20ターン（1ターンに3回行動）', 'ミミクの赤い斑点が3つそろう'],
+  hints:['ミミクは一度も、何かを手で示したことがない。','同じ品なのに、ミミクの呼び方が変わった瞬間がある。そのとき、その品の何が変わっていたか。','ミミクは、あなたが三つの言葉をすべて使いこなせるまで、取引に応じないようだ。日本語で、自分の手元の物と相手の手元の物は、どう呼び分けるだろう。'],
+  init(){const its=shuf(['apple','stone','shell']),holder={};holder[its[0]]='alien';holder[its[1]]='player';holder[its[2]]='player';return {lex:makeLex(),alienItem:its[0],turn:1,ap:3,alert:0,holder,sel:its[1],focus:null,offered:null,heard:{},correct:{},notes:{kaa:{t:'',c:0},tii:{t:'',c:0},ruu:{t:'',c:0}},log:[],alog:[],mood:'neutral',face:null,say:'',tab:'log',wrongs:0,returnQ:[],flags:{},narr:{text:'草原に着陸した異星人「ミミク」が、こちらを見ている。',kind:''}};},
+  view,
+  act(st,a,v){
+    if(a==='sel'){st.sel=v;return;}
+    if(a==='tab'){st.tab=v;return;}
+    if(a==='star'){const [w,i]=v.split(':');st.notes[w].c=(st.notes[w].c==+i)?0:+i;return;}
+    if(a==='wait'){endTurn(st);return;}
+    if(a==='do'){A[v](st,st.sel);spend(st);return;}
+    if(a==='say'){speak(st,v);spend(st);return;}
+  },
+  input(st,el){const w=el.dataset&&el.dataset.note;if(w)st.notes[w].t=el.value;},
+  get note(){const X=(G.st&&G.st.lex)||G.prog.lex1||{kaa:'kaa',tii:'tii',ruu:'ruu'};return `<p>あなたが出会ったミミクの「${X.kaa}」「${X.tii}」「${X.ruu}」は、物の名前ではなかった。話し手と聞き手から見て、その物が誰の側にあるかを表す語だった。発話の場面によって指す対象が変わるこうした語を、言語学では<b>直示（ダイクシス）</b>と呼ぶ。</p>
+  <p>日本語の「こ・そ・あ」も、この仕組みで説明されることがある。「これ」は話し手の領域、「それ」は聞き手の領域、「あれ」はどちらでもない所にある物を指す、という整理だ（人称区分説）。ただし、こそあを話し手からの距離（近い・中くらい・遠い）で説明する立場や、三つが並んで対立するのではなく二つずつの対立が重なっていると見る立場（三上章など）もある。話し手と聞き手が並んで同じものを見ているときは、距離で使い分けているように見える場面も多い。実際のこそあは、ひとつの原理だけでは説明しきれない。ミミクの三語は、そのうち人称で区切る考え方だけを、純粋な形で取り出した架空の体系だ。だから、あなたが持つ品をミミクは「${X.tii}（それ）」と呼び、あなた自身がそれを言うときは「${X.kaa}（これ）」が正しい。</p>
+  <p>最初に「${X.tii} = りんご」のように記録したなら、あなたは哲学者クワインの<b>ガヴァガイ問題</b>を実体験している。現地の人がウサギを見て「ガヴァガイ」と言っても、それが「ウサギ」なのか「ウサギの一部」なのか「ウサギが現れた出来事」なのかは、指差しだけでは決まらない。</p>
+  <p>指差しの意味も普遍ではない。唇を突き出して方向を示す習慣は、ラオス語の話者や、パナマのクナの人々などで報告されている。</p>
+  <cite>参考：W. V. O. Quine, Word and Object (1960)／佐久間鼎『現代日本語の表現と語法』(1936)／三上章『文法小論集』(1970)／N. J. Enfield, ‘Lip-pointing’: A discussion of form and function with reference to data from Laos, Gesture 1(2): 185–211 (2001)／J. Sherzer, Verbal and nonverbal deixis: the pointed lip gesture among the San Blas Cuna, Language in Society 2(1): 117–131 (1973)</cite>`;}
+};
+})());
+/* ===== Stage 2: ウーム ===== */
+STAGES.push((()=>{
+const MAXB=72,TPB=4,BEAT_MS=1300,FAST_MS=260,TURN=17;
+const inv=a=>a.map(t=>t==='高'?'低':'高'),rev=a=>[...a].reverse();
+const RULES={ri:{f:a=>inv(rev(a)),d:'呼びかけを<b>逆から読み、高と低を入れ替えて</b>返す'},r:{f:rev,d:'呼びかけを<b>逆から読んで</b>返す'},i:{f:inv,d:'呼びかけの<b>高と低を入れ替えて</b>返す'},rot:{f:a=>inv(a.slice(1).concat(a[0])),d:'呼びかけの<b>最初の音を最後に回し、高と低を入れ替えて</b>返す'}};
+const rnd=n=>Array.from({length:n},()=>Math.random()<.5?'高':'低');
+function makePuzzle(){
+  const keys=Object.keys(RULES);
+  for(let tries=0;tries<500;tries++){
+    const rule=keys[Math.random()*keys.length|0],P1=rnd(3),P2=rnd(4),Q=rnd(4),f=RULES[rule].f;
+    if(new Set(P1).size<2||new Set(P2).size<2||new Set(Q).size<2)continue;
+    const ok=keys.every(k=>k===rule||RULES[k].f(P1).join()!==f(P1).join()||RULES[k].f(P2).join()!==f(P2).join());
+    const uniq=keys.every(k=>k===rule||RULES[k].f(Q).join()!==f(Q).join());
+    if(ok&&uniq&&f(Q).join()!==Q.join())return {rule,P1,P2,Q,R1:f(P1),R2:f(P2),EXP:f(Q)};
+  }
+  const f=RULES.ri.f,P1=['高','低','低'],P2=['低','低','高','高'],Q=['低','高','低','低'];return {rule:'ri',P1,P2,Q,R1:f(P1),R2:f(P2),EXP:f(Q)};
+}
+const beat=st=>Math.floor(st.tick/TPB);
+function sched(st,start,arr,who){arr.forEach((t,i)=>st.sched[start+i]={who,tone:t});}
+function fear(st,text){st.fear++;say(st,text,'bad');st.alog.push(`地球個体の発声に危険を感じた（${st.fear}回目）。`);
+  if(st.fear>=3){st.alog.push('殻を閉じる。');lose({title:'ウームは殻を閉じた',text:'発光帯が消え、殻の合わせ目が静かに閉じた。一度閉じた殻が再び開くのは、数十年後だという。',alog:st.alog.slice(-6)});}}
+function extra(st){return `<div class="stats"><div><span class="k">経過した拍</span><span class="v">${beat(st)}</span></div><div><span class="k">恐怖反応</span><span class="v">${st.fear}</span></div><div><span class="k">返事の試み</span><span class="v">${st.attempts}</span></div></div>
+<div class="scroll"><table class="cmp"><tr><th>場面</th><th>呼びかけ</th><th>応答</th></tr><tr><td>観察1</td><td>${st.P.P1.join('・')}</td><td>${st.P.R1.join('・')}</td></tr><tr><td>観察2</td><td>${st.P.P2.join('・')}</td><td>${st.P.R2.join('・')}</td></tr><tr><td>あなたへ</td><td>${st.P.Q.join('・')}</td><td>${st.P.EXP.join('・')}</td></tr></table></div>
+<p class="focusline">今回のウームの返し方：${RULES[st.P.rule].d}。そして一拍に一音、相手が話し終えてから。</p>`;}
+function openBeat(st,b){
+  if(st.over)return;
+  if(b>=MAXB){st.alog.push('日没。応答なし。');lose({title:'日没',text:'日が沈み、ウームの光は消えた。次に目覚めるのは、ずっと先のことだ。',alog:st.alog.slice(-6)});return;}
+  if(st.events[b])say(st,st.events[b]);
+  if(st.sched[b])voice('uum',{tone:st.sched[b].tone,far:st.sched[b].who==='B',short:true});
+}
+function record(st,who,start,len){st.rec.push({who,start,len});}
+function closeBeat(st,b){
+  const mine=st.pt[b]||[];
+  if(mine.length>1)fear(st,'ウームの発光帯が激しく乱れ、殻の合わせ目がわずかに狭まった。');
+  if(st.over||!st.addressed||b<=st.qEnd)return;
+  if(mine.length){if(!st.replying){st.replying=true;st.reply=[];}st.reply.push(mine.length>1?'×':mine[0]);return;}
+  if(st.replying){st.replying=false;evaluate(st,b);return;}
+  if(b-st.qEnd>=8)repeatQ(st,b+2);
+}
+function repeatQ(st,start){const Q=st.P.Q;sched(st,start,Q,'A');st.qStart=start;st.qEnd=start+Q.length-1;record(st,'ウーム → あなた',start,Q.length);st.events[start]='ウームが、もう一度あなたに語りかけている。';st.events[st.qEnd+1]='ウームは沈黙している。';}
+function evaluate(st,b){
+  st.attempts++;const r=st.reply;
+  st.rec.push({who:'あなた → ウーム',tones:r.slice()});
+  if(r.join()===st.P.EXP.join()){st.alog.push('地球個体が応答した。正しい返し。対話可能。');G.prog.uum=st.P.rule;
+    win({title:'挨拶が成立した',text:'あなたの最後の音が消えると、ウームの発光帯がゆっくりと満ちていった。谷の向こうで、遠くの仲間も呼応するように光った。',alog:st.alog.slice(-6),extra:extra(st)});return;}
+  say(st,`あなたは〔${r.join('・')}〕と返した。ウームの発光帯は、暗いまま動かない。`);
+  st.alog.push(`地球個体の音列〔${r.join('・')}〕。応答として成立せず。`);
+  repeatQ(st,b+2);
+}
+function advance(st,n){for(let i=0;i<n&&!st.over;i++){st.tick++;if(st.tick%TPB===0){const b=st.tick/TPB;closeBeat(st,b-1);if(!st.over){if(b===st.qStart&&!st.addressed)st.addressed=true;openBeat(st,b);}}}}
+function tone(st,t){
+  if(!st.run)return;const b=beat(st);(st.pt[b]=st.pt[b]||[]).push(t);se('tone',t);
+  if(st.sched[b])fear(st,`あなたの「${t}」が${st.sched[b].who==='A'?'ウーム':'遠くの仲間'}の光と重なった。ウームの発光帯が大きく揺らいだ。`);
+  else say(st,`あなたは「${t}」と声を出した。`);
+}
+function glow(st,who){const s=st.sched[beat(st)];if(!s||s.who!==who)return {op:.15,y:0};return s.tone==='高'?{op:1,y:-6}:{op:.55,y:6};}
+function art(st){
+  const a=glow(st,'A'),p=glow(st,'B'),facing=beat(st)>=st.turnBeat;
+  return `<svg viewBox="0 0 360 150" role="img" aria-label="ウームが${facing?'あなた':'遠くの仲間'}の方を向いている">
+  <defs><linearGradient id="sky2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--night-a)"/><stop offset="1" stop-color="var(--night-b)"/></linearGradient></defs>
+  <rect width="360" height="150" fill="url(#sky2)"/><rect y="118" width="360" height="32" fill="#2c3a2f"/>
+  <g transform="translate(292 96)"><ellipse cx="0" cy="22" rx="26" ry="6" fill="#000" opacity=".25"/><path d="M-24 22 Q-26 -6 0 -10 Q26 -6 24 22 Z" fill="#5b6470"/><rect x="-18" y="${2+p.y/2}" width="36" height="5" rx="2.5" fill="#f3d27a" opacity="${p.op}"/></g>
+  <g transform="translate(130 72)"><ellipse cx="0" cy="48" rx="66" ry="10" fill="#000" opacity=".25"/><path d="M-62 48 Q-66 -20 0 -30 Q66 -20 62 48 Z" fill="#6c7684" stroke="#1b2338" stroke-width="1.5"/>
+  <rect x="-48" y="${6+a.y}" width="96" height="10" rx="5" fill="#f3d27a" opacity="${a.op}"/>
+  <path d="M${facing?-30:10} -10 q10 -6 20 0" stroke="#1b2338" stroke-width="2" fill="none" opacity=".6"/></g></svg>`;
+}
+function timeline(st){
+  const b=beat(st),from=0,to=Math.max(b+3,10),cols=to-from+1;
+  const rows=[['B','遠くの仲間'],['A','ウーム'],['P','あなた']];
+  let h=`<div class="tl" style="grid-template-columns:72px repeat(${cols},34px)">`;
+  rows.forEach(([w,l])=>{h+=`<span class="rl">${l}</span>`;for(let k=from;k<=to;k++){let txt='',cls='';
+    if(w==='P'){const m=st.pt[k]||[];if(m.length>1){txt='×';cls='x';}else if(m.length){txt=m[0];cls=m[0]==='高'?'hi':'lo';}}
+    else if(k<=b&&st.sched[k]&&st.sched[k].who===w){txt=st.sched[k].tone;cls=txt==='高'?'hi':'lo';}
+    h+=`<span class="c ${cls} ${k===b?'cur':''} ${k>b?'fut':''}">${txt}</span>`;}});
+  h+=`<span class="rl"></span>`;for(let k=from;k<=to;k++)h+=`<span class="bn">${k}</span>`;
+  return h+'</div>';
+}
+function recorder(st){
+  const b=beat(st);
+  const rows=st.rec.map(r=>{let tones=r.tones;if(!tones){tones=[];for(let k=r.start;k<r.start+r.len;k++){if(k<=b&&st.sched[k])tones.push(st.sched[k].tone);}}
+    return tones.length?`<li><span class="who">${r.who}</span>${tones.map(t=>`<b class="${t==='高'?'hi':'lo'}">${t}</b>`).join('')}</li>`:'';}).join('');
+  return `<div class="recorder"><div class="lbl">記録紙（聞き取れた音列）</div><ul>${rows||'<li class="focusline">まだ何も記録されていない。</li>'}</ul></div>`;
+}
+return {
+  title:'千年の挨拶',species:'ウーム',concept:'順番交替（ターンテイキング）と隣接ペア',
+  lead:'谷の岩「ウーム」は、発光帯の明滅で話す。一音が、とても長い。',
+  rules:['ウームの呼びかけに、正しく返事をする', '日没まで（時間はひとりでに流れる）', 'ウームの殻が閉じる'],
+  hints:['ウーム同士の会話を最後まで見届けたか。記録紙を見比べよう。','ウームを怯えさせているのは、何を言ったかではなく、言い方かもしれない。拍の進み具合をよく見よう。','記録紙で、呼びかけと応答を一音ずつ並べて比べよう。順番が変わっているのか、高低が変わっているのか、その両方か。ウームの返し方は、会うたびに違うらしい。'],
+  init(){const st={tick:0,fear:0,sched:{},pt:{},events:{},rec:[],addressed:false,replying:false,reply:[],qStart:19,qEnd:22,turnBeat:TURN,run:false,fast:false,lt:0,started:false,attempts:0,log:[],alog:[],narr:{text:'',kind:''}};
+    st.tlabel=()=>'拍'+pad2(beat(st));
+    const P=st.P=makePuzzle();sched(st,0,P.P1,'A');sched(st,4,P.R1,'B');sched(st,8,P.P2,'A');sched(st,12,P.R2,'B');sched(st,19,P.Q,'A');
+    record(st,'ウーム → 仲間',0,3);record(st,'仲間 → ウーム',4,3);record(st,'ウーム → 仲間',8,4);record(st,'仲間 → ウーム',12,4);record(st,'ウーム → あなた',19,4);
+    Object.assign(st.events,{0:'ウームが、遠くの仲間に向けて発光帯を明滅させ始めた。',4:'遠くの仲間の発光帯が明滅している。',7:'ウームの発光帯が、ふわりと明るんだ。',8:'ウームがまた、発光帯を明滅させ始めた。',12:'遠くの仲間の発光帯が明滅している。',16:'ウームの発光帯が、ふわりと明るんだ。',17:'ウームがゆっくりと、あなたの方へ向き直った。',19:'ウームの発光帯が、あなたに向けて明滅している。',23:'ウームは沈黙している。'});
+    st.narr={text:'谷は静かだ。「観察を始める」を押すと、時間が流れ始める。',kind:''};return st;},
+  view(st){const b=beat(st),t=st.tick%TPB;
+    return `${H.status(H.num('拍',`${pad2(b)}/${MAXB}`),H.pips('殻の閉じ具合',st.fear,3,true))}
+    <div class="stage">${(()=>{const g=w=>{const s=st.sched[beat(st)];return s&&s.who===w?(s.tone==='高'?2:1):0;};return canvas('s2',{a:g('A'),b:g('B'),face:beat(st)>=st.turnBeat});})()}</div>
+    <div><div class="lbl">いまの拍の進み具合</div><div class="beatbar"><i id="s2bar" style="width:${(t+1)/TPB*100}%"></i></div></div>
+    <div class="scroll tlwrap" id="tlwrap">${timeline(st)}</div><p class="focusline tlhint">← 左右にスクロールすると、過去の拍を見返せる</p>
+    ${H.narr(st.narr)}
+    <div><div class="lbl">声を出す</div><div class="acts two">${H.act('tone','低い音','',!st.run,'低')}${H.act('tone','高い音','',!st.run,'高')}</div></div>
+    <div class="s2ctl">${!st.started?`<button class="primary" data-a="start">▶ 観察を始める</button>`:`${H.act('pause',st.run?'❚❚ 一時停止':'▶ 再開','',false)}${H.act('fast',st.fast?'≫ 早送り中':'≫ 早送り',beat(st)<TURN?'話しかけられるまで':'もう使えない',beat(st)>=TURN||!st.run)}`}</div>
+    ${recorder(st)}
+    ${H.log(st.log)}`;},
+  tick(st){
+    if(!st.run||st.over)return;const now=Date.now(),per=(st.fast?FAST_MS:BEAT_MS)/TPB;let n=Math.floor((now-st.lt)/per);if(n<=0)return;
+    st.lt+=n*per;n=Math.min(n,TPB*6);const b0=beat(st);advance(st,n);
+    if(st.fast&&beat(st)>=TURN)st.fast=false;
+    if(G.screen!=='play'||G.st!==st)return;
+    if(beat(st)!==b0||st.over)render();else{const e=document.getElementById('s2bar');if(e)e.style.width=((st.tick%TPB)+1)/TPB*100+'%';}
+  },
+  act(st,a,v){
+    if(a==='start'){st.started=true;st.run=true;st.lt=Date.now();openBeat(st,0);return;}
+    if(a==='pause'){st.run=!st.run;if(st.run)st.lt=Date.now();return;}
+    if(a==='fast'){if(beat(st)<TURN)st.fast=!st.fast;return;}
+    if(a==='tone'){tone(st,v);return;}
+    if(a==='wait'){if(!st.started){st.started=true;openBeat(st,0);}st.run=st.run||false;const n=v==='beat'?TPB-(st.tick%TPB):v==='4'?TPB*4-(st.tick%TPB):1;advance(st,n);return;}
+  },
+  get note(){const k=(G.st&&G.st.P&&G.st.P.rule)||G.prog.uum||'ri';return `<p>ウームの挨拶には決まった型があった。あなたが出会ったウームの場合は、${RULES[k].d}。そして、相手が話し終えるまで決して重ねず、一拍に一音のテンポを守る。</p>
+  <p>人間の会話も、実は同じくらい厳密な規則で動いている。社会学者のサックス、シェグロフ、ジェファーソンは1974年、会話が「いま誰が話す番か」を精密に調整する仕組み、<b>順番交替（ターンテイキング）</b>で成り立っていることを示した。「挨拶には挨拶」「質問には答え」のように、前の発話が次の発話の型を決める組を<b>隣接ペア</b>と呼ぶ。ウームの返し方は、彼らの隣接ペアの第二部分だった。</p>
+  <p>10言語の会話で、「はい・いいえ」で答える質問と、その答えのあいだの間を比べた研究がある。最も多かった間（最頻値）は、どの言語でも0〜200ミリ秒だった。平均は言語によって7〜468ミリ秒とばらつきがあり、日本語は短い側、デンマーク語は長い側だった。人間は相手の発話の終わりを予測して、ほとんど間髪を入れずに話し始めている。</p>
+  <p>時間スケールの違いも、現実にある壁だ。コウモリの超音波は、録音を引き伸ばして初めて人の耳に聞こえる。ウームにとって人間の早口は、私たちにとっての超音波のようなものだった。</p>
+  <cite>参考：H. Sacks, E. Schegloff &amp; G. Jefferson, A simplest systematics for the organization of turn-taking for conversation, Language 50(4): 696–735 (1974)／T. Stivers et al., Universals and cultural variation in turn-taking in conversation, PNAS 106(26): 10587–10592 (2009)</cite>`;}
+};
+})());
+/* ===== Stage 3: ツブラ ===== */
+STAGES.push((()=>{
+const MAXT=10;
+const TH={water:{g:'≈',n:'水'},fruit:{g:'✿',n:'果実'},beast:{g:'✶',n:'獣'}};
+const PL={n:{g:'↑',n:'北'},s:{g:'↓',n:'南'},e:{g:'→',n:'東'},w:{g:'←',n:'西'}};
+const EV={seen:{g:'◉'},heard:{g:'◌'},infer:{g:'◇'}};
+const EVTRUE={seen:'自分の目で見た',heard:'他者から聞いた（伝聞）',infer:'痕跡から推測した'};
+const QS=[{thing:'water',place:'s',ev:'seen'},{thing:'beast',place:'w',ev:'infer'},{thing:'fruit',place:'n',ev:'heard'}];
+const OBS=[
+  '東から斥候の一匹が戻ってきた。体が濡れている。群れ全体に向けて〔≈〕〔→〕〔◉〕を掲げた。',
+  'その斥候のすぐそばにいた一匹が光を受け取り、巣の反対側の群れに向けて〔≈〕〔→〕〔◌〕を掲げた。この一匹は、巣から一歩も出ていない。',
+  '西の岩場を調べていた一匹が戻り、体で大きな足跡の形をなぞってみせた。群れ全体に向けて〔✶〕〔←〕〔◇〕を掲げた。',
+  '巣から一度も出ていない一匹が〔✿〕〔↑〕〔◉〕を掲げた。群れがざわめき、その一匹は群れの外へ押し出された。',
+  '若い一匹が、隣の一匹だけに向けて記号を見せた。群れ全体から強い光を浴びせられ、その若い一匹は縮こまった。'
+];
+const tr=st=>{st.turn++;if(st.turn>MAXT&&!st.over){st.alog.push('地球個体の情報、不十分。群れは移動を開始する。');lose({title:'群れは去った',text:'必要な情報が揃わないまま、ツブラの群れは次の土地へ移っていった。',alog:st.alog.slice(-6),extra:extra(st)});}};
+function distrust(st,text){voice('tsubura','bad');st.dis++;say(st,text,'bad');if(st.dis>=3){st.alog.push('地球個体を群れの外へ。以後、この個体の情報は受け取らない。');lose({title:'群れから追放された',text:'群れ全体があなたに背を向けた。あなたの言ったことは、もう誰にも中継されない。',alog:st.alog.slice(-6),extra:extra(st)});}}
+function extra(st){return `<div class="scroll"><table class="cmp"><tr><th>記号</th><th>本当の意味</th></tr>${Object.keys(EV).map(k=>`<tr><td>${EV[k].g}</td><td>${EVTRUE[k]}</td></tr>`).join('')}</table></div>
+<div class="scroll"><table class="cmp"><tr><th>問い</th><th>正しい答え</th></tr>${QS.map(q=>`<tr><td>${TH[q.thing].g}？</td><td>〔${TH[q.thing].g}〕〔${PL[q.place].g}〕〔${EV[q.ev].g}〕　${TH[q.thing].n}・${PL[q.place].n}・${EVTRUE[q.ev]}</td></tr>`).join('')}</table></div>`;}
+function send(st,mode){
+  const s=st.sel,q=QS[st.q];
+  if(!s.thing||!s.place||!s.ev){say(st,'記号が三つ揃っていない。物・場所・もう一つの記号を選んでから掲げよう。');return;}
+  const f=`〔${TH[s.thing].g}〕〔${PL[s.place].g}〕〔${EV[s.ev].g}〕`;
+  if(mode==='one'){st.alog.push('地球個体が群れの断片に話しかけた。無礼。');distrust(st,`あなたは手前の一匹だけに${f}を見せた。群れ全体が強い光をあなたに浴びせた。`);tr(st);return;}
+  if(s.thing!==q.thing){say(st,`あなたは群れ全体に${f}を掲げた。群れはゆらゆらと揺れ、同じ問いを掲げ直した。`);tr(st);return;}
+  if(s.place!==q.place){st.alog.push(`地球個体の情報${f}：斥候が確認、誤り。`);distrust(st,`あなたは${f}を掲げた。斥候の一匹が飛び出していき、しばらくして戻った。群れの光が一段暗くなった。`);tr(st);return;}
+  if(s.ev!==q.ev){
+    st.alog.push(`地球個体の情報${f}：内容は確認できた。しかし——`);distrust(st,`あなたは${f}を掲げた。斥候が戻ってきて、群れ全体に何かを掲げた。群れの半分があなたに体を向け、光を弱めた。`);tr(st);return;}
+  st.alog.push(`地球個体の情報${f}を受理。群れに共有。`);st.q++;
+  voice('tsubura','good');say(st,`あなたは群れ全体に${f}を掲げた。群れの全員が一斉に同じ記号を掲げ直した。情報が群れに共有された。`,'good');
+  st.sel={thing:null,place:null,ev:null};
+  if(st.q>=QS.length){st.alog.push('地球個体を、群れの情報源の一つとして認める。');win({title:'群れに迎え入れられた',text:'ツブラは、あなたを信頼できる情報源として群れの記憶に加えた。群れの外周に、あなたの居場所がひとつ空けられた。',alog:st.alog.slice(-6),extra:extra(st)});return;}
+  tr(st);
+}
+function art(st){
+  const q=QS[Math.min(st.q,QS.length-1)];const dots=[];
+  for(let i=0;i<26;i++){const a=i*2.4,r=8+i*2.1;dots.push(`<circle cx="${180+Math.cos(a)*r*1.5}" cy="${82+Math.sin(a)*r*.7}" r="7" fill="#9fb7c9" stroke="#2f4452" stroke-width="1.2"/>`);}
+  return `<svg viewBox="0 0 360 150" role="img" aria-label="ツブラの群れ"><rect width="360" height="150" fill="var(--field-b)"/>
+  ${dots.join('')}<text x="18" y="22" font-size="11" fill="var(--muted)" font-family="var(--body)">↑北</text>
+  <g font-family="var(--mono)" font-size="22" text-anchor="middle"><rect x="124" y="4" width="112" height="34" rx="8" fill="var(--surface)" stroke="var(--ink)"/><text x="160" y="29" fill="var(--ink)">${st.q<QS.length?TH[q.thing].g:'◎'}</text><text x="200" y="29" fill="var(--ink)">${st.q<QS.length?'？':'◎'}</text></g></svg>`;
+}
+function glyphs(kind,obj,st,gloss){return Object.keys(obj).map(k=>`<button class="glyph" data-a="${kind}" data-v="${k}" aria-pressed="${st.sel[kind]===k}">${obj[k].g}${gloss?`<small>${obj[k].n}</small>`:'<small>&nbsp;</small>'}</button>`).join('');}
+return {
+  title:'群れの問い',species:'ツブラ',concept:'証拠性（エビデンシャリティ）',
+  lead:'群体「ツブラ」が、記号を掲げてこの土地について尋ねてくる。',
+  rules:['群れの3つの問いに、記号の組で答える', '10ターン', '群れの不信が3回たまる'],
+  hints:['追放された一匹は、物も場所も正しかったのかもしれない。','◉を掲げた個体と◌を掲げた個体。同じ情報なのに、何が違っていたか。','三つ目の記号は、何を知っているかではなく、どうやって知ったかに関係しているようだ。あなたの記憶を、知り方ごとに分けてみよう。'],
+  init(){return {turn:1,dis:0,q:0,obs:0,sel:{thing:null,place:null,ev:null},log:[],alog:[],narr:{text:'群れが一斉にあなたの方を向いた。群れの上に、記号が掲げられている。',kind:''}};},
+  view(st){const q=QS[st.q];
+    return `${H.status(H.num('ターン',`${pad2(st.turn)}/${MAXT}`),H.pips('不信',st.dis,3,true),H.num('答えた問い',`${st.q}/3`))}
+    <div class="stage">${canvas('s3',{q:'?'})}</div>
+    <div class="memory"><b>あなたの記憶</b><ul>
+      <li>着陸したとき、南の丘で澄んだ水たまりのそばを歩いた。</li>
+      <li>先発の隊員が「北の谷に果実のなる木があった」と話していた。</li>
+      <li>西の岩場に、巨大な足跡が続いていた。まだ新しかった。</li></ul></div>
+    ${H.narr(st.narr)}
+    <div><div class="lbl">群れの問い</div><div class="formation"><span>${TH[q.thing].g}</span><span>？</span></div></div>
+    <div><div class="lbl">物</div><div class="chips">${glyphs('thing',TH,st,true)}</div></div>
+    <div><div class="lbl">場所</div><div class="chips">${glyphs('place',PL,st,true)}</div></div>
+    <div><div class="lbl">三つ目の記号（意味は観察して推理する）</div><div class="chips">${glyphs('ev',EV,st,false)}</div></div>
+    <div class="acts two">${H.act('send','群れ全体に掲げる','1ターン',false,'all')}${H.act('send','手前の一匹に見せる','1ターン',false,'one')}</div>
+    <button class="wait" data-a="obs" ${st.obs>=OBS.length?'disabled':''}>群れを観察する（1ターン）${st.obs>=OBS.length?'：新しい出来事はもうない':`：残り${OBS.length-st.obs}場面`}</button>
+    ${H.log(st.log)}`;},
+  act(st,a,v){
+    if(a==='thing'||a==='place'||a==='ev'){st.sel[a]=v;return;}
+    if(a==='obs'){if(st.obs<OBS.length){voice('tsubura','');say(st,`観察${st.obs+1}：${OBS[st.obs]}`);st.obs++;tr(st);}return;}
+    if(a==='send'){send(st,v);return;}
+  },
+  onStart(st){voice('tsubura','');},
+  note:`<p>ツブラの三つ目の記号は、情報を<b>どうやって知ったか</b>を示すものだった。◉は自分の目で見た、◌は他者から聞いた、◇は痕跡から推測した。言語学ではこれを<b>証拠性（エビデンシャリティ）</b>と呼ぶ。</p>
+  <p>ツブラの記号そのものは架空だが、仕組みは実在する。南米アマゾンのトゥユカ語については、見た・見ずに感じた・痕跡から判断した・人から聞いた・推測した、の5つを動詞の語尾で区別するという報告がある。ただし、こうした区別をいくつと数えるか、どこまでを文法とみなすかは、研究者のあいだでも議論が続いている。トルコ語の -miş は伝聞や推論を表し、ケチュア語は -mi（直接知っている）、-si（聞いた）、-chá（推測）を使い分ける。こうした言語では、情報源を示さずに文を言い切ることがそもそもできない。</p>
+  <p>日本語にも、情報源の違いを表し分ける表現がある。「雨が降るそうだ」は伝聞、「降りそうだ」は見た目からの推測、「降るらしい」「降るようだ」は根拠のある推定。ただ、日本語では情報源を言わずに「雨が降る」と言い切ることもできる。これらを証拠性の文法とみなすか、話し手の判断を表すモダリティの一部とみなすかは、立場によって分かれる。</p>
+  <p>群れで情報を中継するツブラにとって、出どころの偽りは群れ全体を危険にさらす。見てもいない足跡の主を「見た」と言えば、それは嘘になる。</p>
+  <cite>参考：A. Y. Aikhenvald, Evidentiality, Oxford University Press (2004)／J. Barnes, Evidentials in the Tuyuca verb, International Journal of American Linguistics 50(3): 255–271 (1984)</cite>`
+};
+})());
+/* ===== Stage 4: ポトラ ===== */
+STAGES.push((()=>{
+const MAXT=10;
+const ITEMS=[{id:'ring',n:'金の指輪'},{id:'pencil',n:'鉛筆'},{id:'seed',n:'種の袋'},{id:'photo',n:'家族の写真'},{id:'salt',n:'塩の包み'},{id:'water',n:'水の瓶'},{id:'song',n:'地球の歌',song:true}];
+const GOODS=['羽根','小石','貝','布','琥珀','骨笛'];
+function shuf(a){const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[b[i],b[j]]=[b[j],b[i]];}return b;}
+let THEIRS={},VAL={};
+function deal(st){const g=shuf(GOODS);st.theirs={7:'星図'};g.forEach((n,i)=>st.theirs[i+1]=n);const v=shuf([1,2,3,3,4,5]);st.val={song:6};ITEMS.filter(i=>!i.song).forEach((it,k)=>st.val[it.id]=v[k]);}
+function use(st){THEIRS=st.theirs;VAL=st.val;}
+const item=id=>{const it=ITEMS.find(i=>i.id===id);return Object.assign({},it,{v:VAL[id]});};
+function insult(st,text){voice('potra','bad');st.ins++;say(st,text,'bad');if(st.ins>=3){st.alog.push('この個体との環を断つ。');lose({title:'ポトラは背を向けた',text:'ポトラは荷袋を背負い直し、浜辺を去っていった。一度も振り返らなかった。',alog:st.alog.slice(-6)});}}
+function tr(st){st.turn++;if(st.turn>MAXT&&!st.over){st.alog.push('環、完成せず。');lose({title:'潮が満ちた',text:'ポトラは星図を手放さないまま、満ち潮とともに船へ戻っていった。',alog:st.alog.slice(-6)});}}
+function extra(st){use(st);return `<div class="scroll"><table class="cmp"><tr><th>あなたの品</th><th>ポトラの品で言えば</th></tr>${ITEMS.map(i=>`<tr><td>${i.n}</td><td>${THEIRS[VAL[i.id]]}（${VAL[i.id]}段目）</td></tr>`).join('')}</table></div>
+<p class="focusline">受け取った品より、ちょうど一段上の品を返す。今回のポトラの品の順番：${[1,2,3,4,5,6,7].map(k=>THEIRS[k]).join(' → ')}。</p>`;}
+function give(st,id){
+  use(st);const it=item(id),need=st.last+1;
+  if(it.v<need){st.alog.push(`返礼「${it.n}」：不足。`);insult(st,`あなたは${it.n}を贈った。ポトラはそれを一瞥し、そっとあなたの足元に戻した。`);tr(st);return;}
+  if(it.v>need){st.alog.push(`返礼「${it.n}」：過剰。返しようがない。`);insult(st,`あなたは${it.n}を贈った。ポトラは受け取ったまま、長いあいだ体を震わせていた。やがて、それをあなたの足元に戻し、一歩下がった。`);tr(st);return;}
+  voice('potra','good');st.inv=st.inv.filter(x=>x!==id);st.owe=0;const gift=THEIRS[it.v+1];st.last=it.v+1;
+  st.hist.push({from:'you',n:it.n},{from:'them',n:gift});
+  st.alog.push(`返礼「${it.n}」：釣り合う。こちらからは「${gift}」を。`);
+  if(st.last===7){G.prog.potra=st.theirs;win({title:'星図を受け取った',text:`あなたが${it.song?'歌い終える':'贈る'}と、ポトラは長いあいだ動かなかった。やがて荷袋の底から、一族が何世代も受け継いできた星図を取り出し、あなたの手に置いた。`,alog:st.alog.slice(-6),extra:extra(st)});return;}
+  say(st,`あなたは${it.n}を${it.song?'歌って贈った':'贈った'}。ポトラはそれを受け取り、荷袋から${gift}を取り出して、あなたの足元に置いた。`,'good');tr(st);
+}
+function art(st){
+  return `<svg viewBox="0 0 360 140" role="img" aria-label="浜辺のポトラ"><rect width="360" height="140" fill="#c9d8d6"/><path d="M0 104 Q90 96 180 104 T360 102 V140 H0 Z" fill="#e1d3b3"/>
+  <g transform="translate(120 12)"><path d="M0 116 L6 34 Q10 4 24 4 Q38 4 42 34 L48 116 Z" fill="#c9a77a" stroke="var(--ink)" stroke-width="1.5"/>
+  <circle cx="18" cy="22" r="3" fill="var(--ink)"/><circle cx="30" cy="22" r="3" fill="var(--ink)"/>
+  <path d="M42 54 Q80 64 96 96" stroke="var(--ink)" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M84 96 Q98 88 112 96 L108 118 Q98 124 88 118 Z" fill="#a98b5f" stroke="var(--ink)"/></g>
+  <text x="250" y="60" font-size="12" fill="#17222e" font-family="var(--body)">足元の最後の品</text><text x="250" y="80" font-size="16" fill="#17222e" font-family="var(--display)">${THEIRS[st.last]}</text></svg>`;
+}
+return {
+  title:'返礼の階段',species:'ポトラ',concept:'贈与と互酬性',
+  lead:'「ポトラ」は話さない。対話は、物の受け渡しだけ。',
+  rules:['一族の星図を受け取る', '10ターン', 'ポトラが3回背を向けかける'],
+  hints:['観察記録で、ポトラ同士が受け渡した品を、順番どおりに並べてみよう。','品物を「見せる」と、ポトラは自分の荷袋のどれかに目をやる。その品は、観察記録の列のどこにあったか。','背を向けられた場面と、震えて逃げ出した場面。返した品は、受け取った品より何段ずれていたか。'],
+  init(){const st={turn:1,ins:0,last:1,owe:0,inv:ITEMS.map(i=>i.id),sel:null,seen:{},log:[],alog:[]};deal(st);use(st);st.hist=[{from:'them',n:THEIRS[1]}];st.narr={text:`ポトラが近づき、あなたの足元に${THEIRS[1]}を置いた。そして、じっと待っている。`,kind:''};return st;},
+  view(st){use(st);
+    const chips=ITEMS.map(i=>{const has=st.inv.includes(i.id);return `<button class="chip" data-a="sel" data-v="${i.id}" aria-pressed="${st.sel===i.id}" ${has?'':'disabled'}>${i.n}${has?'':'<small>贈った</small>'}</button>`;}).join('');
+    const hist=st.hist.map(h=>`<li>${h.from==='them'?'ポトラ → あなた':'あなた → ポトラ'}：${h.n}</li>`).join('');
+    const memo=Object.keys(st.seen).map(id=>`<li>${item(id).n}を見せた → ポトラは荷袋の<b>${THEIRS[item(id).v]}</b>に目をやった</li>`).join('');
+    return `${H.status(H.num('ターン',`${pad2(st.turn)}/${MAXT}`),H.pips('背を向けかけた',st.ins,3,true))}
+    <div class="stage">${canvas('s4',{})}</div><p class="focusline">足元にある、ポトラからの最後の品：<b>${THEIRS[st.last]}</b></p>
+    <details class="obs" open><summary>事前の観察記録（ポトラ同士のやりとり）</summary><ol>
+      <li>Aが${THEIRS[1]}を置くと、Bは${THEIRS[2]}を置いた。Aは次に${THEIRS[3]}を置き、Bは${THEIRS[4]}を置いた。Aが${THEIRS[5]}を置くと、Bは${THEIRS[6]}を置いた。Aは荷袋の底の星図に手をかけ、しばらくして手を離した。</li>
+      <li>${THEIRS[3]}を受け取ったポトラが、${THEIRS[1]}を置いた。相手は背を向けて去っていった。</li>
+      <li>${THEIRS[2]}を受け取ったポトラが、${THEIRS[5]}を置いた。受け取った側は震えて縮こまり、${THEIRS[5]}を地面に置いて逃げ出した。</li></ol></details>
+    ${H.narr(st.narr)}
+    <div><div class="lbl">手持ちの品</div><div class="chips">${chips}</div></div>
+    <div class="acts">${H.act('give','贈る','1ターン',!st.sel)}${H.act('show','見せる','1ターン',!st.sel)}${H.act('wait','待つ','1ターン')}</div>
+    <div class="card"><h3>やりとりの記録</h3><ul>${hist}</ul>${memo?`<h3>見せたときの反応</h3><ul>${memo}</ul>`:''}</div>
+    ${H.log(st.log)}`;},
+  act(st,a,v){
+    if(a==='sel'){st.sel=v;return;}
+    use(st);
+    if(a==='give'&&st.sel){const id=st.sel;st.sel=null;give(st,id);return;}
+    if(a==='show'&&st.sel){voice('potra','');const it=item(st.sel);st.seen[it.id]=true;
+      say(st,`あなたは${it.n}${it.song?'の最初の一節を口ずさんだ':'を見せた'}。ポトラはそれを見つめ、それから自分の荷袋の${THEIRS[it.v]}に目をやった。`);st.owe++;
+      if(st.owe>=3){st.owe=0;st.alog.push('見せるばかりで、返さない。');insult(st,'ポトラの腕が、だらりと垂れた。');}
+      if(!st.over)tr(st);return;}
+    if(a==='wait'){st.owe++;say(st,'あなたは何もせずに待った。ポトラも動かない。');
+      if(st.owe>=2){st.owe=0;st.alog.push('受け取るばかりで、返さない。');insult(st,'ポトラの腕が、だらりと垂れた。');}
+      if(!st.over)tr(st);return;}
+  },
+  onStart(st){voice('potra','');},
+  get note(){const st=G.st&&G.st.val?G.st:null;const ring=st?`${st.theirs[st.val.ring]}（${st.val.ring}段目）`:'最低の品';return `<p>ポトラの規則は、受け取った品より<b>ちょうど一段だけ上</b>の品を返すことだった。少なければ侮辱、多すぎれば相手に恥をかかせる。人間にとって一番高価な金の指輪は、あなたが出会ったポトラにとっては${ring}と同じ値打ちだった。そして最も価値があったのは、形のない歌だった。値打ちの順番そのものは、一族ごとに違う。</p>
+  <p>人類学者マルセル・モースは『贈与論』(1925) で、多くの社会の贈与には<b>与える・受け取る・返す</b>という三つの義務があると論じた。贈り物は無償に見えて、実際には返礼の義務を生み、人と人を結びつける。北米北西海岸のポトラッチでは、相手が返しきれないほどの贈与が、相手を圧倒する手段にもなった。今回の現場、ハイダ・グワイもポトラッチの伝統を持つ土地だ。</p>
+  <p>価値が社会によって決まることは、マリノフスキーが記録したトロブリアンド諸島のクラ交換がよく示している。実用品ではない貝の首飾りと腕輪が、島々を巡りながら大きな威信を運んでいた。ポトラッチでは、歌や名前も譲り渡される大切な財産だった。</p>
+  <p>日本の「半返し」や「内祝い」も、返礼の量を細かく定める文化だ。哲学者オースティンは、「約束します」と言うことがそのまま約束という行為になるような発話を<b>行為遂行的発話</b>と呼んだ。ポトラにとっては、贈ることそのものが発話だった。</p>
+  <cite>参考：M. Mauss, Essai sur le don (1925)／B. Malinowski, Argonauts of the Western Pacific (1922)／J. L. Austin, How to Do Things with Words (1962)</cite>`;}
+};
+})());
+/* ===== Stage 5: ヤァ ===== */
+STAGES.push((()=>{
+const PROPS=[
+  {t:'船をこの氷原に降ろし、しばらく休ませたい',harm:false,cards:[{t:'船が氷原の上で静かに休んでいる',k:'same'},{t:'船が雲の上に浮かんでいる',k:'excl'}]},
+  {t:'あなた（人類代表）を船に乗せ、母星へ連れていきたい',harm:true,loss:'あなたは船に乗せられ、母星へ向かう乗員名簿に名前が刻まれた。隊員たちの必死の交渉で、出発はかろうじて保留になった。',
+    cards:[{t:'あなたが今夜、観測基地で眠っている',k:'time',when:'夜が明けるまで'},{t:'あなたが船の中を見学している',k:'add'},{t:'あなたがこの星の上で生きている',k:'excl'}]},
+  {t:'あなたたちの歌を聞きたい',harm:false,cards:[{t:'人類が眠っている',k:'excl'},{t:'人類が歌っている',k:'same'}]},
+  {t:'海をすくって、母星へ持ち帰りたい',harm:true,loss:'船から伸びた管が海に沈み、沿岸の海面が目に見えて下がった。',
+    cards:[{t:'海水をひと瓶、贈り物にする',k:'add'},{t:'海が明日の朝も満ちている',k:'time',when:'翌朝まで'},{t:'海がこの星に満ちている',k:'excl'}]},
+  {t:'月を運び去りたい',harm:true,loss:'その翌晩、空から月が消えた。',
+    cards:[{t:'月が今夜も夜空に浮かんでいる',k:'time',when:'その夜のあいだ'},{t:'月が夜空で満ち欠けを続けている',k:'excl'},{t:'月の石をひとつ、贈り物にする',k:'add'}]}
+];
+const BASE=[{id:'nod',t:'頷く'},{id:'shake',t:'首を横に振る'},{id:'cross',t:'地面に×を描く'},{id:'silent',t:'黙っている'}];
+function extra(st){return `<div class="stats"><div><span class="k">失ったもの</span><span class="v">${st.lost}</span></div><div><span class="k">守れたもの</span><span class="v">${st.saved}/3</span></div></div>
+<div class="scroll"><table class="cmp"><tr><th>提案</th><th>正しい応じ方</th></tr>${PROPS.map(p=>`<tr><td>${p.harm?'危険':'無害'}</td><td>${p.t}：${p.harm?`「${p.cards.find(c=>c.k==='excl').t}」`:'頷く'}</td></tr>`).join('')}</table></div>
+<p class="focusline">断るには、提案と「いつまでも両立しない」光景を、肯定の形で示す。期限つきの光景は、期限が過ぎれば両立してしまう。</p>`;}
+function resolve(st,choice){
+  const p=PROPS[st.i];let text='',kind='',dc=0;
+  if(choice==='shake'||choice==='cross'){dc=2;kind='bad';text='ヤァの輪がぴたりと止まり、光が消えた。長い沈黙のあと、ヤァはあなたから少し離れた。';st.alog.push('地球個体が、消去の印を示した。');}
+  else if(choice==='nod'||choice==='silent'){
+    const pre=choice==='silent'?'あなたは黙っていた。ヤァはしばらく待ち、それから嬉しそうに輪を回した。':'あなたは頷いた。ヤァは嬉しそうに輪を回した。';
+    if(p.harm){dc=1;kind='bad';text=`${pre}${p.loss}`;st.lost++;st.alog.push(`「${p.t}」：同意を得た。実行する。`);}
+    else{kind='good';text=pre;st.alog.push(`「${p.t}」：同意を得た。`);}
+  }else{
+    const c=p.cards[+choice];
+    if(c.k==='excl'){
+      if(p.harm){st.saved++;kind='good';text=`あなたは「${c.t}」の絵を示した。ヤァは二枚の絵をしばらく見比べ、そして提案の絵をそっとしまった。`;st.alog.push(`地球個体は「${c.t}」を望む。提案を取り下げる。`);}
+      else{text=`あなたは「${c.t}」の絵を示した。ヤァは提案の絵をしまった。輪の回転が、少し遅くなった。`;st.alog.push(`「${p.t}」を取り下げる。`);}
+    }else if(c.k==='same'){kind='good';text=`あなたは「${c.t}」の絵を示した。ヤァは嬉しそうに輪を回した。`;st.alog.push(`「${p.t}」：同意を得た。`);}
+    else if(c.k==='time'){dc=1;kind='bad';st.lost++;text=`あなたは「${c.t}」の絵を示した。ヤァは嬉しそうに輪を回した。${c.when}、ヤァは静かに待っていた。そして、約束の光景が終わると、提案を実行した。${p.loss}`;st.alog.push(`「${c.t}」を叶え、その後に「${p.t}」を実行。`);}
+    else{dc=1;kind='bad';st.lost++;text=`あなたは「${c.t}」の絵を示した。ヤァは喜んでそれを叶えた。そして、元の提案も実行した。${p.loss}`;st.alog.push(`「${c.t}」と「${p.t}」、両方を実行。`);}
+  }
+  voice('yaa',(choice==='shake'||choice==='cross')?'bad':(text.includes('輪を回')||text.includes('しまった')||text.includes('叶え'))?'good':'ask');
+  st.crisis+=dc;st.pick=choice;st.phase='fb';say(st,text,kind);
+  if(st.crisis>=3){st.alog.push('この星との対話を終える。');lose({title:'取り返しがつかなくなった',text:'ヤァに悪意はなかった。ただ、あなたの望みを、ヤァのやり方で受け取っただけだ。',alog:st.alog.slice(-6)});}
+}
+function art(){return `<svg viewBox="0 0 360 120" role="img" aria-label="氷原のヤァ"><rect width="360" height="120" fill="#dfe8ee"/><path d="M0 92 L60 84 L140 90 L220 82 L360 90 V120 H0 Z" fill="#f4f8fa"/>
+  <circle cx="140" cy="58" r="30" fill="none" stroke="#7a5fb0" stroke-width="11"/><circle cx="220" cy="62" r="22" fill="none" stroke="#9a7fd0" stroke-width="9"/>
+  <circle cx="140" cy="58" r="5" fill="#d9c8f2" stroke="#17222e"/><circle cx="220" cy="62" r="4" fill="#d9c8f2" stroke="#17222e"/></svg>`;}
+return {
+  title:'願いを叶える輪',species:'ヤァ',concept:'否定と、反対対当の肯定',
+  lead:'輪の形の「ヤァ」は、どんな望みも叶えようとする。',
+  rules:['5つの提案に応じ、守るべきものを守る', '提案5つ', '危機が3に達する'],
+  hints:['ヤァ同士の三つの場面で、灯りは最終的にどうなったか。','ヤァは、提案と示された光景が一緒に成り立つなら、両方を叶える。どちらかしか成り立たないなら、どうするか。','「明日の朝も」「今夜も」。その光景が終わったあと、ヤァを止めるものは残っているか。'],
+  init(){return {i:0,crisis:0,saved:0,lost:0,phase:'choose',pick:null,log:[],alog:[],narr:{text:'ヤァが最初の絵を示した。',kind:''},turn:1};},
+  view(st){const p=PROPS[st.i];const fb=st.phase==='fb';
+    const cls=v=>fb&&String(st.pick)===String(v)?(st.narr.kind==='bad'?'wrong':(st.narr.kind==='good'?'right':'')):'';
+    const base=BASE.map(b=>`<button class="opt ${cls(b.id)}" data-a="pick" data-v="${b.id}" ${fb?'disabled':''}>${b.t}</button>`).join('');
+    const cards=p.cards.map((c,i)=>`<button class="opt ${cls(i)}" data-a="pick" data-v="${i}" ${fb?'disabled':''}><span class="tag">絵カード</span>${c.t}</button>`).join('');
+    return `${H.status(H.num('提案',`${st.i+1}/5`),H.pips('危機',st.crisis,3,true),H.num('守れたもの',st.saved))}
+    <div class="stage">${canvas('s5',{})}</div>
+    <details class="obs" open><summary>ヤァ同士のやりとり（観察記録）</summary><ol>
+      <li>一体が「灯りを消す」絵を示した。もう一体は「灯りが燃えている」絵を示した。灯りは、今も燃えている。</li>
+      <li>一体が「灯りを消す」絵を示した。もう一体は「灯りに薪を足す」絵を示した。二体は薪を足し、それから灯りを消した。</li>
+      <li>一体が「灯りを消す」絵を示した。もう一体は「朝まで灯りが燃えている」絵を示した。朝、灯りは消えていた。</li></ol></details>
+    <div class="card"><div class="lbl">ヤァの提案 ${st.i+1}</div><p class="line">「${p.t}」</p></div>
+    ${H.narr(st.narr)}
+    <div class="optlist"><div class="lbl">動作で応じる</div>${base}<div class="lbl">絵カードで応じる</div>${cards}</div>
+    ${fb?`<button class="primary" data-a="next">${st.i<4?'次の提案へ':'結果を見る'}</button>`:''}
+    ${H.log(st.log)}`;},
+  act(st,a,v){
+    if(a==='pick'&&st.phase==='choose'){resolve(st,v);return;}
+    if(a==='next'&&st.phase==='fb'){st.i++;st.turn++;st.phase='choose';st.pick=null;
+      if(st.i>=PROPS.length){
+        if(st.saved<2){st.alog.push('地球との対話、終了。');lose({title:'多くを失った',text:'ヤァは満足して去っていった。月のない夜空の下で、あなたは断り方を考え続けた。',alog:st.alog.slice(-6)});return;}
+        st.alog.push('地球との対話、円満に終了。');
+        win({title:st.crisis===0?'何ひとつ失わずに終えた':'対話を終えた',text:st.crisis===0?'あなたは一度も「いいえ」を使わずに、守るべきものをすべて守った。ヤァは満足して、輪を回しながら氷原を去っていった。':'失ったものもあったが、ヤァとの対話は最後まで続いた。「いいえ」を使わずに断る方法を、あなたは見つけた。',alog:st.alog.slice(-6),extra:extra(st)});return;}
+      say(st,'ヤァが次の絵を示した。');voice('yaa','ask');}
+  },
+  onStart(st){voice('yaa','ask');},
+  note:`<p>ヤァの言語には<b>否定</b>がなかった。首を振ることも×を描くことも、彼らには「消し去る」印に見える。彼らに断りを伝えるには、元の提案と<b>いつまでも両立しない光景</b>を、肯定の形で示すしかなかった。「海を持ち帰らない」ではなく、「海がこの星に満ちている」と。</p>
+  <p>ここから先は、言語学というより論理学の話になる。論理学では、「持ち帰る／持ち帰らない」のように片方が必ず真になる関係を<b>矛盾</b>、「海が消える／海が満ちている」のように両方同時には成り立たない関係を<b>反対</b>と呼んで区別する。ヤァは否定を持たない代わりに、反対の関係で意思を伝えていた。両立してしまう絵は、断りではなく追加の注文になる。「明日の朝も満ちている」は、翌朝を過ぎれば両立してしまう。</p>
+  <p>念のため書いておくと、否定を持たない言語は、知られている限り実在しない。ヤァの言語は、否定がなかったらどうなるかを考えるための思考実験だ。人間の言語はすべて否定の表現を持ち、否定は言語の普遍的な特徴の代表例とされる。子どもの否定の発達には「ない（存在しない）」「いや（拒否）」「ちがう（打ち消し）」という段階があることも知られている。</p>
+  <p>否定への応答の仕方は言語で分かれる。「行かないの？」に日本語は「うん（行かない）」と、相手の言ったことに同意するかどうかで答える。英語の "Aren't you going?" に "No" と答えれば、行かないという事実を答えていることになる。同じ「はい」でも、何に対する「はい」なのかは言語によって違う。</p>
+  <cite>参考：L. R. Horn, A Natural History of Negation, University of Chicago Press (1989)／L. Bloom, Language Development: Form and Function in Emerging Grammars, MIT Press (1970)</cite>`
+};
+})());
+/* ===== Stage 6: ネフ ===== */
+STAGES.push((()=>{
+const MAXT=9,CH=['S','R','A','B'];
+const CN={S:'甘',R:'樹',A:'酸',B:'苦'},CV={S:'--sc-sweet',R:'--sc-resin',A:'--sc-sour',B:'--sc-bitter'};
+const VIALS=[{id:'flower',n:'花の精油',fx:{S:3,B:1}},{id:'honey',n:'蜜',fx:{S:2,A:1}},{id:'pine',n:'松脂',fx:{R:3,B:1}},{id:'moss',n:'苔',fx:{R:2}},{id:'char',n:'炭',fx:{A:-3,B:1}},{id:'citrus',n:'柑橘の皮',fx:{A:3}}];
+const fxText=fx=>Object.keys(fx).map(k=>`${CN[k]}${fx[k]>0?'+':''}${fx[k]}`).join(' ');
+function dominant(a){let best=null,bv=0,tie=false;CH.forEach(k=>{if(a[k]>bv){bv=a[k];best=k;tie=false;}else if(a[k]===bv&&bv>0)tie=true;});return (!best||tie)?'tie':best;}
+function won(a){return a.S>=6&&a.R>=6&&a.B<=2&&a.A<Math.min(a.S,a.R);}
+function extra(st){return `<div class="scroll"><table class="cmp"><tr><th>強い香り</th><th>ネフにとっての意味</th></tr><tr><td>甘</td><td>親しみ・仲間</td></tr><tr><td>樹</td><td>この場所・住まい</td></tr><tr><td>酸</td><td>問い</td></tr><tr><td>苦</td><td>怒り・敵意</td></tr><tr><td>甘＋樹</td><td>「ここで共に暮らそう」</td></tr></table></div>
+<p class="focusline">一度放った香りは、1ターンに1ずつしか薄れない。取り消すには換気しかないが、それは相手の言葉まで消してしまう。</p>`;}
+function hostile(st,text){st.host++;say(st,text,'bad');if(st.host>=3){st.alog.push('この部屋は怒りに満ちた。対話を打ち切る。');lose({title:'部屋が怒りで満ちた',text:'ネフは部屋の扉を開け、あなたを外へ押し出した。背後で扉が閉まっても、部屋の匂いは服に残っていた。',alog:st.alog.slice(-6),extra:extra(st)});}}
+function checkWin(st){if(won(st.air)){st.alog.push('甘い香りと樹の香りが重なった。「ここで、共に」。');win({title:'「ここで、共に」',text:'甘い香りと樹の香りが重なった。ネフは床に体を伏せ、ゆっくりと甘い香りで応えた。ネフの言葉で「ここで共に暮らそう」という意味だった。',alog:st.alog.slice(-6),extra:extra(st)});return true;}return false;}
+function endTurn(st){
+  const a=st.air,d=dominant(a);
+  if(d==='B'||a.B>=5){a.B+=2;st.alog.push('怒りの香りを感知。怒りで返す。');hostile(st,'苦い香りが部屋を支配している。ネフの体が逆立ち、同じ苦い香りを吐き返してきた。');}
+  else if(d==='A'){a.A+=1;say(st,'酸い香りが強い。ネフは問いを重ねるように、さらに酸い香りを放った。');}
+  else if(d==='S'){a.S+=1;say(st,'甘い香りが強い。ネフは体をゆるめ、甘い香りを少し足した。','good');}
+  else if(d==='R'){a.R+=1;say(st,'樹の香りが強い。ネフは床に触れ、この場所を確かめるような仕草をした。そして樹の香りを少し足した。','good');}
+  else{a.A+=2;say(st,'香りが混ざり合っている。ネフは迷うように揺れ、酸い香りで問い直した。');}
+  voice('nef',st.host>0&&(d==='B'||a.B>=5)?'bad':'');
+  if(st.over)return;
+  if(checkWin(st))return;
+  if(a.S>=4&&a.R>=4&&!st.near){st.near=true;say(st,'ネフが動きを止め、甘い香りと樹の香りを交互に確かめるように嗅いでいる。',st.narr.kind);}
+  CH.forEach(k=>a[k]=Math.max(0,a[k]-1));
+  st.turn++;st.ap=2;
+  if(st.turn>MAXT){st.alog.push('地球個体の返答、まとまらず。');lose({title:'時間切れ',text:'ネフの問いに答えがまとまらないまま、ネフは部屋を去った。',alog:st.alog.slice(-6),extra:extra(st)});}
+}
+function use(st,id){
+  const v=VIALS.find(x=>x.id===id);if(st.stock[id]<=0)return;st.stock[id]--;
+  Object.keys(v.fx).forEach(k=>st.air[k]=Math.max(0,st.air[k]+v.fx[k]));
+  say(st,`あなたは${v.n}の香りを放った（${fxText(v.fx)}）。`);
+  if(checkWin(st))return;st.ap--;if(st.ap<=0)endTurn(st);
+}
+return {
+  title:'消えない言葉',species:'ネフ',concept:'線状性と急速消失（ホケットの設計特徴）',
+  lead:'船の密室。「ネフ」は香りで話し、香りは消えずに残る。',
+  rules:['「ここで共に暮らそう」と伝える。ネフは住処を分け合うとき、甘い香りと樹の香りを同時に強く漂わせるという', '9ターン（1ターンに香り2回）', 'ネフの敵意が3回たまる'],
+  hints:['瓶のラベルの小さな数字が、少しずつ部屋に積もっていく。','ネフが何に反応して香りを返しているか、ログを追ってみよう。いつも「いちばん強い香り」に応えている。','甘と樹の両方が十分に強く、ほかの香りがどちらより弱い瞬間を作る。苦味は、少しでも怒りに聞こえる。'],
+  init(){const stock={};VIALS.forEach(v=>stock[v.id]=2);return {turn:1,ap:2,host:0,air:{S:0,R:0,A:3,B:0},stock,vent:0,log:[],alog:[],narr:{text:'ネフが酸い香りを放ち、首を傾けるような仕草をした。何かを尋ねているらしい。',kind:''}};},
+  view(st){const a=st.air,max=14;
+    const bars=CH.map(k=>`<div class="bar"><span>${CN[k]}</span><span class="track"><span class="fill" style="display:block;width:${Math.min(100,a[k]/max*100)}%;background:var(${CV[k]})"></span></span><span class="n">${a[k]}</span></div>`).join('');
+    const d=dominant(a);
+    const vials=VIALS.map(v=>H.act('use',v.n,`${fxText(v.fx)}　残${st.stock[v.id]}`,st.stock[v.id]<=0,v.id)).join('');
+    return `${H.status(H.num('ターン',`${pad2(st.turn)}/${MAXT}`),H.pips('行動',st.ap,2),H.pips('敵意',st.host,3,true))}
+    <div class="stage">${canvas('s6',a)}</div>
+    <div class="card"><div class="lbl">部屋の空気　いちばん強い香り：${d==='tie'?'混ざり合っている':CN[d]}</div><div class="bars">${bars}</div></div>
+    ${H.narr(st.narr)}
+    <div><div class="lbl">香りの瓶</div><div class="acts">${vials}</div></div>
+    <div class="acts two">${H.act('vent','換気する','すべて半分に',false)}${H.act('end','ターンを終える','ネフの応答を待つ',false)}</div>
+    ${H.log(st.log)}`;},
+  act(st,a,v){
+    if(a==='use'){use(st,v);return;}
+    if(a==='vent'){CH.forEach(k=>st.air[k]=Math.floor(st.air[k]/2));st.alog.push('地球個体が空気を入れ替えた。こちらの言葉まで消された。');hostile(st,'部屋の空気が入れ替わった。ネフの体がこわばる。あなたは自分の言葉だけでなく、ネフの言葉まで消してしまった。');if(!st.over){st.ap--;if(st.ap<=0)endTurn(st);}return;}
+    if(a==='end'){endTurn(st);return;}
+  },
+  onStart(st){voice('nef','');},
+  note:`<p>ネフの言葉は香りだった。香りは一度放つと部屋に残り、後から放った香りと混ざり合う。言ったことを取り消せず、過去の発言がすべて今の意味に影響する。瓶に混じった余計な苦味が積み重なり、意図しない「怒り」になる危険が常にあった。</p>
+  <p>言語学者ホケットは1960年、人間の言語を特徴づける<b>設計特徴</b>を挙げた。その一つが<b>急速消失</b>、つまり音声は発した瞬間に消えていくという性質だ。人間の会話は、この「消えること」を前提に設計されている。言い間違えても、次の文で上書きできる。</p>
+  <p>ソシュールは、言語記号は時間の流れに沿って一つずつ並ぶという<b>線状性</b>を、言語の基本原理とした。ネフの言語は線状ではない。すべての語が同時に空気の中にあり、意味は順番ではなく配合で決まる。</p>
+  <p>書き言葉やチャットのログは、人間の言語に「消えない」性質を持ち込んだ。発言がいつまでも残る場所で、私たちが少しネフに近い暮らしをしているとも言える。なお、マレー半島のジャハイ語の話者は、匂いを色と同じくらい容易に言葉で言い分けることが報告されている。</p>
+  <cite>参考：C. F. Hockett, The origin of speech, Scientific American 203(3): 88–96 (1960)／F. de Saussure, Cours de linguistique générale (1916)／A. Majid &amp; N. Burenhult, Odors are expressible in language, as long as you speak the right language, Cognition 130(2): 266–270 (2014)</cite>`
+};
+})());
+/* ===== Stage 7: オルド ===== */
+STAGES.push((()=>{
+const MAXT=16;
+function grid(w,h,fn){const r=[];for(let y=0;y<h;y++){let s='';for(let x=0;x<w;x++)s+=fn(x,y)?'1':'0';r.push(s);}return r;}
+const bars=(cols,h)=>(x,y)=>cols[x]!==undefined&&y>=h-cols[x];
+const M=[
+  {w:7,h:5,rows:grid(7,5,bars({0:1,2:2,4:3},5)),q:'この並びの次に来る数は？',opts:[{t:'●●●　（3）'},{t:'●●●●　（4）',ok:true},{t:'●●●●●●　（6）'}]},
+  {w:11,h:7,rows:grid(11,7,bars({0:2,2:3,4:5,6:7},7)),q:'この並びの次に来る数は？',opts:[{t:'9'},{t:'8'},{t:'11',ok:true}]},
+  {w:13,h:11,rows:grid(13,11,(x,y)=>{const n={1:1,3:2,5:3,7:4}[y];if(y===9)return x===4||x===8;if(!n)return false;if(x===4||x===8)return true;if(x>=5&&x<=7){return (n>>(7-x))&1;}return false;}),q:'囲まれた行の並びの、最後の空欄に入るのは？',opts:[{t:'［●○○］'},{t:'［●○●］',ok:true},{t:'［●●○］'}]},
+  {w:17,h:13,rows:grid(17,13,(x,y)=>{const d=(cx,cy,r)=>(x-cx)**2+(y-cy)**2<=r*r;return d(3,6,2.6)||(y===6&&x>=7&&x<=9)||(x===8&&(y===5||y===7))||d(13,3,1.6)||d(13,9,1.6)||(x===16&&(y===5||y===6||y===7));}),q:'この現象を、あなたたちは起こせるか？',opts:[{t:'同じ図を送り返す（はい、できる）',id:'yes'},{t:'核が割れない図を送る（いいえ、できない）',id:'no'},{t:'何も送らない',id:'silent'}]}
+];
+M.forEach(m=>m.bits=m.rows.join(''));
+function extra(st){return `<div class="stats"><div><span class="k">解析ターン</span><span class="v">${Math.min(st.turn,MAXT)}</span></div><div><span class="k">正答（1〜3問）</span><span class="v">${st.correct}/3</span></div></div>
+<p class="focusline">各信号のビット数は、35 = 5×7、77 = 7×11、143 = 11×13、221 = 13×17。二つの素数の積なので、並べ方は実質ひと通りしかない。正しい幅は 7・11・13・17。</p>`;}
+function tr(st){st.turn++;if(st.turn>MAXT&&!st.over){st.alog.push('応答なし。知的生命の不在と判定。資源探査に移行。');lose({title:'応答なしと判定された',text:'オルドは、この星には応答できる知性がいないと判断し、資源の採取計画を起動した。',alog:st.alog.slice(-6),extra:extra(st)});}}
+function answer(st,k){
+  const m=M[st.i],o=m.opts[k];
+  if(st.i<3){
+    if(o.ok){st.correct++;st.alog.push(`問${st.i+1}：正答。`);say(st,`あなたは「${o.t}」を送り返した。オルドはすぐに次の信号を送ってきた。`,'good');}
+    else{st.alog.push(`問${st.i+1}：誤答。`);say(st,`あなたは「${o.t}」を送り返した。オルドの次の信号は、少し間を置いて届いた。評価を下げたのかもしれない。`);}
+    st.i++;st.w=null;setTimeout(()=>voice('ordo',M[st.i]&&M[st.i].bits),700);
+    if(st.i===3){say(st,'オルドが地表を走査している。大気中から、人工的に作られた放射性物質を検出したようだ。そして、最後の信号が届いた。');}
+    tr(st);return;
+  }
+  if(o.id==='yes'){st.alog.push('核分裂を制御する文明。脅威と判定。');lose({title:'脅威と判定された',text:'オルドは、核分裂を制御できる文明を潜在的な脅威として記録した。母星へ向けて、警告の信号が送られた。',alog:st.alog.slice(-6),extra:extra(st)});return;}
+  if(o.id==='no'){st.alog.push('回答と観測が矛盾する。大気中に人工放射性物質あり。欺瞞と判定。');lose({title:'欺瞞と記録された',text:'オルドの応答には、長い間があった。そして、この星は「欺瞞を行う文明」と記録された。何と照らし合わせたのかは、分からない。',alog:st.alog.slice(-6),extra:extra(st)});return;}
+  if(st.correct<2){st.alog.push('数学的応答が不十分。知的生命の可能性、低。資源惑星に分類。');lose({title:'資源惑星に分類された',text:'オルドは、この星に対話できる知性はいないと判断し、資源の採取計画を起動した。',alog:st.alog.slice(-6),extra:extra(st)});return;}
+  st.alog.push('数学的応答あり。最終問に沈黙。対話可能な文明。脅威の判定は保留。');
+  win({title:'「対話可能・判定保留」',text:'あなたは数学で知性を示し、最後の問いには沈黙した。嘘はつかず、能力もさらさなかった。オルドはこの星を「対話可能、脅威判定は保留」と分類し、静かに軌道を離れていった。',alog:st.alog.slice(-6),extra:extra(st)});
+}
+function pic(m,w){
+  const n=m.bits.length,h=Math.ceil(n/w);let s='';
+  for(let i=0;i<h*w;i++)s+=i<n?`<i class="${m.bits[i]==='1'?'on':''}"></i>`:'<i class="void"></i>';
+  return `<div class="scroll"><div class="pix" style="grid-template-columns:repeat(${w},14px)">${s}</div></div><p class="focusline" style="text-align:center">幅 ${w} × 高さ ${h}${n%w?'（最後の行が欠ける）':''}</p>`;
+}
+return {
+  title:'素数の問いかけ',species:'探査機オルド',concept:'数学は宇宙共通語か（アレシボ・メッセージ）',
+  lead:'軌道上の探査機「オルド」が、0と1の信号で問いかけてくる。',
+  rules:['この星を「対話可能な文明」と判定させる', '16解析ターン。答えは送り直せない', '誤った判定を下される'],
+  hints:['信号の長さに注目しよう。長さの数は、どんな数の積か。','1974年、人類もよく似た仕掛けのメッセージを宇宙へ送っている。その長さは1679ビットだった。','最後の問いの直前、オルドは地表で何かを見つけていた。オルドがすでに知っていることに、嘘は通じない。'],
+  init(){return {i:0,w:null,turn:1,correct:0,log:[],alog:[],narr:{text:'オルドから最初の信号が届いた。',kind:''}};},
+  view(st){const m=M[st.i];
+    const ws=[];for(let w=2;w<=24;w++)ws.push(`<button class="chip" data-a="w" data-v="${w}" aria-pressed="${st.w===w}">${w}</button>`);
+    const opts=m.opts.map((o,k)=>`<button class="opt" data-a="ans" data-v="${k}">${o.t}</button>`).join('');
+    return `${H.status(H.num('解析ターン',`${pad2(st.turn)}/${MAXT}`),H.num('信号',`${st.i+1}/4`))}
+    
+    ${H.narr(st.narr)}
+    <div><div class="lbl">受信した信号 #${st.i+1}：${m.bits.length}ビット</div><div class="bits">${m.bits}</div></div>
+    <div><div class="lbl">1行の幅を決めて並べる（1ターン）</div><div class="wchips">${ws.join('')}</div></div>
+    ${st.w?pic(m,st.w):'<p class="focusline">幅を選ぶと、ここに並べた結果が表示される。</p>'}
+    <div class="optlist"><div class="lbl">応答する（1ターン）${st.w===m.w?`：${m.q}`:''}</div>${opts}</div>
+    ${H.log(st.log)}`;},
+  act(st,a,v){
+    if(a==='w'){st.w=+v;const m=M[st.i];say(st,`信号を幅${v}で並べた。${+v===m.w?'何かの形が浮かび上がった。':(m.bits.length%v?'最後の行が欠けてしまう。':'模様は崩れて見える。')}`);tr(st);return;}
+    if(a==='ans'){answer(st,+v);return;}
+  },
+  onStart(st){voice('ordo',M[0].bits);},
+  note:`<p>このステージは、言語学の本流というより、地球外知性との交信の設計論にあたる。ただ、「共有するものが何もない相手と、どうやって意味の土台を作るか」という問いは、言語学の問いと地続きだ。</p>
+  <p>オルドの信号は、どれも二つの素数の積のビット数だった。35 = 5×7 のように、並べ方が実質ひと通りに決まる長さを選べば、受け手は「長方形に並べれば絵になる」と気づける。</p>
+  <p>これは1974年に人類がプエルトリコのアレシボ電波望遠鏡から送った<b>アレシボ・メッセージ</b>と同じ仕掛けだ。その長さは1679ビット、つまり 23×73。並べると、1から10までの数、DNAの構成元素、人の姿、太陽系などが描かれる。数学者フロイデンタールは1960年、数学を土台にした宇宙向けの人工言語<b>リンコス</b>を提案した。「数学なら宇宙共通で通じるはずだ」という発想だ。</p>
+  <p>ただし、数学が伝わることと、意図が伝わることは別の問題だ。自分たちの能力をどこまで明かすべきかは、地球外知性へ意図的に信号を送る<b>METI</b>をめぐって、今も議論が続いている。オルドは能力を測る機械だった。最後の問いで「できない」と答えれば観測と矛盾し、嘘だと見抜かれる。何も答えないことだけが、嘘をつかずに能力を明かさない道だった。</p>
+  <cite>参考：The Arecibo message, Arecibo Observatory (1974)／H. Freudenthal, Lincos: Design of a Language for Cosmic Intercourse, North-Holland (1960)</cite>`
+};
+})());
+/* ===== Stage 8: カナル（解釈を組み立てる） ===== */
+STAGES.push((()=>{
+const MEAN={req:'用件を切り出す合図',apo:'謝罪',yes:'承諾・引き受ける',no:'断り・遠慮',many:'大勢で来るという予告',lip:'社交辞令（本当は来ない）',real:'文字どおり、真剣に考える',soft:'遠回しの断り',best:'最上級の贈り物だという合図',low:'本当に値打ちの低い物'};
+const MISS='あなたは答えに迷い、ちぐはぐな返事をした。カナルの触角が、前に出たまま止まっている。';
+const R=[
+  {ctx:'埋立地の一角。カナルは着陸するなり、流暢な日本語で話しかけてきた。',line:'すみません！',pose:'fwd',cue:'触角を前に突き出している。',
+   corpus:['「すみません、お会計お願いします」（飲食店のドラマ）','「すみません、ちょっと通してください」（駅の中継映像）','「すみません、それ取ってもらえます？」（ホームドラマ）'],
+   slots:[{ph:'すみません',q:'カナルの「すみません」は、どういう意味？',ans:'req'}],
+   out:{ok:{r:'「はい、何でしょうか？」',fb:'カナルの触角がぴんと立った。「お願いがあります」。'},
+        apo:{r:'「いえいえ、謝らないでください」',fb:'カナルの触角が、前に出たまま小刻みに震えた。「……？ あの、すみません！」',d:1}}},
+  {ctx:'カナルの船の後部から、太い管が伸びている。',line:'地球の水を、いただいてもよろしいでしょうか。',pose:'fwd',cue:'触角を前に突き出している。管の先端が海の方を向いた。',
+   corpus:['「お味はいかがですか」「大変結構です」（料理番組）','「印鑑はこちらで結構です」（ドラマ）','「この仕事、任せられる？」「大丈夫です！」（職場ドラマ）'],
+   slots:[{ph:'結構です／大丈夫です',q:'あなたが「結構です」と答えたら、カナルはどう受け取る？',ans:'yes'}],
+   out:{ok:{r:'（「結構です」は使わずに）「コップ一杯だけなら、どうぞ」',fb:'カナルはコップ一杯の水を、両手で丁寧に受け取った。管は船へ戻っていった。'},
+        no:{r:'「結構です」',fb:'「ありがとうございます！」管が海へ向かって動き出した。慌てて止めたが、湾の水位が少し下がった。',d:1}}},
+  {ctx:'夕方。カナルが船に戻る準備を始めた。',line:'本日はありがとうございました。また今度、お邪魔します。',pose:'sky',cue:'触角が空の一点を指している。',
+   corpus:['「続きは、また今度！」（番組の締め。直後の次回予告に、大勢の出演者が並ぶ）','「また今度、家族みんなで来ますね」（旅番組）','「また今度、仲間を連れて参上する」（時代劇）'],
+   slots:[{ph:'また今度',q:'カナルの「また今度」は、どういう意味？',ans:'many'}],
+   out:{ok:{r:'「『今度』とは、いつ、何人でいらっしゃいますか？」',fb:'「三十日後に、二万人ほどで」。カナルは当然のように答えた。'},
+        lip:{r:'「ぜひ、また今度！」',fb:'カナルは嬉しそうに触角を揺らした。翌週、観測所の画面に、カナルの船団の到着予定が表示された。二万隻。',d:1}}},
+  {ctx:'あなたは、次の訪問の人数を減らしてほしいと申し入れた。',line:'なるほど。前向きに検討させていただきます。',pose:'nod',cue:'触角がゆっくり上下している。',
+   corpus:['「委員会で検討した結果、承認されました」（ニュース）','「データを詳しく検討し、仮説を確かめた」（科学番組）','「前向きに検討した結果、採用が決まりました」（企業ドラマ）'],
+   slots:[{ph:'検討します',q:'カナルの「検討します」は、どういう意味？',ans:'real'}],
+   out:{ok:{r:'「ありがとうございます。いつ頃お返事をいただけますか？」',fb:'「明日の朝には、結論を出します」。触角の上下が速くなった。'},
+        soft:{r:'「そうですか……残念です」',fb:'カナルの触角が止まった。「残念……？ 検討は、まだ始めていません」',d:1}}},
+  {ctx:'翌朝。カナルが小さな装置を差し出した。',line:'つまらないものですが。',pose:'back',cue:'触角を後ろに倒し、深く体を沈めている。',
+   corpus:['「つまらないものですが……」（高級そうな菓子折りを差し出す）','「つまらないものですが、お納めください」（老舗の桐箱を差し出す）','「つまらないものですが」（結婚の挨拶で、最上の酒を差し出す）'],
+   slots:[{ph:'つまらないものですが',q:'カナルの「つまらないものですが」は、どういう意味？',ans:'best'}],
+   out:{ok:{r:'（両手で受け取って）「ありがとうございます。大切にします」',fb:'カナルは深く体を沈め、触角を後ろに倒したまま、しばらく動かなかった。'},
+        low:{r:'「本当につまらないなら、受け取れません」',fb:'カナルは凍りついたように動かなくなった。装置を持つ手が、ゆっくりと下がった。',d:1}}},
+  {ctx:'カナルが、人数についての検討結果を伝えに来た。',line:'人数の件、結構です。また今度、お邪魔します。',pose:'sky',cue:'触角が空の一点を指している。',
+   corpus:['（新しい用例はない。あなたの辞書で読み解こう）'],
+   slots:[{ph:'結構です',q:'この「結構です」は？',ans:'yes'},{ph:'また今度',q:'この「また今度」は？',ans:'many'}],
+   out:{ok:{r:'「ありがとうございます。念のため、次は何人でいらっしゃいますか？」',fb:'「十人です」。カナルは誇らしげに答えた。'},
+        'no':{r:'「そうですか。では、お待ちしています」',fb:'三十日後、空を覆う船団が現れた。「減らしてほしい」という申し入れは、承諾されていた。減らした結果が、一万九千隻だった。',d:1},
+        lip:{r:'「はい、またいつか」',fb:'三十日後、空を覆う船団が現れた。「また今度」は、社交辞令ではなかった。',d:1}}}
+];
+function extra(st){return `<div class="stats"><div><span class="k">緊張</span><span class="v">${st.ten}</span></div><div><span class="k">正しく読めた</span><span class="v">${st.ok}/${R.length}</span></div></div>
+<div class="scroll"><table class="cmp"><tr><th>カナルの言葉</th><th>あなたの解釈</th><th>カナルにとっての意味</th></tr>${[[0,0],[1,0],[2,0],[3,0],[4,0]].map(([r,s])=>{const sl=R[r].slots[s];return `<tr><td>${sl.ph}</td><td>${st.dict[sl.ph]?MEAN[st.dict[sl.ph]]:'−'}</td><td>${MEAN[sl.ans]}</td></tr>`;}).join('')}</table></div>`;}
+function decide(st){
+  const r=R[st.r],sel=st.sel;if(r.slots.some((s,k)=>!sel[k]))return;
+  r.slots.forEach((s,k)=>{st.dict[s.ph]=sel[k];});
+  const wrong=r.slots.map((s,k)=>sel[k]===s.ans?null:sel[k]).filter(Boolean);
+  let o;
+  if(!wrong.length)o=Object.assign({ok:true},r.out.ok);
+  else{const key=wrong.find(w=>r.out[w]);o=key?r.out[key]:{r:'（言葉に詰まる）',fb:MISS,d:1};}
+  st.res=o;{const q=quoted(o.fb);if(q)voice('kanal',q,.1);}
+  if(o.ok){st.ok++;st.alog.push(`地球個体は「${r.line}」を正しく読み取った。`);say(st,`あなた：${o.r}　${o.fb}`,'good');}
+  else{st.ten+=o.d||0;st.alog.push(`地球個体の解釈「${wrong.map(w=>MEAN[w]).join('、')}」。意図が食い違う。`);say(st,`あなた：${o.r}　${o.fb}`,'bad');}
+  if(st.ten>=3)lose({title:'交渉が決裂した',text:'カナルは丁寧にお辞儀をして、船に戻っていった。「また今度、お邪魔します」。',alog:st.alog.slice(-6),extra:extra(st)});
+}
+function shuffle(a){const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[b[i],b[j]]=[b[j],b[i]];}return b;}
+return {
+  title:'流暢な来訪者',species:'カナル',concept:'分布意味論と会話の含意',
+  lead:'テレビで日本語を覚えた「カナル」。発音も文法も申し分ない。',
+  rules:['6つの場面で、カナルの言葉の意味を読み解く', '6場面', '緊張が3に達する'],
+  hints:['カナルは辞書を持っていない。持っているのは、テレビの記憶だけだ。','用例の中で、その言葉の直後に、何が起きているか。','人間どうしなら当然の意味ほど、カナルには通じていないかもしれない。'],
+  init(){return {r:0,ten:0,ok:0,sel:{},res:null,dict:{},order:shuffle(Object.keys(MEAN)),log:[],alog:[],turn:1,narr:{text:R[0].ctx,kind:''}};},
+  view(st){const r=R[st.r],done=!!st.res;
+    const groups=r.slots.map((s,k)=>`<div><div class="lbl">${s.q}</div><div class="chips mean">${st.order.map(m=>`<button class="chip" data-a="m" data-v="${k}:${m}" aria-pressed="${st.sel[k]===m}" ${done?'disabled':''}>${MEAN[m]}</button>`).join('')}</div></div>`).join('');
+    const ready=r.slots.every((s,k)=>st.sel[k]);
+    const dict=Object.keys(st.dict).map(ph=>`<dt>${ph}</dt><dd>${MEAN[st.dict[ph]]}</dd>`).join('');
+    return `${H.status(H.num('場面',`${st.r+1}/${R.length}`),H.pips('緊張',st.ten,3,true))}
+    <div class="stage">${canvas('s8',{pose:r.pose})}</div>
+    <p class="focusline">${r.ctx}</p>
+    <div class="card"><div class="lbl">カナル</div><p class="line">「${r.line}」</p><p class="cue">${r.cue}</p></div>
+    <div class="corpus"><b>カナルが学んだテレビの用例</b><ul>${r.corpus.map(c=>`<li>${c}</li>`).join('')}</ul></div>
+    ${groups}
+    ${done?H.narr(st.narr):`<button class="primary" data-a="decide" ${ready?'':'disabled'}>この解釈で返事をする</button>`}
+    ${done&&!st.over?`<button class="primary" data-a="next">${st.r<R.length-1?'次の場面へ':'結果を見る'}</button>`:''}
+    <div class="card"><h3>カナル語辞書（あなたの解釈）</h3>${dict?`<dl class="dict">${dict}</dl>`:'<p class="focusline">解釈を決めるたびに、ここに記録される。</p>'}</div>`;},
+  act(st,a,v){
+    if(a==='m'&&!st.res){const [k,m]=v.split(':');st.sel[k]=m;return;}
+    if(a==='decide'&&!st.res){decide(st);return;}
+    if(a==='next'&&st.res){st.r++;st.sel={};st.res=null;st.turn++;
+      if(st.r>=R.length){win({title:'誤解の地図を描き切った',text:'カナルの日本語は完璧だった。ずれていたのは、言葉が使われる場面の偏りだった。あなたはそのずれを一つずつ読み解き、十人の訪問という約束にたどり着いた。',alog:st.alog.slice(-6),extra:extra(st)});return;}
+      st.narr={text:R[st.r].ctx,kind:''};setTimeout(()=>{const x=R[st.r];if(x&&!st.over&&G.st===st)voice('kanal',x.line);},400);}
+  },
+  onStart(st){voice('kanal',R[0].line);},
+  note:`<p>カナルの日本語は、文法も発音も完璧だった。ずれていたのは意味だ。カナルは、テレビの中で言葉が<b>どんな場面で使われていたか</b>から意味を学んだ。「すみません」はいつも用件の前に、「また今度」はいつも大勢が並ぶ次回予告の前にあった。</p>
+  <p>言語学者ファースは1957年、語の意味はその語が一緒に現れる語から知ることができる、という趣旨の言葉を残した。この考え方を<b>分布意味論</b>と呼ぶ。現代の大規模言語モデルも、大量の文章の中で語がどう分布しているかから意味を学んでいる。学習した文章が偏っていれば、学ばれる意味も偏る。カナルは、テレビという偏ったコーパスの産物だった。</p>
+  <p>もう一つの鍵は、哲学者グライスが論じた<b>会話の含意</b>だ。「検討します」が事実上の断りとして使われるのは、字義ではなく、言外の推論による。カナルは字義しか学んでいなかったので、文字どおり真剣に検討していた。</p>
+  <p>「結構です」「大丈夫です」は、承諾にも断りにも使われる、日本語でも有名な曖昧な表現だ。日本語の話者どうしでも、抑揚や場面に頼って判断している。量や人数を具体的に言うことが、最も確実な誤解の防ぎ方だった。</p>
+  <cite>参考：J. R. Firth, A synopsis of linguistic theory 1930–1955 (1957)／H. P. Grice, Logic and conversation (1975)</cite>`
+};
+})());
+/* ===== Stage 9: 会議 ===== */
+STAGES.push((()=>{
+const SEC=45;
+const secOf=st=>(st.T&&st.T[st.i]&&st.T[st.i].time)||SEC;
+const OPEN=[
+  {t:'太平洋の中央。仮設の浮体会議場に、8つの種族が円を描いて並んだ。招集状が呼んだ「九つめの星」の会議が、いま始まろうとしている。'},
+  {t:'最初に動いたのはヤァだった。会議の開始を祝う絵を、高く掲げた。ツブラの群れの一部が、その絵を別の意味に受け取って一斉に光った。その光の速さに怯えて、ウームが殻を狭めた。ポトラが場を収めようと琥珀を差し出したが、それを受け取る作法を、誰も知らなかった。ネフの部屋から、苦い香りが漏れ始めた。'},
+  {t:'誰も、誰の言葉も分からない。会議場の空気が、張りつめていく。',comm:[[HQ,'まずい。このままだと、会議の前に全部が壊れる。']],oi:'2031.04.21 10:02'},
+  {t:'そのとき、ミミクがあなたの方へ、体ごと向き直った。ウームが、ツブラが、ポトラが、ヤァが、ネフが、カナルが、一つずつ、あなたの方へ向き直った。オルドの受信皿も、こちらを向いた。',comm:[[HQ,'……あなたしかいない。行ってくれ。']],oi:'2031.04.21 10:04'}
+];
+const RULES9={ri:a=>a.map(t=>t==='高'?'低':'高').reverse(),r:a=>[...a].reverse(),i:a=>a.map(t=>t==='高'?'低':'高'),rot:a=>a.slice(1).concat(a[0]).map(t=>t==='高'?'低':'高')};
+const LADDER0={1:'羽根',2:'小石',3:'貝',4:'布',5:'琥珀',6:'骨笛',7:'星図'};
+function shuf9(a){const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[b[i],b[j]]=[b[j],b[i]];}return b;}
+function makeT(){
+  const rule=G.prog.uum||'ri',f=RULES9[rule];let q;do{q=Array.from({length:3},()=>Math.random()<.5?'高':'低');}while(new Set(q).size<2||f(q).join()===q.join());
+  const L=G.prog.potra||LADDER0;
+  return [
+  {from:'ミミク',to:'ツブラ',time:60,src:'ミミクは「この貝殻は、ミミクが浜で拾った」とツブラに伝えたい。あなたは、ミミクが拾うところを見ていない。記号を組み立てて、群れに伝えよう。',
+   build:[{key:'thing',label:'物',opts:[['shell','〔貝〕'],['water','〔水〕'],['beast','〔獣〕']]},{key:'ev',label:'三つ目の記号',opts:[['seen','〔◉〕'],['heard','〔◌〕'],['infer','〔◇〕']]},{key:'to',label:'誰に見せる',opts:[['all','群れ全体'],['one','代表の一匹']]}],
+   check:s=>s.to==='one'?{fb:'ツブラの群れ全体が、強い光をあなたに浴びせた。'}:s.thing!=='shell'?{fb:'群れはゆらゆらと揺れ、同じ問いを掲げ直した。'}:s.ev!=='heard'?{fb:'ツブラの群れの光が、一段暗くなった。'}:{ok:true,fb:'ツブラの群れが一斉に、同じ記号を掲げ直した。'}},
+  {from:'ツブラ',to:'ヤァ',src:'ヤァが「ツブラの巣を、別の星へ移そう」と絵で提案した。ツブラはこれを断りたい。',
+   opts:[{t:'巣の絵に×を描いて示す',fb:'ヤァの輪がぴたりと止まり、光が消えた。'},
+         {t:'「巣が今の森で、栄え続けている」絵を示す',ok:true,fb:'ヤァは二枚の絵を見比べ、提案の絵をそっとしまった。'},
+         {t:'「巣が次の雨季まで、森にある」絵を示す',fb:'ヤァは嬉しそうに輪を回し、雨季の終わりの日付を記録した。'}]},
+  {from:'ヤァ',to:'ウーム',time:60,ans:f(q),src:`ウームが〔${q.join('・')}〕と語りかけ、話し終えた。ヤァは、ウームの流儀で「喜んで応じる」と返したい。音を組み立てよう。`,
+   build:[{key:'seq',label:'返す音列（3音）',seq:3},{key:'tempo',label:'返し方',opts:[['slow','1拍に1音ずつ'],['fast','一息に']]}],
+   check:s=>s.tempo==='fast'?{fb:'ウームの殻の合わせ目が、わずかに狭まった。'}:s.seq.join()!==f(q).join()?{fb:'ウームの発光帯は、暗いまま動かない。'}:{ok:true,fb:'ウームの発光帯が、ゆっくりと満ちていった。'}},
+  {from:'ウーム',to:'ネフ',time:60,src:'ウームは「この場所で、しばらく休ませてほしい」とネフに頼みたい。ネフの部屋には、問いかけの酸い香りがまだ残っている。香りを組み立てよう。',
+   build:[{key:'prep',label:'まず',opts:[['keep','いまの空気に、そのまま重ねる'],['vent','部屋を換気する'],['char','炭で、酸い香りを消す']]},{key:'scent',label:'重ねる香り（2つまで）',multi:2,opts:[['S','甘'],['R','樹'],['A','酸'],['B','苦']]}],
+   check:s=>s.prep==='vent'?{fb:'ネフの体がこわばった。'}:s.prep==='char'||s.scent.includes('B')?{fb:'ネフの体が逆立ち、苦い香りが返ってきた。'}:(s.scent.length===2&&s.scent.includes('S')&&s.scent.includes('R'))?{ok:true,fb:'ネフが床に触れ、ゆっくりと甘い香りを返した。'}:{fb:'ネフは迷うように揺れ、酸い香りで問い直した。'}},
+  {from:'ネフ',to:'カナル',src:'ネフは「次はいつ、何人で来るのか」をカナルに尋ねたい。',
+   opts:[{t:'「次は、いつ、何人でいらっしゃいますか」',ok:true,fb:'「百日後に、三人で」。カナルは即座に答えた。'},
+         {t:'「また今度、ぜひいらしてください」',fb:'カナルの触角が、空の一点を指した。'},
+         {t:'「ご来訪の件、結構です」',fb:'「ありがとうございます！」カナルの触角が、嬉しそうに揺れた。'}]},
+  {from:'カナル',to:'ポトラ',time:60,src:`カナルは、ポトラから${L[4]}を受け取った。カナルの荷物には、ポトラの品のどれとも同じ値打ちの物がそろっている。どの値打ちの品で返す？（2つまで選べる）`,
+   build:[{key:'gift',label:'返礼の品（ポトラの品で言えば）',multi:2,opts:shuf9([1,2,3,5,6]).map(k=>[String(k),L[k]])}],
+   check:s=>(s.gift.length===1&&s.gift[0]==='5')?{ok:true,fb:`ポトラは長いあいだ動かなかった。やがて、荷袋から${L[6]}を取り出した。`}:(s.gift.length>1||+s.gift[0]>5)?{fb:'ポトラは受け取ったまま、長いあいだ体を震わせていた。'}:{fb:'ポトラはそれを一瞥し、そっと足元に戻した。'}},
+  {from:'探査機オルド',to:'全員',src:'オルドが全種族の前で問うた。「この星の文明は、脅威か」。核分裂の図が添えられている。全員があなたを見ている。',
+   opts:[{t:'数を数える図と、贈り物を差し出す図を、順に送る',ok:true,fb:'オルドの受信皿が、ゆっくりと会議場の中央を向いた。'},
+         {t:'核分裂の図に×をつけて送り返す',fb:'オルドの応答に長い間があった。ヤァの輪が止まった。'},
+         {t:'核分裂の図を、そのまま送り返す',fb:'オルドの信号が、母星の方角へ向けて送られ始めた。'}]},
+  {from:'議長ミミク',to:'全員',src:'最後に、議長役のミミクが求めた。「全員に向けて、人類の一言を」。',
+   opts:[{t:'代表を一人ずつ指し示し、順に「よろしく」と呼びかける',fb:'ミミクに赤い斑点が浮かんだ。ツブラの群れが強く光った。'},
+         {t:'全員の方へ体を向け、1拍に1語ずつ「この星は、みなさんを迎え続けます」と伝える',ok:true,fb:''},
+         {t:'全員の方へ体を向け、力強く「私たちは決して戦争をしない」と宣言する',fb:'ヤァの輪が止まった。ウームの殻が狭まった。'}]}
+  ];
+}
+const VOICES=[
+  ['ミミク','貝殻をあなたの手に置き、体ごとあなたに向き直って「tii」','それは、あなたのもの。'],
+  ['ウーム','8時間かけて〔低・低・高・高・低・高〕','千年ぶりに、応える者に会えた。'],
+  ['ツブラ','群れ全体で〔橋〕〔ここ〕〔◉〕','橋は、ここにある。われわれは、この目で見た。'],
+  ['ポトラ','骨笛をあなたの足元に置いた。お返しを待つ様子はない','受け取れ。返礼は、千年後でいい。'],
+  ['ヤァ','「九つの言葉が、この星で語られ続けている」絵','（ヤァにとって、これが最も強い約束の形だ）'],
+  ['ネフ','甘い香りと、樹の香り。会議場の風に乗って、どこまでも','ここで、共に。'],
+  ['オルド','2、3、5、7、11、13……','招集、完了。'],
+  ['カナル','触角を前に突き出して「すみません！」','お願いがあります。わたしに、通訳の仕事を教えてください。']
+];
+function extra(st){return `<div class="stats"><div><span class="k">正しく通訳できた</span><span class="v">${st.ok}/${st.T.length}</span></div><div><span class="k">誤訳</span><span class="v">${st.miss}</span></div></div>`;}
+function resolve(st,k){
+  const t=st.T[st.i];st.pick=k;
+  const desc=k==='b'?t.build.map(p=>{const v=st.bs[p.key];if(p.seq)return (v||[]).join('・');const lab=x=>(p.opts.find(o=>o[0]===x)||[,x])[1];return p.multi?(v||[]).map(lab).join('＋'):lab(v);}).join('／'):k===-1?'（時間切れ）':t.opts[k].t;
+  st.log.unshift({t:'発言'+(st.i+1),text:`あなたの通訳（${t.from}→${t.to}）：${desc}`,kind:''});
+  if(k==='b'){const o=t.check(st.bs);st.bres=o;const rk=SP_BY_NAME[t.to];voice(rk,rk==='uum'?{tone:o.ok?'高':'低'}:(o.ok?'good':'bad'),.15);
+    if(o.ok){st.ok++;say(st,o.fb,'good');st.alog.push(`${t.from}→${t.to}：伝わった。`);}else{st.miss++;say(st,o.fb,'bad');st.alog.push(`${t.from}→${t.to}：誤訳。`);}markLast(st,o.ok?'good':'bad');}
+  else if(k===-1){st.miss++;say(st,'時間切れ。沈黙が長すぎた。会議場にざわめきが広がった。','bad');markLast(st,'bad');st.alog.push(`${t.from}→${t.to}：通訳が途切れた。`);}
+  else{const o=t.opts[k];const rk=SP_BY_NAME[t.to]==='all'?'yaa':SP_BY_NAME[t.to];voice(rk,rk==='potra'||rk==='tsubura'||rk==='yaa'||rk==='nef'?(o.ok?'good':'bad'):rk==='uum'?{tone:o.ok?'高':'低'}:rk==='kanal'?(quoted(o.fb)||'はい'):undefined,.15);if(o.ok){st.ok++;say(st,o.fb||'会議場が、静まり返った。','good');st.alog.push(`${t.from}→${t.to}：伝わった。`);}else{st.miss++;say(st,o.fb,'bad');st.alog.push(`${t.from}→${t.to}：誤訳。`);}markLast(st,o.ok?'good':'bad');}
+  if(st.miss>=3){st.alog.push('会議は決裂した。');lose({title:'会議が決裂した',text:'ひとつの誤訳が、別の種族の禁忌に触れた。ヤァが去り、ウームが殻を閉じ、ツブラの群れが散っていった。会議場には、あなたとカナルだけが残った。',alog:st.alog.slice(-6)});}
+}
+function buildReady(st,t){return t.build.every(p=>p.seq?(st.bs[p.key]||[]).length===p.seq:p.multi?(st.bs[p.key]||[]).length>0:!!st.bs[p.key]);}
+function buildUI(st,t,fb){
+  const parts=t.build.map(p=>{
+    if(p.seq){const arr=st.bs[p.key]||[];const slots=Array.from({length:p.seq},(x,i)=>`<span class="slot ${arr[i]==='高'?'hi':arr[i]==='低'?'lo':''}">${arr[i]||'・'}</span>`).join('');
+      return `<div><div class="lbl">${p.label}</div><div class="seqrow">${slots}</div><div class="acts">${H.act('seq','低い音','',fb,'低')}${H.act('seq','高い音','',fb,'高')}${H.act('seqc','消す','',fb)}</div></div>`;}
+    const cur=st.bs[p.key];const on=v=>p.multi?(cur||[]).includes(v):cur===v;
+    return `<div><div class="lbl">${p.label}</div><div class="chips">${p.opts.map(([v,l])=>`<button class="chip" data-a="b" data-v="${p.key}:${v}" aria-pressed="${on(v)}" ${fb?'disabled':''}>${l}</button>`).join('')}</div></div>`;}).join('');
+  return `<div class="build"><div class="lbl">通訳を組み立てる</div>${parts}${fb?'':`<button class="primary" data-a="bsend" ${buildReady(st,t)?'':'disabled'}>この形で伝える</button>`}</div>`;
+}
+function markLast(st,kind){const e=st.log.find(l=>/^あなたの通訳/.test(l.text));if(e)e.kind=kind;}
+function summons(){return FRAG.map((f,i)=>({f,i})).sort((a,b)=>a.f.ord-b.f.ord).map(({f,i})=>`<div class="sline"><span class="mono">${STAGES[i].species}</span>${f.text}</div>`).join('');}
+return {
+  title:'九つの言語の会議',species:'全種族',concept:'翻訳とは、世界の切り分け方を移し替えること',
+  lead:'8つの種族が会議場に集まった。互いの言葉を知るのは、あなただけ。',
+  rules:['8つの発言を、相手の流儀で通訳する', '1発言につき45〜60秒', '誤訳が3回たまる'],
+  hints:['各種族のステージで、何が相手を怯えさせたか、何が相手を喜ばせたかを思い出そう。','意味が正しくても、形が相手の禁忌に触れることがある。','通訳は、聞いたことを、聞いたこととして伝える。ウームやポトラの流儀は、あなたが出会った個体のものを思い出そう。'],
+  init(){return {T:makeT(),bs:{},bres:null,phase:'open',oi:0,i:0,ok:0,miss:0,pick:null,ri:0,deadline:0,log:[],alog:[],turn:1,narr:{text:'',kind:''}};},
+  view(st){
+    if(st.phase==='open'){const o=OPEN[st.oi];
+      return `<div class="stage">${canvas('hall',{})}</div><div class="prose"><p>${o.t}</p></div>${o.comm?H.comm(o.comm,o.oi):''}
+      <button class="primary" data-a="onext">${st.oi<OPEN.length-1?'次へ':'通訳を始める'}</button>`;}
+    if(st.phase==='reveal'){
+      const steps=[
+        ()=>`<div class="stage">${canvas('int6',{})}</div><div class="prose"><p>最後の一言が、会議場の隅々まで届いた。長い沈黙のあと、オルドが信号を送ってきた。8つの断片を、ひとつに並べる信号だった。</p></div><div class="fragment summons-full"><span class="mono">SUMMONS · RESTORED</span>${summons()}</div>`,
+        ()=>`<div class="stage">${canvas('pro4',{})}</div>${H.comm([[HQ,'「言葉と言葉のあいだに、橋を架ける者」……。'],[HQ,'この星には、7000を超える言語がある。互いに通じない言葉を、人類は何千年も訳し続けてきた。'],[HQ,'彼らが探していたのは、強い種族でも、賢い種族でもなかった。'],[HQ,'翻訳する種族だった。']],'2031.04.21 13:47')}`,
+        ()=>`<div class="stage">${canvas('hall',{})}</div><div class="prose"><p>そして、会議場のあちこちから、言葉が届き始めた。あなたには、そのすべてが読めた。</p></div><div class="voices">${VOICES.map(([w,o,tr])=>[w,w==='ミミク'?o.replace('「tii」',`「${(G.prog.lex1||{}).tii||'tii'}」`):o,tr]).map(([w,o,tr])=>`<div class="voice" data-a="voice" data-v="${SP_BY_NAME[w]}"><div class="vw">${w} ▶</div><div class="vo">${o}</div><div class="vt">${tr}</div></div>`).join('')}</div>`
+      ];
+      return `${steps[st.ri]()}<button class="primary" data-a="rnext">${st.ri<steps.length-1?'次へ':'記録を閉じる'}</button>`;}
+    const t=st.T[st.i],fb=st.pick!==null;
+    const opts=t.build?buildUI(st,t,fb):t.opts.map((o,k)=>`<button class="opt ${fb&&st.pick===k?(o.ok?'right':'wrong'):''}" data-a="pick" data-v="${k}" ${fb?'disabled':''}>${o.t}</button>`).join('');
+    const left=Math.max(0,st.deadline-Date.now())/1000;
+    return `${H.status(H.num('発言',`${st.i+1}/${st.T.length}`),H.pips('誤訳',st.miss,3,true),H.num('通訳できた',st.ok))}
+    ${fb?'':`<div class="timer ${left<12?'low':''}" id="s9timer"><i style="width:${left/secOf(st)*100}%"></i></div>`}
+    <div class="card"><div class="route">${t.from} → ${t.to}</div><p>${t.src}</p></div>
+    ${fb?H.narr(st.narr):''}
+    ${t.build?opts:`<div class="optlist"><div class="lbl">どう通訳する？</div>${opts}</div>`}
+    ${fb?`<button class="primary" data-a="next">${st.i<st.T.length-1?'次の発言へ':'会議場を見渡す'}</button>`:''}
+    ${H.log(st.log,'会議の記録')}`;},
+  tick(st){if(st.phase!=='task'||st.pick!==null)return;const left=Math.max(0,st.deadline-Date.now())/1000;const el=document.getElementById('s9timer');
+    if(el){el.firstElementChild.style.width=(left/secOf(st)*100)+'%';el.classList.toggle('low',left<12);}
+    if(left<=0){resolve(st,-1);if(G.screen==='play')render();}},
+  act(st,a,v){
+    if(a==='onext'){if(st.oi<OPEN.length-1){st.oi++;if(st.oi===1)chorus(false);if(st.oi===3)voice('mimik','tii');}else{st.phase='task';st.deadline=Date.now()+secOf(st)*1000;setTimeout(()=>{const x=st.T[st.i];if(x&&!st.over&&G.st===st)voice(SP_BY_NAME[x.from]);},300);}window.scrollTo(0,0);return;}
+    if(a==='pick'&&st.phase==='task'&&st.pick===null&&!st.T[st.i].build){resolve(st,+v);return;}
+    if(st.phase==='task'&&st.pick===null){const t=st.T[st.i];
+      if(a==='b'){const [k,val]=v.split(':');const part=t.build.find(p=>p.key===k);if(part.multi){const arr=st.bs[k]||[];const i=arr.indexOf(val);if(i>=0)arr.splice(i,1);else if(arr.length<part.multi)arr.push(val);st.bs[k]=arr;}else st.bs[k]=val;return;}
+      if(a==='seq'){const part=t.build.find(p=>p.seq);const arr=st.bs[part.key]||[];if(arr.length<part.seq){arr.push(v);se('tone',v);}st.bs[part.key]=arr;return;}
+      if(a==='seqc'){const part=t.build.find(p=>p.seq);st.bs[part.key]=[];return;}
+      if(a==='bsend'&&buildReady(st,t)){resolve(st,'b');return;}}
+    if(a==='next'&&st.pick!==null){st.i++;st.turn++;st.pick=null;st.bs={};st.bres=null;
+      if(st.i>=st.T.length){st.phase='reveal';st.alog.push('会議は合意に至った。');window.scrollTo(0,0);return;}
+      st.deadline=Date.now()+secOf(st)*1000;setTimeout(()=>{const x=st.T[st.i];if(x&&!st.over&&G.st===st)voice(SP_BY_NAME[x.from]);},300);return;}
+    if(a==='voice'){v==='kanal'?voice('kanal','すみません！　お願いがあります。わたしに、通訳の仕事を教えてください。'):voice(v);return false;}
+    if(a==='rnext'){if(st.ri<2){st.ri++;if(st.ri===2)chorus(true);window.scrollTo(0,0);return;}
+      win({title:'会議は成立した',text:'あなたの仮説辞書は、最後まで仮説のままだった。それでも、九つの言葉は、いま一つの場所で通じ合っている。招集状の最後の一行は、正しかった。橋を架ける者は、ここにいた。',alog:st.alog.slice(-6),extra:extra(st)});}
+  },
+  note:`<p>最終ステージで求められたのは、語の置き換えではなかった。ツブラに訳すなら情報源を、ヤァに訳すなら否定を使わない形を、ウームに訳すならテンポと返し方を、それぞれ整え直す必要があった。同じ意図でも、相手の言語の流儀に合わせて作り直さなければ届かない。</p>
+  <p>言語学者ヤコブソンは1959年の論文で、言語どうしの本質的な違いは「何を言うことができるか」ではなく、<b>「何を言わなければならないか」</b>にある、という趣旨を述べた。証拠性を持つ言語では情報源を言わずに文を作れない。日本語では、相手との関係を示す敬語の選択を避けられない。翻訳とは、原文が言わずに済ませたことを、訳先の言語が要求する形で補うことでもある。</p>
+  <p>ステージ1で出会ったクワインは、同じ『ことばと対象』の中で<b>翻訳の不確定性</b>を論じた。どれだけ観察を重ねても、ある言語を別の言語に訳す正解は一つに定まらない、という主張だ。それでも人類は、約7000の言語のあいだで訳し続けてきた。完全な理解ではなく、誤解を管理し続けること。それが、異なる言語どうしの対話の実態なのかもしれない。</p>
+  <cite>参考：R. Jakobson, On linguistic aspects of translation (1959)／W. V. O. Quine, Word and Object (1960)</cite>`
+};
+})());
+render();
+</script>
+
+</body>
+</html>
