@@ -934,7 +934,7 @@ function renderMap(){
    <ol class="stages">${rows}</ol>
    ${done===STAGES.length?`<button class="ghost" data-nav="epilogue">エピローグを見る</button>`:''}
    ${Object.keys(G.prog.cleared).length?`<button class="ghost recbtn" data-nav="records" data-v="map">▤ 調査記録をまとめて見る</button>`:''}
-   <div class="small-links"><button class="linkbtn" data-nav="title">タイトルへ</button><button class="linkbtn" data-nav="unlock">すべてのステージを開放する</button><button class="linkbtn" data-nav="reset">記録を消去する</button></div>
+   <div class="small-links"><button class="linkbtn" data-nav="title">タイトルへ</button><button class="linkbtn" data-nav="reset">記録を消去する</button></div>
   </div>`;
 }
 function saveRecap(o){
@@ -1016,7 +1016,6 @@ function nav(w,v){
   if(w==='interlude'){startStory(`INTERLUDE ${G.cur+1}`,interludePages(G.cur),'next');G.story.doneLabel=`次の現場へ`;}
   if(w==='epilogue'){startStory('EPILOGUE',EPILOGUE,'fin');G.story.doneLabel='おわり';}
   if(w==='next'){G.cur=Math.min(STAGES.length-1,G.cur+1);G.screen='intro';}
-  if(w==='unlock'){G.prog.unlockAll=true;save();}
   if(w==='reset'){G.prog={cleared:{},fails:{},unlockAll:false,seenPrologue:false};save();G.screen='title';}
   render();window.scrollTo(0,0);
 }
