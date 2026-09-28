@@ -741,7 +741,7 @@ const HASHTAG='#ファーストコンタクトリンギスト';
 const FLAVOR=['ミミクの三つの言葉の意味が分かった瞬間、声が出た。','千年を生きる岩と、挨拶を交わした。','群れの前で、口をすべらせずに済んだ。','浜辺の取引を、最後までやり遂げた。','願いを叶える輪から、月を守った。','香りの部屋で、約束を結んだ。','探査機との問答を、生き延びた。','カナルとの会話が、いちばん怖かった。','橋を架ける者は、ここにいた。'];
 function totalFails(){return Object.values(G.prog.fails||{}).reduce((a,b)=>a+(+b||0),0);}
 function stageShareText(i){const f=G.prog.fails[i]||0;return `STAGE ${i+1}「${STAGES[i].title}」解明（${f?`失敗${f}回`:'ノーミス'}）。\n${FLAVOR[i]}\n\n言葉の通じない来訪者と対話する、言語学の謎解きゲーム\n${HASHTAG}`;}
-function finalShareText(){const f=totalFails();return `言葉の通じない8つの来訪者と、身振りと贈り物と香りと素数で対話した。\n9つの言語、すべて解明（失敗${f}回）。\n\n言語学の謎解きゲーム、全9ステージ。\n${HASHTAG}`;}
+function finalShareText(){const f=totalFails();return `言葉の通じない来訪者と、身振りや贈り物や香りや素数で対話した。\n彼らの言語、すべて解明（失敗${f}回）。\n\n言語学の謎解きゲーム、全9ステージ。\n${HASHTAG}`;}
 function shareBlock(text,big,link){
   link=link||SHARE_URL;const url='https://twitter.com/intent/tweet?text='+encodeURIComponent(text)+'&url='+encodeURIComponent(link);
   return `<div class="card share ${big?'big':''}"><div class="lbl">${big?'全クリおめでとう。よかったら、SNSでシェアしてください':'よかったら、SNSでシェアしてください'}</div>
@@ -793,7 +793,7 @@ function profile(){
   const rows=idx.map(i=>({i,cls:!G.prog.cleared[i]?'no':F(i)?'re':'ok',mark:!G.prog.cleared[i]?'−':F(i)?`○${F(i)}`:'◎'}));
   return {title,desc,cleared,first,fails,obs,bad,time:fmtTime(G.prog.time),s9,lines,rows};
 }
-finalShareText=function(){const P=profile();return `言葉の通じない8つの来訪者と、身振りと贈り物と香りと素数で対話した。\n9つの言語、すべて解明（失敗${P.fails}回・一度で解明${P.first}/9）。\nわたしの調査記録に残った称号は《${P.title}》。\n\n言語学の謎解きゲーム、全9ステージ。\n${HASHTAG}`;};
+finalShareText=function(){const P=profile();return `言葉の通じない来訪者と、身振りや贈り物や香りや素数で対話した。\n彼らの言語、すべて解明（失敗${P.fails}回・一度で解明${P.first}/9）。\nわたしの調査記録に残った称号は《${P.title}》。\n\n言語学の謎解きゲーム、全9ステージ。\n${HASHTAG}`;};
 /* ---- 1200x675 card for X ---- */
 let CARD_URL='';
 async function buildResultCard(){
