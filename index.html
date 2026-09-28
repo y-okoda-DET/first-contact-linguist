@@ -60,6 +60,9 @@ button{font:inherit;color:inherit;cursor:pointer}
 button:focus-visible,summary:focus-visible,input:focus-visible,.kami:focus-visible{outline:2px dashed var(--accent);outline-offset:3px}
 .head{display:flex;flex-direction:column;gap:6px}
 .lead{color:var(--muted);font-size:14px}
+.objbar{position:sticky;top:8px;z-index:40;background:var(--surface);border:2px solid var(--line);padding:8px 12px;display:flex;gap:8px;align-items:baseline;box-shadow:3px 3px 0 var(--shadow)}
+.objbar .k{font-family:var(--mono);font-size:13px;color:var(--teal);letter-spacing:.06em;white-space:nowrap;flex:none}
+.objbar b{font-weight:400;font-family:var(--display);color:var(--ink);font-size:14px;line-height:1.4}
 .mono{font-family:var(--mono);font-size:16px;letter-spacing:.06em}
 /* pixel canvases */
 canvas.px{display:block;width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;background:#0f0e15}
@@ -853,7 +856,7 @@ function render(){
   const tw=document.getElementById('tlwrap');const tlPrev=tw?(()=>{const c=tw.querySelector('.cur'),wr=tw.getBoundingClientRect(),r=c?c.getBoundingClientRect():null;return {l:tw.scrollLeft,follow:!r||(r.left>=wr.left-4&&r.right<=wr.right+4)};})():null;
   const v={title:renderTitle,story:renderStory,fin:renderFin,map:renderMap,intro:renderIntro,end:renderEnd,records:renderRecords}[G.screen];
   if(v)sc.innerHTML=v();
-  else if(G.screen==='play')sc.innerHTML=`<div class="stack">${stageHead()}${STAGES[G.cur].view(G.st)}</div>`;
+  else if(G.screen==='play')sc.innerHTML=`<div class="stack">${stageHead()}${objBar()}${STAGES[G.cur].view(G.st)}</div>`;
   const bar=$('#bar');if(bar)bar.innerHTML=audioBar();
   hydrate(document);
   try{if(document.activeElement&&document.activeElement!==document.body&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName))document.activeElement.blur();}catch(e){}
@@ -861,6 +864,7 @@ function render(){
   if(G.screen==='fin')buildResultCard();
 }
 function stageHead(){const s=STAGES[G.cur];return `<div class="head"><div class="eyebrow">Stage ${G.cur+1} · ${s.species}</div><h1>${s.title}</h1></div>`;}
+function objBar(){const s=STAGES[G.cur];return `<div class="objbar"><span class="k">目標</span><b>${s.rules[0]}</b></div>`;}
 function renderTitle(){
   return `<div class="stack title-screen">
    ${logo()}
