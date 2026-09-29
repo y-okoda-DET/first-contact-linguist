@@ -609,7 +609,14 @@ const AU={ctx:null,bgm:true,se:true,on:true,out:null,mus:null,sfx:null,noise:nul
 try{const a=JSON.parse(localStorage.getItem('fcl-audio')||'null');if(a){AU.on=a.on!==undefined?!!a.on:!!(a.bgm||a.se);AU.bgm=AU.se=AU.on;}}catch(e){}
 function auSave(){try{localStorage.setItem('fcl-audio',JSON.stringify({on:AU.on}));}catch(e){}}
 const mtof=m=>440*Math.pow(2,(m-69)/12);
+/* 音の扱いを「アンビエント（環境音）」に固定する（iPhone／iPad）。
+   ・消音スイッチがオンのとき、本体スピーカーからは鳴らない（イヤホン接続時は鳴る）
+   ・ラジオや動画など、ほかのアプリの音を止めずに重ねて鳴らす
+   ※ 音声要素を再生すると「メディア再生」扱いに切り替わって消音を無視するため、このゲームでは使わない */
+function auSession(){try{if(navigator.audioSession&&navigator.audioSession.type!=='ambient')navigator.audioSession.type='ambient';}catch(e){}}
+auSession();
 function auInit(){
+  auSession();
   if(AU.ctx)return true;const C=window.AudioContext||window.webkitAudioContext;if(!C)return false;
   try{AU.ctx=new C();}catch(e){return false;}
   const c=AU.ctx;AU.out=c.createDynamicsCompressor();AU.out.connect(c.destination);
@@ -776,6 +783,7 @@ function kanalSpeak(text,delay){
   if(!AU.se||!text)return 0;const est=text.length*.17+.8;
   const fallback=()=>{if(!auInit())return;voxOut();const t=AU.ctx.currentTime+.03;const d=VOICE.kanal(t,text);duck(d);};
   const go=()=>{
+    auSession();
     if(!('speechSynthesis' in window)||TTS.ok===false){fallback();return;}
     try{
       if(auInit()){voxOut();const t=AU.ctx.currentTime+.01;burst(t,.18,'bandpass',2600,.18,AU.vox);burst(t+.05,.12,'highpass',5000,.12,AU.vox);}
