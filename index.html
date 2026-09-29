@@ -892,6 +892,7 @@ async function copyCard(){
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const pad2=n=>String(n).padStart(2,'0');
+const BUILD='0929-1020';
 const STAGES=[];
 const G={cur:0,st:null,screen:'title',pi:0,result:null,prog:{cleared:{},fails:{},skipped:{},unlockAll:false,seenPrologue:false}};
 try{const p=JSON.parse(localStorage.getItem('fcl-progress-v2')||'null');if(p&&p.cleared)G.prog=Object.assign(G.prog,p);}catch(e){}
@@ -1960,7 +1961,39 @@ return {
   <cite>参考：R. Jakobson, On linguistic aspects of translation (1959)／W. V. O. Quine, Word and Object (1960)</cite>`
 };
 })());
-render();
+/* ===== サウンドチェック（URL末尾に ?soundcheck を付けたときだけ） ===== */
+function renderSoundCheck(){
+  AU.on=false; /* 画面タップで勝手にBGMが始まらないように（保存はしない） */
+  const bar=$('#bar');if(bar)bar.innerHTML='';
+  const info=()=>{const s=navigator.audioSession;const ios=(navigator.userAgent.match(/OS (\d+)_(\d+)/)||[]).slice(1).join('.');
+    return `<dl class="mis">
+      <dt>BUILD</dt><dd>${BUILD}</dd>
+      <dt>iOS</dt><dd>${ios||'（iOS以外）'}</dd>
+      <dt>音の扱い</dt><dd>${s?`対応している　現在：<b>${esc(s.type)}</b>`:'<b>未対応</b>（この端末では指定できない）'}</dd>
+      <dt>音声エンジン</dt><dd>${AU.ctx?esc(AU.ctx.state):'まだ起動していない'}</dd>
+      <dt>読み上げ</dt><dd>${'speechSynthesis' in window?(TTS.voice?esc(TTS.voice.name):'日本語の声なし'):'未対応'}</dd></dl>`;};
+  $('#screen').innerHTML=`<div class="stack">${logo(true)}
+    <div class="head"><div class="eyebrow">Sound check</div><h1>音の確認</h1></div>
+    <div class="card"><div class="lbl">この端末の状態</div><div id="scinfo">${info()}</div></div>
+    <div class="card"><div class="lbl">手順</div><ol class="hints">
+      <li>イヤホンを外し、消音モードをオンにする</li>
+      <li>YouTubeやラジオのアプリで音を流してから、この画面に戻る</li>
+      <li>下のボタンを順に押して、鳴ったか、後ろの音が止まったかを確かめる</li>
+      <li>最後に、この画面のスクリーンショットを送る</li></ol></div>
+    <button class="primary" id="sc1">① 効果音を鳴らす（2秒）</button>
+    <button class="primary" id="sc2">② BGMを10秒流す</button>
+    <button class="primary" id="sc3">③ カナルの声（読み上げ）</button>
+    <p class="focusline" id="scmsg" aria-live="polite"></p>
+    <a class="ghost" href="./" style="text-align:center;text-decoration:none">ゲームに戻る</a></div>`;
+  hydrate(document);
+  const msg=t=>{document.getElementById('scmsg').textContent=t;};
+  document.getElementById('sc1').onclick=()=>{if(!auInit())return msg('この端末では音を鳴らせない');auResume();
+    const t=AU.ctx.currentTime+.05;[69,72,76,81,84,81,76,72].forEach((n,i)=>tone1('triangle',mtof(n),t+i*.22,.01,.14,.5));msg('効果音を鳴らした。');};
+  document.getElementById('sc2').onclick=()=>{if(!auInit())return;auResume();musicStart();msg('BGMを流している（10秒で止まる）。');setTimeout(()=>{musicStop();msg('BGMを止めた。');},10000);};
+  document.getElementById('sc3').onclick=()=>{if(!('speechSynthesis' in window))return msg('読み上げに未対応');auSession();try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance('すみません。聞こえますか。');u.lang='ja-JP';if(TTS.voice)u.voice=TTS.voice;speechSynthesis.speak(u);msg('読み上げた。');}catch(e){msg('読み上げに失敗した');}};
+  setInterval(()=>{const el=document.getElementById('scinfo');if(el)el.innerHTML=info();},700);
+}
+if(/[?&]soundcheck/.test(location.search))renderSoundCheck();else render();
 </script>
 
 </body>
