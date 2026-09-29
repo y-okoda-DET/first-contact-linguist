@@ -182,6 +182,10 @@ details.obs ol{margin:8px 0 0;padding-left:1.3em;display:flex;flex-direction:col
 .stagerow .st{font-family:var(--display);font-size:17px}
 .stagerow .sc{grid-column:2;font-size:12px;color:var(--muted)}
 .stagerow.cleared .sc{color:var(--good)}
+.stagerow.held{border-color:var(--warn);border-style:dashed}
+.stagerow .hold{color:var(--warn)}
+.skipbtn{display:flex;flex-direction:column;align-items:center;gap:2px;border-style:dashed;color:var(--muted);font-family:var(--display)}
+.skipbtn span{font-family:var(--body);font-size:11px}
 .small-links{display:flex;gap:14px;flex-wrap:wrap}
 .linkbtn{background:none;border:none;padding:0;font-size:12px;color:var(--muted);text-decoration:underline}
 /* stage 2 */
@@ -396,9 +400,59 @@ const AFTER=[
   [[HQ,'……橋を架ける者。'],[HQ,'全種族が、太平洋の会議場に集まり始めた。会議は、あなた抜きでは始まらない。']]
 ];
 
-function interludePages(i){return [
+/* 保留や寄り道があったときに使う「次の行き先」の指示（行き先ごと） */
+const GO=[null,
+  '次はアイスランドだ。光る岩のところへ向かってくれ。',
+  'アマゾンから連絡。群体があなたを待っているらしい。「来るなら、ちゃんと来い」と村人が伝言をよこした。',
+  'カナダへ。浜辺の来訪者が、あなたの到着に合わせて何かの品を用意しているそうだ。',
+  '南極へ急いでくれ。氷原の来訪者が、観測隊に「海をください」と言い出した。',
+  'ナミブの船から招待状が来た。文字どおりの招待状だ。香りのついた。',
+  '軌道の探査機が、また信号を送ってきた。今度は観測所だけでは解読できない。',
+  '次は東京湾だ。日本語を話す来訪者が、あなたを待っている。',
+  '全種族が、太平洋の会議場に集まり始めた。会議は、あなた抜きでは始まらない。'];
+/* ===== 作戦時計：訪れた順に日時を積み上げる（順番どおりなら元の日時になる） ===== */
+const PRO_END='2031.03.15 23:05';
+const tsParse=s=>{const m=s.match(/(\d+)\.(\d+)\.(\d+) (\d+):(\d+)/);return Date.UTC(+m[1],+m[2]-1,+m[3],+m[4],+m[5])/60000;};
+const tsFmt=t=>{const d=new Date(t*60000);return `${d.getUTCFullYear()}.${pad2(d.getUTCMonth()+1)}.${pad2(d.getUTCDate())} ${pad2(d.getUTCHours())}:${pad2(d.getUTCMinutes())}`;};
+const GAP_B=BRIEF_TS.map((s,i)=>tsParse(s)-tsParse(i?AFTER_TS[i-1]:PRO_END));
+const GAP_A=AFTER_TS.map((s,i)=>tsParse(s)-tsParse(BRIEF_TS[i]));
+function clockInit(){const P=G.prog;if(P.clk!=null&&P.tsb)return;P.tsb={};P.tsa={};P.tss={};P.clk=tsParse(PRO_END);
+  for(let i=0;i<8;i++)if(P.cleared[i]){P.tsb[i]=tsParse(BRIEF_TS[i]);P.tsa[i]=tsParse(AFTER_TS[i]);P.clk=Math.max(P.clk,P.tsa[i]);}}
+function stampBrief(i){clockInit();const P=G.prog;if(P.tsb[i]==null){P.clk+=GAP_B[i];P.tsb[i]=P.clk;save();}return tsFmt(P.tsb[i]);}
+function stampAfter(i){clockInit();const P=G.prog;if(P.tsa[i]==null){P.clk+=GAP_A[i];P.tsa[i]=P.clk;save();}return tsFmt(P.tsa[i]);}
+function stampSkip(i){clockInit();const P=G.prog;P.clk+=Math.round(GAP_A[i]*.45);P.tss[i]=P.clk;save();return tsFmt(P.clk);}
+function councilTs(off){stampBrief(8);const P=G.prog;return tsFmt(Math.max(P.tsb[8],(P.tsr||{})[8]||0)+off);}
+/* 現場に着いたときの通信。はじめての現場なら最初の報告、未解明の現場に戻ったなら、報告を再送する */
+function arrivalComm(i){
+  clockInit();const P=G.prog;P.tsr=P.tsr||{};
+  if(P.tsb[i]==null){const ts=stampBrief(i);P.at=i;save();return {lines:BRIEF[i],ts};}
+  if(P.at!==i&&!P.cleared[i]){P.clk+=Math.round(GAP_B[i]*.5);P.tsr[i]=P.clk;}
+  P.at=i;save();
+  if(P.tsr[i]!=null&&!P.cleared[i]){const sp=STAGES[i].species,w=i===8?'会議場に戻ったか。':`${sp}の現場に戻ったか。${isHeld(i)?'保留にしていた件だ。':''}`;
+    return {lines:[[HQ,`${w}最初の報告を、もう一度送っておく。`],...BRIEF[i]],ts:tsFmt(P.tsr[i])};}
+  return {lines:BRIEF[i],ts:tsFmt(P.tsb[i])};
+}
+/* 解明のあと、どこへ向かうか */
+function nextTarget(i){
+  if([0,1,2,3,4,5,6,7].every(k=>G.prog.cleared[k]))return 8;
+  if(i<7&&!G.prog.cleared[i+1]&&(G.prog.tsb||{})[i+1]==null)return i+1;
+  for(let k=0;k<8;k++)if(!G.prog.cleared[k])return k;
+  return 8;
+}
+function goLine(i,t){
+  const fresh=(G.prog.tsb||{})[t]==null;
+  if(fresh&&t===i+1)return AFTER[i][1];
+  if(fresh||t===8)return GO[t];
+  const sp=STAGES[t].species;
+  return G.prog.skipped&&G.prog.skipped[t]?`保留にしていた${sp}の件が、まだ残っている。もう一度、会いに行ってくれ。`:`${sp}との対話が、途中のままだ。もう一度、会いに行ってくれ。`;
+}
+function interludePages(i){const t=nextTarget(i);G.nextT=t;return [
   {scene:'int'+i,kicker:`${STAGES[i].species}が残したもの`,lines:[FRAG[i].how],fragment:FRAG[i].text},
-  {scene:'worldmap',kicker:'本部より',comm:AFTER[i],stamp:AFTER_TS[i],map:true}
+  {scene:'worldmap',kicker:'本部より',comm:[AFTER[i][0],[HQ,goLine(i,t)]],stamp:stampAfter(i),map:true}
+];}
+/* 詰まった来訪者を保留にして、次の現場へ */
+function skipPages(i){G.nextT=i+1;const sp=STAGES[i].species;return [
+  {scene:'worldmap',kicker:'本部より',comm:[[HQ,`わかった。${sp}との接触は、いったん保留にしよう。向こうに急ぐ様子はない。`],[HQ,'現場で見たことは、記録に残っている。別の言葉に触れてから戻れば、見え方が変わるかもしれない。'],[HQ,GO[i+1]]],stamp:stampSkip(i),map:true}
 ];}
 const EPILOGUE=[
   {scene:'epi1',kicker:'会議の翌朝',lines:['世界中のニュースが、あなたの名前を報じた。','見出しはどれも同じだった。「人類、銀河の架け橋に」。']},
@@ -831,7 +885,7 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const pad2=n=>String(n).padStart(2,'0');
 const STAGES=[];
-const G={cur:0,st:null,screen:'title',pi:0,result:null,prog:{cleared:{},fails:{},unlockAll:false,seenPrologue:false}};
+const G={cur:0,st:null,screen:'title',pi:0,result:null,prog:{cleared:{},fails:{},skipped:{},unlockAll:false,seenPrologue:false}};
 try{const p=JSON.parse(localStorage.getItem('fcl-progress-v2')||'null');if(p&&p.cleared)G.prog=Object.assign(G.prog,p);}catch(e){}
 function save(){try{localStorage.setItem('fcl-progress-v2',JSON.stringify(G.prog));}catch(e){}}
 const H={
@@ -846,8 +900,13 @@ const H={
     return `<div class="comm">${g.map((x,k)=>`<div class="cl"><div class="who"><span>${esc(x.who)}</span>${stamp&&k===0?`<span class="ts">${esc(stamp)}</span>`:''}</div>${x.ts.map(t=>`<p>${esc(t)}</p>`).join('')}</div>`).join('')}</div>`;}
 };
 function say(st,text,kind,t){if(kind==='good')se('good');else if(kind==='bad'){se('bad');st._bad=(st._bad||0)+1;}st.narr={text,kind:kind||''};st.log.unshift({t:t??(st.tlabel?st.tlabel():('T'+pad2(st.turn||0))),text,kind:kind||''});}
-function isUnlocked(i){return i===0||G.prog.unlockAll||!!G.prog.cleared[i-1];}
-function win(o){se('win');if(G.st){G.st.over=true;recordStat(true);saveRecap(o);}G.result=Object.assign({win:true},o);G.prog.cleared[G.cur]=true;save();G.screen='end';render();window.scrollTo(0,0);}
+function isUnlocked(i){const P=G.prog;if(i===0||P.unlockAll)return true;if(i===8)return [0,1,2,3,4,5,6,7].every(k=>P.cleared[k]);return !!(P.cleared[i-1]||(P.skipped&&P.skipped[i-1]));}
+/* 保留：2回失敗した来訪者は、後回しにして次の一か所だけ先へ進める（会議は8つすべての解明が必要） */
+const SKIP_AFTER=2;
+function canSkip(i){return i<7&&!G.prog.cleared[i]&&!isUnlocked(i+1)&&(G.prog.fails[i]||0)>=SKIP_AFTER;}
+function isHeld(i){return !!(G.prog.skipped&&G.prog.skipped[i])&&!G.prog.cleared[i];}
+function skipBtn(){return `<button class="ghost skipbtn" data-nav="skip">この来訪者は保留にして、次の現場へ<span>あとから、作戦盤でいつでも戻ってこられる</span></button>`;}
+function win(o){se('win');if(G.st){G.st.over=true;recordStat(true);saveRecap(o);}G.result=Object.assign({win:true},o);G.prog.cleared[G.cur]=true;if(G.cur<8)stampAfter(G.cur);save();G.screen='end';render();window.scrollTo(0,0);}
 function lose(o){se('lose');if(G.st){G.st.over=true;recordStat(false);}G.prog.fails[G.cur]=(G.prog.fails[G.cur]||0)+1;save();G.result=Object.assign({win:false},o);G.screen='end';render();window.scrollTo(0,0);}
 function fragCount(){return FRAG.filter((f,i)=>G.prog.cleared[i]).length;}
 
@@ -927,9 +986,10 @@ function renderFin(){
 function renderMap(){
   const done=STAGES.filter((s,i)=>G.prog.cleared[i]).length;
   const rows=STAGES.map((s,i)=>{const un=isUnlocked(i),cl=!!G.prog.cleared[i];
-    return `<li><button class="stagerow ${cl?'cleared':''}" data-nav="stage" data-v="${i}" ${un?'':'disabled'}>
+    const lockTxt=i===8&&[0,1,2,3,4,5,6,7].some(isHeld)?'保留中の来訪者と話し終えると、ここが開く':'未確認の反応';
+    return `<li><button class="stagerow ${cl?'cleared':''} ${isHeld(i)?'held':''}" data-nav="stage" data-v="${i}" ${un?'':'disabled'}>
       <span class="sn">${pad2(i+1)}</span><span class="st">${un?s.title:'？？？'}</span>
-      <span class="sc">${un?`${s.species}・${SITES[i].place}`:'未確認の反応'}${cl?`<br>解明：${s.concept}　<span class="reclink">▸ 調査記録を見る</span>`:''}</span></button></li>`;}).join('');
+      <span class="sc">${un?`${s.species}・${SITES[i].place}`:lockTxt}${cl?`<br>解明：${s.concept}　<span class="reclink">▸ 調査記録を見る</span>`:''}${isHeld(i)?`<br><span class="hold">保留中　いつでも戻れる</span>`:''}</span></button></li>`;}).join('');
   const frags=FRAG.map((f,i)=>({f,i})).sort((a,b)=>a.f.ord-b.f.ord).map(({f,i})=>G.prog.cleared[i]?`<span class="fr on">${f.text}</span>`:`<span class="fr">＿＿＿＿</span>`).join('');
   return `<div class="stack">
    <div class="head"><div class="eyebrow">第一接触言語班　作戦盤</div><h1>来訪者の着地点</h1></div>
@@ -978,11 +1038,12 @@ function renderIntro(){
    <div class="site"><span>現場</span>${site.place}　<span class="mono">${site.coord}</span></div>
    ${plate(G.cur)}
    <button class="ghost listen" data-voice="${SPECIES_KEY[G.cur]}">▶ ${G.cur===8?'会議場の声を聞く':`${s.species}の声を聞く`}</button>
-   ${H.comm(BRIEF[G.cur],BRIEF_TS[G.cur])}
+   ${(c=>H.comm(c.lines,c.ts))(arrivalComm(G.cur))}
    ${recapBlock(G.cur)}
    <div class="card mission"><p class="mlead">${s.lead}</p><dl class="mis"><dt>目標</dt><dd>${s.rules[0]}</dd><dt>制限</dt><dd>${s.rules[1]}</dd><dt>失敗</dt><dd>${s.rules[2]}</dd></dl>
    ${G.cur===8?`<button class="ghost recbtn" data-nav="records" data-v="intro">▤ これまでの調査記録を見返す<span>ウームの返し方、ポトラの品の順番、ツブラの記号……</span></button>`:''}
    <button class="primary" data-nav="play">${G.prog.cleared[G.cur]?'もう一度接触する':'接触を開始する'}</button>
+   ${canSkip(G.cur)?skipBtn():''}
    <button class="ghost" data-nav="map">作戦盤へ戻る</button></div></div>`;
 }
 function foldNote(n){const k=n.indexOf('</p>');if(k<0)return n;return n.slice(0,k+4)+`<details class="more"><summary>続きを読む</summary>${n.slice(k+4)}</details>`;}
@@ -994,7 +1055,8 @@ function renderEnd(){
     return `<div class="stack">${stageHead()}
      <div class="card"><div class="eyebrow">Contact lost</div><h2>${esc(r.title)}</h2><p>${r.text}</p>${alog}</div>
      <div class="card"><div class="lbl">現場メモ（失敗${f}回目${f<s.hints.length?'。失敗するたびに、メモが一行増える':''}）</div><ol class="hints">${hs.map(h=>`<li>${h}</li>`).join('')}</ol></div>
-     <div class="btnrow"><button class="primary" data-nav="play">もう一度挑戦する</button><button class="ghost" data-nav="map">作戦盤へ</button></div></div>`;
+     <div class="btnrow"><button class="primary" data-nav="play">もう一度挑戦する</button><button class="ghost" data-nav="map">作戦盤へ</button></div>
+     ${canSkip(G.cur)?skipBtn():(G.cur<7&&!G.prog.cleared[G.cur]&&!isUnlocked(G.cur+1)?`<p class="focusline">どうしても行き詰まったら、この来訪者を保留にして、先の現場へ進むこともできる（失敗${SKIP_AFTER}回から選べる）。</p>`:'')}</div>`;
   }
   const next=last?`<button class="primary" data-nav="epilogue">エピローグへ</button>`:`<button class="primary" data-nav="interlude">断片を受け取る</button>`;
   const finale=last?`<div class="card"><div class="eyebrow">All stages cleared</div><h2>九つの言語、九つの世界</h2>
@@ -1019,13 +1081,15 @@ function nav(w,v){
   if(w==='play'){G.st=STAGES[G.cur].init();G.st.t0=Date.now();G.st._bad=0;G.st._obs=0;G.screen='play';const S=STAGES[G.cur];if(S.onStart)setTimeout(()=>{if(G.screen==='play')S.onStart(G.st);},450);}
   if(w==='interlude'){startStory(`INTERLUDE ${G.cur+1}`,interludePages(G.cur),'next');G.story.doneLabel=`次の現場へ`;}
   if(w==='epilogue'){startStory('EPILOGUE',EPILOGUE,'fin');G.story.doneLabel='おわり';}
-  if(w==='next'){G.cur=Math.min(STAGES.length-1,G.cur+1);G.screen='intro';}
-  if(w==='reset'){G.prog={cleared:{},fails:{},unlockAll:false,seenPrologue:false};save();G.screen='title';}
+  if(w==='skip'&&canSkip(G.cur)){G.prog.skipped=G.prog.skipped||{};G.prog.skipped[G.cur]=true;save();startStory(`STAGE ${pad2(G.cur+1)} · 保留`,skipPages(G.cur),'next');G.story.doneLabel='次の現場へ';}
+  if(w==='next'){goNext();}
+  if(w==='reset'){G.prog={cleared:{},fails:{},skipped:{},unlockAll:false,seenPrologue:false};save();G.screen='title';}
   render();window.scrollTo(0,0);
 }
+function goNext(){const t=G.nextT!=null?G.nextT:nextTarget(G.cur);G.nextT=null;G.cur=Math.min(STAGES.length-1,t);G.screen='intro';}
 function storyDone(d){
   if(d==='prologue'){G.prog.seenPrologue=true;save();G.cur=0;G.screen='intro';}
-  else if(d==='next'){G.cur=Math.min(STAGES.length-1,G.cur+1);G.screen='intro';}
+  else if(d==='next')goNext();
   else if(d==='fin')G.screen='fin';
 }
 document.addEventListener('click',e=>{
@@ -1764,8 +1828,8 @@ const secOf=st=>(st.T&&st.T[st.i]&&st.T[st.i].time)||SEC;
 const OPEN=[
   {t:'太平洋の中央。仮設の浮体会議場に、8つの種族が円を描いて並んだ。招集状が呼んだ「九つめの星」の会議が、いま始まろうとしている。'},
   {t:'最初に動いたのはヤァだった。会議の開始を祝う絵を、高く掲げた。ツブラの群れの一部が、その絵を別の意味に受け取って一斉に光った。その光の速さに怯えて、ウームが殻を狭めた。ポトラが場を収めようと琥珀を差し出したが、それを受け取る作法を、誰も知らなかった。ネフの部屋から、苦い香りが漏れ始めた。'},
-  {t:'誰も、誰の言葉も分からない。会議場の空気が、張りつめていく。',comm:[[HQ,'まずい。このままだと、会議の前に全部が壊れる。']],oi:'2031.04.21 10:02'},
-  {t:'そのとき、ミミクがあなたの方へ、体ごと向き直った。ウームが、ツブラが、ポトラが、ヤァが、ネフが、カナルが、一つずつ、あなたの方へ向き直った。オルドの受信皿も、こちらを向いた。',comm:[[HQ,'……あなたしかいない。行ってくれ。']],oi:'2031.04.21 10:04'}
+  {t:'誰も、誰の言葉も分からない。会議場の空気が、張りつめていく。',comm:[[HQ,'まずい。このままだと、会議の前に全部が壊れる。']],off:302},
+  {t:'そのとき、ミミクがあなたの方へ、体ごと向き直った。ウームが、ツブラが、ポトラが、ヤァが、ネフが、カナルが、一つずつ、あなたの方へ向き直った。オルドの受信皿も、こちらを向いた。',comm:[[HQ,'……あなたしかいない。行ってくれ。']],off:304}
 ];
 const RULES9={ri:a=>a.map(t=>t==='高'?'低':'高').reverse(),r:a=>[...a].reverse(),i:a=>a.map(t=>t==='高'?'低':'高'),rot:a=>a.slice(1).concat(a[0]).map(t=>t==='高'?'低':'高')};
 const LADDER0={1:'羽根',2:'小石',3:'貝',4:'布',5:'琥珀',6:'骨笛',7:'星図'};
@@ -1844,12 +1908,12 @@ return {
   init(){return {T:makeT(),bs:{},bres:null,phase:'open',oi:0,i:0,ok:0,miss:0,pick:null,ri:0,deadline:0,log:[],alog:[],turn:1,narr:{text:'',kind:''}};},
   view(st){
     if(st.phase==='open'){const o=OPEN[st.oi];
-      return `<div class="stage">${canvas('hall',{})}</div><div class="prose"><p>${o.t}</p></div>${o.comm?H.comm(o.comm,o.oi):''}
+      return `<div class="stage">${canvas('hall',{})}</div><div class="prose"><p>${o.t}</p></div>${o.comm?H.comm(o.comm,councilTs(o.off)):''}
       <button class="primary" data-a="onext">${st.oi<OPEN.length-1?'次へ':'通訳を始める'}</button>`;}
     if(st.phase==='reveal'){
       const steps=[
         ()=>`<div class="stage">${canvas('int6',{})}</div><div class="prose"><p>最後の一言が、会議場の隅々まで届いた。長い沈黙のあと、オルドが信号を送ってきた。8つの断片を、ひとつに並べる信号だった。</p></div><div class="fragment summons-full"><span class="mono">SUMMONS · RESTORED</span>${summons()}</div>`,
-        ()=>`<div class="stage">${canvas('pro4',{})}</div>${H.comm([[HQ,'「言葉と言葉のあいだに、橋を架ける者」……。'],[HQ,'この星には、7000を超える言語がある。互いに通じない言葉を、人類は何千年も訳し続けてきた。'],[HQ,'彼らが探していたのは、強い種族でも、賢い種族でもなかった。'],[HQ,'翻訳する種族だった。']],'2031.04.21 13:47')}`,
+        ()=>`<div class="stage">${canvas('pro4',{})}</div>${H.comm([[HQ,'「言葉と言葉のあいだに、橋を架ける者」……。'],[HQ,'この星には、7000を超える言語がある。互いに通じない言葉を、人類は何千年も訳し続けてきた。'],[HQ,'彼らが探していたのは、強い種族でも、賢い種族でもなかった。'],[HQ,'翻訳する種族だった。']],councilTs(527))}`,
         ()=>`<div class="stage">${canvas('hall',{})}</div><div class="prose"><p>そして、会議場のあちこちから、言葉が届き始めた。あなたには、そのすべてが読めた。</p></div><div class="voices">${VOICES.map(([w,o,tr])=>[w,w==='ミミク'?o.replace('「tii」',`「${(G.prog.lex1||{}).tii||'tii'}」`):o,tr]).map(([w,o,tr])=>`<div class="voice" data-a="voice" data-v="${SP_BY_NAME[w]}"><div class="vw">${w} ▶</div><div class="vo">${o}</div><div class="vt">${tr}</div></div>`).join('')}</div>`
       ];
       return `${steps[st.ri]()}<button class="primary" data-a="rnext">${st.ri<steps.length-1?'次へ':'記録を閉じる'}</button>`;}
